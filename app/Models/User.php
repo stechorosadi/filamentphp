@@ -21,6 +21,21 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasRoles;
 
+    protected static function booted(): void
+    {
+        static::updating(function (User $user): void {
+            if ($user->isDirty('avatar_url') && $user->getOriginal('avatar_url')) {
+                Storage::disk('public')->delete($user->getOriginal('avatar_url'));
+            }
+        });
+
+        static::deleting(function (User $user): void {
+            if ($user->avatar_url) {
+                Storage::disk('public')->delete($user->avatar_url);
+            }
+        });
+    }
+
     protected function casts(): array
     {
         return [
