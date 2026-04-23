@@ -36,86 +36,105 @@ class UserResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
+            ->columns(2)
             ->schema([
-                Section::make('Profile Information')
+                // Left group: identity + password
+                Grid::make(1)
                     ->schema([
-                        TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
+                        Section::make('Profile Information')
+                            ->schema([
+                                TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255),
 
-                        TextInput::make('email')
-                            ->email()
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(User::class, 'email', ignoreRecord: true),
+                                TextInput::make('email')
+                                    ->email()
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->unique(User::class, 'email', ignoreRecord: true),
+                            ])
+                            ->columns(2),
+
+                        Section::make('Password')
+                            ->schema([
+                                TextInput::make('password')
+                                    ->password()
+                                    ->revealable()
+                                    ->required()
+                                    ->minLength(8)
+                                    ->dehydrateStateUsing(fn (string $state): string => Hash::make($state)),
+                            ])
+                            ->visible(fn (string $operation): bool => $operation === 'create'),
+
+                        Section::make('Change Password')
+                            ->description('Leave all fields blank to keep the current password.')
+                            ->schema([
+                                TextInput::make('current_password')
+                                    ->password()
+                                    ->revealable()
+                                    ->dehydrated(false)
+                                    ->requiredWith('new_password')
+                                    ->rules([
+                                        fn (?Model $record): \Closure => function (string $attribute, mixed $value, \Closure $fail) use ($record): void {
+                                            if (filled($value) && !Hash::check($value, $record?->password)) {
+                                                $fail('The current password is incorrect.');
+                                            }
+                                        },
+                                    ]),
+
+                                TextInput::make('new_password')
+                                    ->password()
+                                    ->revealable()
+                                    ->minLength(8)
+                                    ->dehydrated(false)
+                                    ->confirmed()
+                                    ->requiredWith('current_password'),
+
+                                TextInput::make('new_password_confirmation')
+                                    ->password()
+                                    ->revealable()
+                                    ->label('Confirm New Password')
+                                    ->dehydrated(false)
+                                    ->requiredWith('new_password'),
+                            ])
+                            ->visible(fn (string $operation): bool => $operation === 'edit'),
                     ])
-                    ->columns(2),
+                    ->columnSpan(1),
 
-                Section::make('Password')
+                // Right group: avatar + roles
+                Grid::make(1)
                     ->schema([
-                        TextInput::make('password')
-                            ->password()
-                            ->revealable()
-                            ->required()
-                            ->minLength(8)
-                            ->dehydrateStateUsing(fn (string $state): string => Hash::make($state)),
-                    ])
-                    ->visible(fn (string $operation): bool => $operation === 'create'),
-
-                Section::make('Change Password')
-                    ->description('Leave all fields blank to keep the current password.')
-                    ->schema([
-                        TextInput::make('current_password')
-                            ->password()
-                            ->revealable()
-                            ->dehydrated(false)
-                            ->requiredWith('new_password')
-                            ->rules([
-                                fn (?Model $record): \Closure => function (string $attribute, mixed $value, \Closure $fail) use ($record): void {
-                                    if (filled($value) && !Hash::check($value, $record?->password)) {
-                                        $fail('The current password is incorrect.');
-                                    }
-                                },
+                        Section::make('Profile Image')
+                            ->schema([
+                                FileUpload::make('avatar_url')
+                                    ->label('Avatar')
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('avatars')
+                                    ->visibility('public')
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                                    ->maxSize(2048)
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatioOptions(['1:1'])
+                                    ->automaticallyResizeImagesToWidth(200)
+                                    ->automaticallyResizeImagesToHeight(200)
+                                    ->automaticallyResizeImagesMode('cover')
+                                    ->automaticallyUpscaleImagesWhenResizing()
+                                    ->imagePreviewHeight('150')
+                                    ->columnSpanFull(),
                             ]),
 
-                        TextInput::make('new_password')
-                            ->password()
-                            ->revealable()
-                            ->minLength(8)
-                            ->dehydrated(false)
-                            ->confirmed()
-                            ->requiredWith('current_password'),
-
-                        TextInput::make('new_password_confirmation')
-                            ->password()
-                            ->revealable()
-                            ->label('Confirm New Password')
-                            ->dehydrated(false)
-                            ->requiredWith('new_password'),
+                        Section::make('Roles')
+                            ->schema([
+                                Select::make('roles')
+                                    ->relationship('roles', 'name')
+                                    ->multiple()
+                                    ->preload()
+                                    ->searchable()
+                                    ->columnSpanFull(),
+                            ]),
                     ])
-                    ->visible(fn (string $operation): bool => $operation === 'edit'),
-
-                Section::make('Profile Image')
-                    ->schema([
-                        FileUpload::make('avatar_url')
-                            ->label('Avatar')
-                            ->image()
-                            ->disk('public')
-                            ->directory('avatars')
-                            ->visibility('public')
-                            ->imagePreviewHeight('150')
-                            ->columnSpanFull(),
-                    ]),
-
-                Section::make('Roles')
-                    ->schema([
-                        Select::make('roles')
-                            ->relationship('roles', 'name')
-                            ->multiple()
-                            ->preload()
-                            ->searchable()
-                            ->columnSpanFull(),
-                    ]),
+                    ->columnSpan(1),
             ]);
     }
 
