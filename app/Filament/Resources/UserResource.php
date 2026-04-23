@@ -4,6 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -13,13 +17,10 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
@@ -47,18 +48,52 @@ class UserResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->unique(User::class, 'email', ignoreRecord: true),
+                    ])
+                    ->columns(2),
 
+                Section::make('Password')
+                    ->schema([
                         TextInput::make('password')
                             ->password()
                             ->revealable()
-                            ->required(fn (string $operation): bool => $operation === 'create')
-                            ->dehydrated(fn (?string $state): bool => filled($state))
-                            ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                            ->required()
                             ->minLength(8)
-                            ->helperText('Leave blank to keep the current password when editing.')
-                            ->columnSpanFull(),
+                            ->dehydrateStateUsing(fn (string $state): string => Hash::make($state)),
                     ])
-                    ->columns(2),
+                    ->visible(fn (string $operation): bool => $operation === 'create'),
+
+                Section::make('Change Password')
+                    ->description('Leave all fields blank to keep the current password.')
+                    ->schema([
+                        TextInput::make('current_password')
+                            ->password()
+                            ->revealable()
+                            ->dehydrated(false)
+                            ->requiredWith('new_password')
+                            ->rules([
+                                fn (?Model $record): \Closure => function (string $attribute, mixed $value, \Closure $fail) use ($record): void {
+                                    if (filled($value) && !Hash::check($value, $record?->password)) {
+                                        $fail('The current password is incorrect.');
+                                    }
+                                },
+                            ]),
+
+                        TextInput::make('new_password')
+                            ->password()
+                            ->revealable()
+                            ->minLength(8)
+                            ->dehydrated(false)
+                            ->confirmed()
+                            ->requiredWith('current_password'),
+
+                        TextInput::make('new_password_confirmation')
+                            ->password()
+                            ->revealable()
+                            ->label('Confirm New Password')
+                            ->dehydrated(false)
+                            ->requiredWith('new_password'),
+                    ])
+                    ->visible(fn (string $operation): bool => $operation === 'edit'),
 
                 Section::make('Profile Image')
                     ->schema([
