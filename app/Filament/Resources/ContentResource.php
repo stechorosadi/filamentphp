@@ -44,9 +44,20 @@ class ContentResource extends Resource
         return $schema
             ->columns(2)
             ->schema([
-                // Left column: content + classification
+                // Left column: author + content + classification + images
                 Grid::make(1)
                     ->schema([
+                        Section::make('Author')
+                            ->schema([
+                                Select::make('user_id')
+                                    ->label('Author')
+                                    ->relationship('user', 'name')
+                                    ->disabled()
+                                    ->dehydrated()
+                                    ->default(fn () => auth()->id())
+                                    ->required(),
+                            ]),
+
                         Section::make('Content Details')
                             ->schema([
                                 TextInput::make('title')
@@ -108,22 +119,6 @@ class ContentResource extends Resource
                                     ->columnSpanFull(),
                             ])
                             ->columns(2),
-                    ])
-                    ->columnSpan(1),
-
-                // Right column: author + images + attachments
-                Grid::make(1)
-                    ->schema([
-                        Section::make('Author')
-                            ->schema([
-                                Select::make('user_id')
-                                    ->label('Author')
-                                    ->relationship('user', 'name')
-                                    ->disabled()
-                                    ->dehydrated()
-                                    ->default(fn () => auth()->id())
-                                    ->required(),
-                            ]),
 
                         Section::make('Images')
                             ->schema([
@@ -156,7 +151,12 @@ class ContentResource extends Resource
                                     ->automaticallyUpscaleImagesWhenResizing(),
                             ])
                             ->columns(2),
+                    ])
+                    ->columnSpan(1),
 
+                // Right column: attachments
+                Grid::make(1)
+                    ->schema([
                         Section::make('Image Attachments')
                             ->schema([
                                 Repeater::make('imageAttachments')
