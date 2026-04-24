@@ -1,0 +1,78 @@
+.fi-content-prose h1,
+.fi-content-prose h2,
+.fi-content-prose h3,
+.fi-content-prose h4,
+.fi-content-prose h5,
+.fi-content-prose h6 {
+    font-weight: 700;
+    line-height: 1.3;
+    margin-top: 1.4em;
+    margin-bottom: 0.5em;
+}
+
+.fi-content-prose h1 { font-size: 1.75rem; }
+.fi-content-prose h2 { font-size: 1.4rem; }
+.fi-content-prose h3 { font-size: 1.2rem; }
+.fi-content-prose h4 { font-size: 1.05rem; }
+
+.fi-content-prose p {
+    margin-bottom: 1em;
+    line-height: 1.75;
+}
+
+.fi-content-prose ul,
+.fi-content-prose ol {
+    margin-bottom: 1em;
+    padding-left: 1.5em;
+    line-height: 1.75;
+}
+
+.fi-content-prose ul { list-style-type: disc; }
+.fi-content-prose ol { list-style-type: decimal; }
+
+.fi-content-prose li { margin-bottom: 0.25em; }
+
+.fi-content-prose strong { font-weight: 700; }
+.fi-content-prose em { font-style: italic; }
+
+.fi-content-prose a {
+    color: #f59e0b;
+    text-decoration: underline;
+}
+
+.fi-content-prose blockquote {
+    border-left: 4px solid #d1d5db;
+    padding-left: 1em;
+    margin: 1em 0;
+    color: #6b7280;
+    font-style: italic;
+}
+
+.fi-content-prose code {
+    background: #f3f4f6;
+    padding: 0.1em 0.35em;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    font-family: ui-monospace, monospace;
+}
+
+.fi-content-prose pre {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 1em;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin-bottom: 1em;
+    font-family: ui-monospace, monospace;
+    font-size: 0.875em;
+}
+
+.fi-content-prose pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+.dark .fi-content-prose blockquote { border-color: #4b5563; color: #9ca3af; }
+.dark .fi-content-prose code { background: #374151; }
+.dark .fi-content-prose a { color: #fbbf24; }

@@ -3,11 +3,14 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ContentResource\Pages;
+use App\Filament\Resources\ContentResource\RelationManagers;
 use App\Models\Content;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -130,30 +133,30 @@ class ContentResource extends Resource
                         Section::make('Images')
                             ->schema([
                                 FileUpload::make('header_image')
-                                    ->label('Header Image (500×200)')
+                                    ->label('Header Image (1000×400)')
                                     ->image()
                                     ->disk('public')
                                     ->directory('content-headers')
                                     ->acceptedFileTypes(['image/jpeg', 'image/png'])
-                                    ->maxSize(2048)
+                                    ->maxSize(1024)
                                     ->imageEditor()
-                                    ->imageEditorAspectRatioOptions(['5:2'])
-                                    ->automaticallyResizeImagesToWidth(500)
-                                    ->automaticallyResizeImagesToHeight(200)
+                                    ->imageEditorAspectRatioOptions(['5:3'])
+                                    ->automaticallyResizeImagesToWidth(1000)
+                                    ->automaticallyResizeImagesToHeight(600)
                                     ->automaticallyResizeImagesMode('cover')
                                     ->automaticallyUpscaleImagesWhenResizing(),
 
                                 FileUpload::make('featured_image')
-                                    ->label('Featured Image (500×200)')
+                                    ->label('Featured Image (1000×400)')
                                     ->image()
                                     ->disk('public')
                                     ->directory('content-featured')
                                     ->acceptedFileTypes(['image/jpeg', 'image/png'])
-                                    ->maxSize(2048)
+                                    ->maxSize(1024)
                                     ->imageEditor()
-                                    ->imageEditorAspectRatioOptions(['5:2'])
-                                    ->automaticallyResizeImagesToWidth(500)
-                                    ->automaticallyResizeImagesToHeight(200)
+                                    ->imageEditorAspectRatioOptions(['5:3'])
+                                    ->automaticallyResizeImagesToWidth(1000)
+                                    ->automaticallyResizeImagesToHeight(600)
                                     ->automaticallyResizeImagesMode('cover')
                                     ->automaticallyUpscaleImagesWhenResizing(),
                             ])
@@ -170,7 +173,21 @@ class ContentResource extends Resource
                 ImageColumn::make('header_image')
                     ->label('Header')
                     ->disk('public')
-                    ->imageHeight(40),
+                    ->imageHeight(40)
+                    ->action(
+                        Action::make('previewHeaderImage')
+                            ->label('Preview Header Image')
+                            ->modalHeading(fn (Content $record): string => $record->title)
+                            ->modalContent(fn (Content $record): HtmlString => new HtmlString(
+                                '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">' .
+                                '<img src="' . asset('storage/' . $record->header_image) .
+                                '" style="max-width:100%;border-radius:0.5rem;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,0.15);">' .
+                                '</div>'
+                            ))
+                            ->modalWidth('xl')
+                            ->modalSubmitAction(false)
+                            ->modalCancelActionLabel('Close')
+                    ),
 
                 TextColumn::make('title')
                     ->searchable()
@@ -231,17 +248,46 @@ class ContentResource extends Resource
                         ->schema([
                             ImageEntry::make('header_image')
                                 ->label('Header Image')
-                                ->disk('public'),
+                                ->disk('public')
+                                ->action(
+                                    Action::make('previewHeaderImage')
+                                        ->modalHeading('Header Image')
+                                        ->modalContent(fn (Content $record): HtmlString => new HtmlString(
+                                            '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">' .
+                                            '<img src="' . asset('storage/' . $record->header_image) .
+                                            '" style="max-width:100%;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.15);">' .
+                                            '</div>'
+                                        ))
+                                        ->modalWidth('xl')
+                                        ->modalSubmitAction(false)
+                                        ->modalCancelActionLabel('Close')
+                                ),
 
                             ImageEntry::make('featured_image')
                                 ->label('Featured Image')
-                                ->disk('public'),
+                                ->disk('public')
+                                ->action(
+                                    Action::make('previewFeaturedImage')
+                                        ->modalHeading('Featured Image')
+                                        ->modalContent(fn (Content $record): HtmlString => new HtmlString(
+                                            '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">' .
+                                            '<img src="' . asset('storage/' . $record->featured_image) .
+                                            '" style="max-width:100%;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.15);">' .
+                                            '</div>'
+                                        ))
+                                        ->modalWidth('xl')
+                                        ->modalSubmitAction(false)
+                                        ->modalCancelActionLabel('Close')
+                                ),
                         ]),
 
                     TextEntry::make('title')->columnSpanFull(),
                     TextEntry::make('slug')->copyable(),
                     TextEntry::make('excerpt')->columnSpanFull(),
-                    TextEntry::make('content')->html()->columnSpanFull(),
+                    TextEntry::make('content')
+                        ->html()
+                        ->columnSpanFull()
+                        ->extraAttributes(['class' => 'fi-content-prose']),
                     TextEntry::make('youtube_url')->label('YouTube Link')->copyable(),
                 ]),
 

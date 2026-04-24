@@ -4,10 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -145,6 +148,22 @@ class UserResource extends Resource
                     ->circular()
                     ->defaultImageUrl(fn (User $record): string =>
                         'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&color=7F9CF5&background=EBF4FF'
+                    )
+                    ->action(
+                        Action::make('previewAvatar')
+                            ->label('Preview Avatar')
+                            ->modalHeading(fn (User $record): string => $record->name)
+                            ->modalContent(fn (User $record): HtmlString => new HtmlString(
+                                '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">' .
+                                '<img src="' . (filled($record->avatar_url)
+                                    ? Storage::disk('public')->url($record->avatar_url)
+                                    : 'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&color=7F9CF5&background=EBF4FF&size=256'
+                                ) . '" style="width:200px;height:200px;border-radius:50%;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,0.15);">' .
+                                '</div>'
+                            ))
+                            ->modalWidth('sm')
+                            ->modalSubmitAction(false)
+                            ->modalCancelActionLabel('Close')
                     ),
 
                 TextColumn::make('name')
