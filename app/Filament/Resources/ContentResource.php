@@ -66,12 +66,14 @@ class ContentResource extends Resource
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(function (Set $set, ?string $state): void {
                                         $set('slug', now()->format('Y-m-d') . '-' . Str::slug((string) $state));
-                                    }),
+                                    })
+                                    ->columnSpanFull(),
 
                                 TextInput::make('slug')
                                     ->required()
                                     ->readOnly()
-                                    ->unique(Content::class, 'slug', ignoreRecord: true),
+                                    ->unique(Content::class, 'slug', ignoreRecord: true)
+                                    ->columnSpanFull(),
 
                                 Textarea::make('excerpt')
                                     ->rows(3)
@@ -79,6 +81,7 @@ class ContentResource extends Resource
 
                                 RichEditor::make('content')
                                     ->required()
+                                    ->extraInputAttributes(['style' => 'min-height: 250px'])
                                     ->columnSpanFull(),
 
                                 TextInput::make('youtube_url')
