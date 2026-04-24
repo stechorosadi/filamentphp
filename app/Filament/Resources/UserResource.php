@@ -52,9 +52,41 @@ class UserResource extends Resource
                                     ->required()
                                     ->maxLength(255)
                                     ->unique(User::class, 'email', ignoreRecord: true),
+
+                                Select::make('roles')
+                                    ->relationship('roles', 'name')
+                                    ->multiple()
+                                    ->preload()
+                                    ->searchable()
+                                    ->columnSpanFull(),
                             ])
                             ->columns(2),
+                        
+                        Section::make('Profile Image')
+                            ->schema([
+                                FileUpload::make('avatar_url')
+                                    ->label('Avatar')
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('avatars')
+                                    ->visibility('public')
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                                    ->maxSize(2048)
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatioOptions(['1:1'])
+                                    ->automaticallyResizeImagesToWidth(200)
+                                    ->automaticallyResizeImagesToHeight(200)
+                                    ->automaticallyResizeImagesMode('cover')
+                                    ->automaticallyUpscaleImagesWhenResizing()
+                                    ->imagePreviewHeight('150')
+                                    ->columnSpanFull(),
+                            ]),
+                    ])
+                    ->columnSpan(1),
 
+                // Right group: avatar + roles
+                Grid::make(1)
+                    ->schema([
                         Section::make('Password')
                             ->schema([
                                 TextInput::make('password')
@@ -98,41 +130,6 @@ class UserResource extends Resource
                                     ->requiredWith('new_password'),
                             ])
                             ->visible(fn (string $operation): bool => $operation === 'edit'),
-                    ])
-                    ->columnSpan(1),
-
-                // Right group: avatar + roles
-                Grid::make(1)
-                    ->schema([
-                        Section::make('Profile Image')
-                            ->schema([
-                                FileUpload::make('avatar_url')
-                                    ->label('Avatar')
-                                    ->image()
-                                    ->disk('public')
-                                    ->directory('avatars')
-                                    ->visibility('public')
-                                    ->acceptedFileTypes(['image/jpeg', 'image/png'])
-                                    ->maxSize(2048)
-                                    ->imageEditor()
-                                    ->imageEditorAspectRatioOptions(['1:1'])
-                                    ->automaticallyResizeImagesToWidth(200)
-                                    ->automaticallyResizeImagesToHeight(200)
-                                    ->automaticallyResizeImagesMode('cover')
-                                    ->automaticallyUpscaleImagesWhenResizing()
-                                    ->imagePreviewHeight('150')
-                                    ->columnSpanFull(),
-                            ]),
-
-                        Section::make('Roles')
-                            ->schema([
-                                Select::make('roles')
-                                    ->relationship('roles', 'name')
-                                    ->multiple()
-                                    ->preload()
-                                    ->searchable()
-                                    ->columnSpanFull(),
-                            ]),
                     ])
                     ->columnSpan(1),
             ]);
