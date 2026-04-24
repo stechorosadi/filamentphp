@@ -170,6 +170,10 @@ class ContentResource extends Resource
                                             ->acceptedFileTypes(['image/jpeg', 'image/png'])
                                             ->maxSize(1024)
                                             ->required(),
+
+                                        TextInput::make('caption')
+                                            ->label('Caption / Title')
+                                            ->maxLength(255),
                                     ])
                                     ->orderColumn('order')
                                     ->reorderable()

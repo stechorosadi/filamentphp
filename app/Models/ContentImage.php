@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['content_id', 'path', 'order'])]
+#[Fillable(['content_id', 'path', 'caption', 'order'])]
 class ContentImage extends Model
 {
     protected static function booted(): void
