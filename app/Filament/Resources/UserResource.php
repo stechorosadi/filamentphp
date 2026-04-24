@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -248,6 +249,14 @@ class UserResource extends Resource
                     ])
                     ->collapsible(),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\EducationHistoryRelationManager::class,
+            RelationManagers\PublicationsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
