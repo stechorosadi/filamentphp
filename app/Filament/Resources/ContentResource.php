@@ -9,7 +9,6 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -44,20 +43,9 @@ class ContentResource extends Resource
         return $schema
             ->columns(2)
             ->schema([
-                // Left column: author + content + classification + images
+                // Left: content details
                 Grid::make(1)
                     ->schema([
-                        Section::make('Author')
-                            ->schema([
-                                Select::make('user_id')
-                                    ->label('Author')
-                                    ->relationship('user', 'name')
-                                    ->disabled()
-                                    ->dehydrated()
-                                    ->default(fn () => auth()->id())
-                                    ->required(),
-                            ]),
-
                         Section::make('Content Details')
                             ->schema([
                                 TextInput::make('title')
@@ -81,7 +69,7 @@ class ContentResource extends Resource
 
                                 RichEditor::make('content')
                                     ->required()
-                                    ->extraInputAttributes(['style' => 'min-height: 250px'])
+                                    ->extraInputAttributes(['style' => 'min-height: 480px'])
                                     ->columnSpanFull(),
 
                                 TextInput::make('youtube_url')
@@ -90,6 +78,22 @@ class ContentResource extends Resource
                                     ->columnSpanFull(),
                             ])
                             ->columns(2),
+                    ])
+                    ->columnSpan(1),
+
+                // Right: author + classification + images
+                Grid::make(1)
+                    ->schema([
+                        Section::make('Author')
+                            ->schema([
+                                Select::make('user_id')
+                                    ->label('Author')
+                                    ->relationship('user', 'name')
+                                    ->disabled()
+                                    ->dehydrated()
+                                    ->default(fn () => auth()->id())
+                                    ->required(),
+                            ]),
 
                         Section::make('Classification')
                             ->schema([
@@ -154,92 +158,6 @@ class ContentResource extends Resource
                                     ->automaticallyUpscaleImagesWhenResizing(),
                             ])
                             ->columns(2),
-                    ])
-                    ->columnSpan(1),
-
-                // Right column: attachments
-                Grid::make(1)
-                    ->schema([
-                        Section::make('Image Attachments')
-                            ->schema([
-                                Repeater::make('imageAttachments')
-                                    ->relationship('imageAttachments')
-                                    ->schema([
-                                        FileUpload::make('path')
-                                            ->label('Image')
-                                            ->image()
-                                            ->disk('public')
-                                            ->directory('content-images')
-                                            ->acceptedFileTypes(['image/jpeg', 'image/png'])
-                                            ->maxSize(1024)
-                                            ->required(),
-
-                                        TextInput::make('caption')
-                                            ->label('Caption / Title')
-                                            ->maxLength(255),
-                                    ])
-                                    ->orderColumn('order')
-                                    ->reorderable()
-                                    ->collapsible()
-                                    ->addActionLabel('Add Image')
-                                    ->columnSpanFull(),
-                            ])
-                            ->collapsible(),
-
-                        Section::make('File Attachments')
-                            ->schema([
-                                Repeater::make('fileAttachments')
-                                    ->relationship('fileAttachments')
-                                    ->schema([
-                                        FileUpload::make('path')
-                                            ->label('File')
-                                            ->disk('public')
-                                            ->directory('content-files')
-                                            ->acceptedFileTypes([
-                                                'application/pdf',
-                                                'application/msword',
-                                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                                                'application/vnd.ms-excel',
-                                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                                'application/vnd.ms-powerpoint',
-                                                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                                            ])
-                                            ->maxSize(2048)
-                                            ->required(),
-
-                                        TextInput::make('original_name')
-                                            ->label('Display Name')
-                                            ->required()
-                                            ->maxLength(255),
-                                    ])
-                                    ->orderColumn('order')
-                                    ->reorderable()
-                                    ->collapsible()
-                                    ->addActionLabel('Add File')
-                                    ->columnSpanFull(),
-                            ])
-                            ->collapsible(),
-
-                        Section::make('Link Attachments')
-                            ->schema([
-                                Repeater::make('linkAttachments')
-                                    ->relationship('linkAttachments')
-                                    ->schema([
-                                        TextInput::make('url')
-                                            ->url()
-                                            ->required()
-                                            ->maxLength(2048),
-
-                                        TextInput::make('label')
-                                            ->maxLength(255),
-                                    ])
-                                    ->orderColumn('order')
-                                    ->reorderable()
-                                    ->collapsible()
-                                    ->addActionLabel('Add Link')
-                                    ->columnSpanFull(),
-                            ])
-                            ->collapsible(),
                     ])
                     ->columnSpan(1),
             ]);
@@ -352,6 +270,15 @@ class ContentResource extends Resource
                 ])
                 ->collapsible(),
         ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\ImageAttachmentsRelationManager::class,
+            RelationManagers\FileAttachmentsRelationManager::class,
+            RelationManagers\LinkAttachmentsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
