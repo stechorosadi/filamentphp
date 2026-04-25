@@ -18,20 +18,20 @@
 <body
     x-data="{
         darkMode: document.documentElement.classList.contains('dark'),
+        scrolled: false,
         toggleDark() {
             this.darkMode = !this.darkMode;
             document.documentElement.classList.toggle('dark', this.darkMode);
             localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
         }
     }"
+    x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 20 })"
     class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300 antialiased">
 
 {{-- ─────────────────────────────────────────── --}}
 {{-- NAVBAR --}}
 {{-- ─────────────────────────────────────────── --}}
 <header
-    x-data="{ scrolled: false }"
-    x-init="window.addEventListener('scroll', () => scrolled = window.scrollY > 20)"
     :class="scrolled ? 'shadow-md bg-white/90 dark:bg-gray-900/90 backdrop-blur' : 'bg-transparent'"
     class="fixed inset-x-0 top-0 z-50 transition-all duration-300">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
