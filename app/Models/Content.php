@@ -20,9 +20,19 @@ use Illuminate\Support\Facades\Storage;
     'excerpt',
     'content',
     'youtube_url',
+    'published',
+    'featured',
 ])]
 class Content extends Model
 {
+    protected function casts(): array
+    {
+        return [
+            'published' => 'boolean',
+            'featured' => 'boolean',
+        ];
+    }
+
     protected static function booted(): void
     {
         static::updating(function (Content $content): void {

@@ -10,12 +10,13 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
@@ -23,10 +24,14 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class ContentResource extends Resource
@@ -56,7 +61,7 @@ class ContentResource extends Resource
                                     ->maxLength(100)
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(function (Set $set, ?string $state): void {
-                                        $set('slug', now()->format('Y-m-d') . '-' . Str::slug((string) $state));
+                                        $set('slug', now()->format('Y-m-d').'-'.Str::slug((string) $state));
                                     })
                                     ->columnSpanFull(),
 
@@ -96,6 +101,23 @@ class ContentResource extends Resource
                                     ->dehydrated()
                                     ->default(fn () => auth()->id())
                                     ->required(),
+                            ]),
+
+                        Section::make('Publishing')
+                            ->schema([
+                                Toggle::make('published')
+                                    ->label('Published')
+                                    ->helperText('Make this content visible to the public.')
+                                    ->onColor('success')
+                                    ->offColor('danger')
+                                    ->default(false),
+
+                                Toggle::make('featured')
+                                    ->label('Featured')
+                                    ->helperText('Pin this content to the featured section.')
+                                    ->onColor('warning')
+                                    ->offColor('gray')
+                                    ->default(false),
                             ]),
 
                         Section::make('Classification')
@@ -179,9 +201,9 @@ class ContentResource extends Resource
                             ->label('Preview Header Image')
                             ->modalHeading(fn (Content $record): string => $record->title)
                             ->modalContent(fn (Content $record): HtmlString => new HtmlString(
-                                '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">' .
-                                '<img src="' . asset('storage/' . $record->header_image) .
-                                '" style="max-width:100%;border-radius:0.5rem;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,0.15);">' .
+                                '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">'.
+                                '<img src="'.asset('storage/'.$record->header_image).
+                                '" style="max-width:100%;border-radius:0.5rem;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,0.15);">'.
                                 '</div>'
                             ))
                             ->modalWidth('xl')
@@ -193,6 +215,18 @@ class ContentResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->limit(50),
+
+                ToggleColumn::make('published')
+                    ->label('Published')
+                    ->sortable(),
+
+                IconColumn::make('featured')
+                    ->label('Featured')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-star')
+                    ->falseIcon('heroicon-o-star')
+                    ->trueColor('warning')
+                    ->falseColor('gray'),
 
                 TextColumn::make('user.name')
                     ->label('Author')
@@ -221,6 +255,16 @@ class ContentResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                TernaryFilter::make('published')
+                    ->label('Published')
+                    ->trueLabel('Published only')
+                    ->falseLabel('Unpublished only'),
+
+                TernaryFilter::make('featured')
+                    ->label('Featured')
+                    ->trueLabel('Featured only')
+                    ->falseLabel('Not featured'),
+
                 SelectFilter::make('content_classification_id')
                     ->label('Classification')
                     ->relationship('classification', 'name'),
@@ -253,9 +297,9 @@ class ContentResource extends Resource
                                     Action::make('previewHeaderImage')
                                         ->modalHeading('Header Image')
                                         ->modalContent(fn (Content $record): HtmlString => new HtmlString(
-                                            '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">' .
-                                            '<img src="' . asset('storage/' . $record->header_image) .
-                                            '" style="max-width:100%;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.15);">' .
+                                            '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">'.
+                                            '<img src="'.asset('storage/'.$record->header_image).
+                                            '" style="max-width:100%;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.15);">'.
                                             '</div>'
                                         ))
                                         ->modalWidth('xl')
@@ -270,9 +314,9 @@ class ContentResource extends Resource
                                     Action::make('previewFeaturedImage')
                                         ->modalHeading('Featured Image')
                                         ->modalContent(fn (Content $record): HtmlString => new HtmlString(
-                                            '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">' .
-                                            '<img src="' . asset('storage/' . $record->featured_image) .
-                                            '" style="max-width:100%;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.15);">' .
+                                            '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">'.
+                                            '<img src="'.asset('storage/'.$record->featured_image).
+                                            '" style="max-width:100%;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.15);">'.
                                             '</div>'
                                         ))
                                         ->modalWidth('xl')
@@ -293,17 +337,35 @@ class ContentResource extends Resource
 
             Section::make('Classification & Author')
                 ->schema([
-                    Grid::make(3)
+                    Grid::make(4)
                         ->schema([
                             TextEntry::make('user.name')->label('Author'),
                             TextEntry::make('classification.name')->label('Classification')->badge(),
                             TextEntry::make('category.name')->label('Category')->badge(),
+                            IconEntry::make('published')
+                                ->label('Published')
+                                ->boolean()
+                                ->trueIcon('heroicon-o-check-circle')
+                                ->falseIcon('heroicon-o-x-circle')
+                                ->trueColor('success')
+                                ->falseColor('danger'),
                         ]),
 
-                    TextEntry::make('tags.name')
-                        ->label('Tags')
-                        ->badge()
-                        ->separator(','),
+                    Grid::make(4)
+                        ->schema([
+                            TextEntry::make('tags.name')
+                                ->label('Tags')
+                                ->badge()
+                                ->separator(',')
+                                ->columnSpan(3),
+                            IconEntry::make('featured')
+                                ->label('Featured')
+                                ->boolean()
+                                ->trueIcon('heroicon-o-star')
+                                ->falseIcon('heroicon-o-star')
+                                ->trueColor('warning')
+                                ->falseColor('gray'),
+                        ]),
                 ]),
 
             Section::make('Timestamps')
@@ -330,10 +392,10 @@ class ContentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListContents::route('/'),
+            'index' => Pages\ListContents::route('/'),
             'create' => Pages\CreateContent::route('/create'),
-            'view'   => Pages\ViewContent::route('/{record}'),
-            'edit'   => Pages\EditContent::route('/{record}/edit'),
+            'view' => Pages\ViewContent::route('/{record}'),
+            'edit' => Pages\EditContent::route('/{record}/edit'),
         ];
     }
 }

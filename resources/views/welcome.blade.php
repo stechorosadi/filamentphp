@@ -3,7 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name') }}</title>
+    <title>{{ config('app.name') }} — Stay Informed</title>
+    <meta name="description" content="Discover articles, research, and resources curated by our team. Stay informed with the latest content.">
+    <meta property="og:title" content="{{ config('app.name') }}">
+    <meta property="og:description" content="Discover articles, research, and resources curated by our team.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/') }}">
+    @if($featuredContents->isNotEmpty() && $featuredContents->first()->featured_image)
+    <meta property="og:image" content="{{ asset('storage/' . $featuredContents->first()->featured_image) }}">
+    @endif
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="{{ url('/') }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet">
     {{-- Set dark class before render to prevent flash --}}
@@ -111,11 +121,160 @@
 {{-- HERO --}}
 {{-- ─────────────────────────────────────────── --}}
 <section class="relative flex min-h-screen items-center bg-[#FFF8D4] dark:bg-[#4B2E2B] overflow-hidden">
-    {{-- Background grid pattern --}}
+    {{-- Background grid --}}
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#00000010_1px,transparent_1px),linear-gradient(to_bottom,#00000010_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-size-[48px_48px]"></div>
     {{-- Glow --}}
-    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-amber-500/20 dark:bg-[#8C5A3C]/30 blur-3xl"></div>
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[32rem] w-[32rem] rounded-full bg-amber-500/20 dark:bg-[#8C5A3C]/30 blur-3xl pointer-events-none"></div>
 
+    @if($featuredContents->isNotEmpty())
+    {{-- ── FEATURED SLIDER ── --}}
+    <div class="relative w-full"
+         x-data="{
+             current: 0,
+             slides: {{ $featuredContents->count() }},
+             timer: null,
+             init() { if (this.slides > 1) this.timer = setInterval(() => this.next(), 6000); },
+             next() { this.current = (this.current + 1) % this.slides; },
+             prev() { this.current = (this.current - 1 + this.slides) % this.slides; },
+             go(i) { this.current = i; clearInterval(this.timer); if (this.slides > 1) this.timer = setInterval(() => this.next(), 6000); }
+         }">
+
+        {{-- Slides --}}
+        <div class="relative min-h-screen">
+            @foreach($featuredContents as $index => $slide)
+            <div x-show="current === {{ $index }}"
+                 x-transition:enter="transition ease-out duration-700"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-300"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="absolute inset-0 flex items-center">
+
+                <div class="relative mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-28 lg:py-32">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+                        {{-- LEFT: Text --}}
+                        <div class="space-y-7">
+                            {{-- Badge --}}
+                            <div class="inline-flex items-center gap-2 rounded-full border border-[#C8B870] dark:border-[#8C5A3C] bg-[#EDE5A8] dark:bg-[#8C5A3C]/20 px-4 py-1.5">
+                                <span class="h-1.5 w-1.5 rounded-full bg-amber-600 dark:bg-amber-400 animate-pulse"></span>
+                                <span class="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+                                    {{ $slide->category?->name ?? 'Featured' }}
+                                </span>
+                            </div>
+
+                            {{-- Title --}}
+                            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#2C1A0E] dark:text-[#FFF8D4] leading-tight">
+                                {{ $slide->title }}
+                            </h1>
+
+                            {{-- Excerpt --}}
+                            @if($slide->excerpt)
+                            <p class="text-lg leading-relaxed text-[#5C3A1E] dark:text-[#E8C9A8] max-w-lg">
+                                {{ \Illuminate\Support\Str::limit($slide->excerpt, 160) }}
+                            </p>
+                            @endif
+
+                            {{-- CTA buttons --}}
+                            <div class="flex flex-wrap items-center gap-4">
+                                <a href="{{ route('content.show', $slide->slug) }}"
+                                   class="inline-flex items-center gap-2 rounded-xl bg-[#2C1A0E] dark:bg-[#FFF8D4] px-6 py-3 text-sm font-semibold text-white dark:text-[#2C1A0E] shadow-lg hover:opacity-90 transition-opacity duration-200">
+                                    Read Article
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+                                    </svg>
+                                </a>
+                                <button class="inline-flex items-center gap-2.5 rounded-xl border-2 border-[#C8B870] dark:border-[#8C5A3C] px-6 py-3 text-sm font-semibold text-[#5C3A1E] dark:text-[#E8C9A8] hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540] transition-colors duration-200">
+                                    <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#2C1A0E] dark:bg-[#FFF8D4]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-3 w-3 text-white dark:text-[#2C1A0E] translate-x-0.5">
+                                            <path d="M8 5v14l11-7z"/>
+                                        </svg>
+                                    </span>
+                                    Preview
+                                </button>
+                            </div>
+
+                            {{-- Meta --}}
+                            <div class="flex items-center gap-2.5 text-sm text-[#8C6040] dark:text-[#C4A080]">
+                                @if($slide->classification?->name)
+                                <span>{{ $slide->classification->name }}</span>
+                                <span class="h-1 w-1 rounded-full bg-[#C8B870] dark:bg-[#8C5A3C]"></span>
+                                @endif
+                                <span>{{ $slide->created_at->format('M d, Y') }}</span>
+                            </div>
+                        </div>
+
+                        {{-- RIGHT: Browser mockup --}}
+                        <div class="relative hidden lg:block">
+                            {{-- Blob glow behind card --}}
+                            <div class="absolute inset-0 -z-10 scale-110 rounded-3xl bg-amber-400/20 dark:bg-[#8C5A3C]/25 blur-2xl"></div>
+
+                            {{-- Browser card --}}
+                            <div class="relative overflow-hidden rounded-2xl border border-[#DDD090] dark:border-[#6B4540] bg-[#FFFEF0] dark:bg-[#5C3835] shadow-2xl dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)]">
+                                {{-- Browser chrome --}}
+                                <div class="flex items-center gap-1.5 border-b border-[#DDD090] dark:border-[#6B4540] bg-[#F5EDBA] dark:bg-[#3D2220] px-4 py-3">
+                                    <span class="h-3 w-3 rounded-full bg-red-400"></span>
+                                    <span class="h-3 w-3 rounded-full bg-amber-400"></span>
+                                    <span class="h-3 w-3 rounded-full bg-green-400"></span>
+                                    <div class="ml-3 h-4 max-w-48 flex-1 rounded-md bg-white/60 dark:bg-[#4B2E2B]/60"></div>
+                                </div>
+                                {{-- Featured image --}}
+                                <img src="{{ asset("storage/{$slide->featured_image}") }}"
+                                     alt="{{ $slide->title }}"
+                                     class="aspect-video w-full object-cover">
+                            </div>
+
+                            {{-- Floating category badge --}}
+                            @if($slide->category)
+                            <div class="absolute -bottom-3 -left-3 rounded-xl bg-amber-600 dark:bg-[#8C5A3C] px-4 py-2 shadow-lg">
+                                <span class="text-xs font-semibold text-white">{{ $slide->category->name }}</span>
+                            </div>
+                            @endif
+
+                            {{-- Floating date badge --}}
+                            <div class="absolute -top-3 -right-3 rounded-xl bg-[#2C1A0E] dark:bg-[#FFF8D4] px-4 py-2 shadow-lg">
+                                <span class="text-xs font-semibold text-white dark:text-[#2C1A0E]">{{ $slide->created_at->format('M d, Y') }}</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        {{-- Navigation dots --}}
+        @if($featuredContents->count() > 1)
+        <div class="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
+            @foreach($featuredContents as $i => $_)
+            <button @click="go({{ $i }})"
+                    :class="current === {{ $i }} ? 'w-6 bg-amber-600 dark:bg-amber-400' : 'w-2 bg-[#C8B870] dark:bg-[#8C5A3C]'"
+                    class="h-2 rounded-full transition-all duration-300"></button>
+            @endforeach
+        </div>
+
+        {{-- Prev arrow --}}
+        <button @click="prev()"
+                class="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[#DDD090] dark:border-[#6B4540] bg-white/70 dark:bg-[#5C3835]/70 p-2.5 text-[#5C3A1E] dark:text-[#E8C9A8] shadow-md backdrop-blur hover:bg-amber-600 hover:text-white dark:hover:bg-[#8C5A3C] transition-all duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
+            </svg>
+        </button>
+
+        {{-- Next arrow --}}
+        <button @click="next()"
+                class="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[#DDD090] dark:border-[#6B4540] bg-white/70 dark:bg-[#5C3835]/70 p-2.5 text-[#5C3A1E] dark:text-[#E8C9A8] shadow-md backdrop-blur hover:bg-amber-600 hover:text-white dark:hover:bg-[#8C5A3C] transition-all duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+            </svg>
+        </button>
+        @endif
+
+    </div>
+
+    @else
+    {{-- ── FALLBACK (no featured content) ── --}}
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-32 text-center">
         <p class="animate-fade-up mb-4 inline-block rounded-full border border-[#C8B870] dark:border-[#8C5A3C] bg-[#EDE5A8] dark:bg-[#8C5A3C]/20 px-4 py-1 text-sm font-medium text-amber-700 dark:text-amber-400">
             Welcome
@@ -123,20 +282,20 @@
         <h1 class="animate-fade-up-delay-1 text-4xl font-bold tracking-tight text-[#2C1A0E] dark:text-[#FFF8D4] sm:text-6xl lg:text-7xl">
             {{ config('app.name') }}
         </h1>
-        <p class="animate-fade-up-delay-2 mt-6 text-lg leading-8 text-[#5C3A1E] dark:text-[#E8C9A8] max-w-2xl mx-auto">
+        <p class="animate-fade-up-delay-2 mt-6 max-w-2xl mx-auto text-lg leading-8 text-[#5C3A1E] dark:text-[#E8C9A8]">
             Discover articles, research, and resources curated by our team. Stay informed with the latest content.
         </p>
         <div class="animate-fade-up-delay-2 mt-10">
             <a href="#content"
                class="inline-flex items-center gap-2 rounded-xl bg-amber-600 dark:bg-[#8C5A3C] px-7 py-3.5 text-sm font-semibold text-white dark:text-[#FFF8D4] shadow-lg hover:bg-amber-700 dark:hover:bg-[#A87050] transition-colors duration-200">
                 Browse Content
-                {{-- Arrow down --}}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"/>
                 </svg>
             </a>
         </div>
     </div>
+    @endif
 </section>
 
 <div class="h-px bg-linear-to-r from-transparent via-[#C8B870] dark:via-[#8C5A3C]/50 to-transparent"></div>
@@ -147,22 +306,69 @@
 @if($categories->isNotEmpty())
 <section class="bg-[#F5EDBA] dark:bg-[#3D2220] py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-3 mb-8">
-            {{-- Tag icon --}}
+        <div class="flex items-center gap-3 mb-10">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-amber-600 dark:text-amber-500">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
             </svg>
             <h2 class="text-2xl font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">Browse by Category</h2>
         </div>
-        <div class="flex flex-wrap gap-3">
+        @php $catColors = ['#FFF8D4','#FFE8CC','#FFDAC4','#FFECD8','#F8E8C0','#FFD8C0']; @endphp
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             @foreach($categories as $category)
-            <a href="#"
-               class="inline-flex items-center gap-1.5 rounded-full border border-[#C8B870] dark:border-[#8C5A3C] bg-[#FFFEF0] dark:bg-[#5C3835] px-5 py-2.5 text-sm font-medium text-[#5C3A1E] dark:text-[#E8C9A8] hover:bg-amber-600 dark:hover:bg-[#8C5A3C] hover:border-amber-600 hover:text-white dark:hover:text-[#FFF8D4] transition-all duration-200">
-                {{ $category->name }}
-                <span class="rounded-full bg-[#EDE5A8] dark:bg-[#6B4540] px-2 py-0.5 text-xs text-[#5C3A1E] dark:text-[#E8C9A8]">
-                    {{ $category->contents_count }}
-                </span>
+            @php $bg = $catColors[$loop->index % count($catColors)]; @endphp
+            <a href="{{ route('home', ['category' => $category->id]) }}"
+               class="card-animate group relative overflow-hidden rounded-2xl p-5 flex flex-col min-h-37
+                      dark:bg-[#5C3835] border border-transparent dark:border-[#6B4540]
+                      transition-all duration-300
+                      hover:-translate-y-1.5 hover:shadow-lg hover:border-[#C8B870]
+                      dark:hover:shadow-[0_16px_32px_rgba(0,0,0,0.4)] dark:hover:border-[#8C5A3C]"
+               :style="darkMode ? {} : { backgroundColor: '{{ $bg }}' }">
+
+                {{-- Top row: icon badge + arrow button --}}
+                <div class="flex items-start justify-between mb-3">
+                    @if($category->icon)
+                    <span class="inline-flex rounded-xl bg-white/60 dark:bg-[#4B2E2B]/50 p-1.5
+                                 group-hover:bg-white/90 dark:group-hover:bg-[#4B2E2B]/80
+                                 transition-colors duration-200">
+                        {!! svg($category->icon, 'w-4 h-4 text-[#5C3A1E] dark:text-[#E8C9A8]')->toHtml() !!}
+                    </span>
+                    @else
+                    <span></span>
+                    @endif
+                    <span class="inline-flex rounded-full bg-white/50 dark:bg-[#6B4540]/50 p-1.5
+                                 group-hover:bg-amber-600 dark:group-hover:bg-[#8C5A3C]
+                                 transition-all duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke-width="2.5" stroke="currentColor"
+                             class="w-3 h-3 text-[#5C3A1E] dark:text-[#E8C9A8]
+                                    group-hover:text-white
+                                    group-hover:translate-x-0.5 group-hover:-translate-y-0.5
+                                    transition-all duration-200">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+                        </svg>
+                    </span>
+                </div>
+
+                {{-- Name + count --}}
+                <div class="mt-auto {{ $category->image ? 'pr-16' : '' }}">
+                    <h3 class="font-bold text-[#2C1A0E] dark:text-[#FFF8D4] leading-tight">
+                        {{ $category->name }}
+                    </h3>
+                    <p class="mt-1 text-xs text-[#8C6040] dark:text-[#C4A080]">
+                        {{ $category->contents_count }} {{ $category->contents_count === 1 ? 'article' : 'articles' }}
+                    </p>
+                </div>
+
+                {{-- Image bottom-right --}}
+                @if($category->image)
+                <div class="absolute bottom-0 right-0 w-20 h-20 pointer-events-none
+                            transition-transform duration-500 group-hover:scale-110 origin-bottom-right">
+                    <img src="{{ asset("storage/{$category->image}") }}"
+                         alt="{{ $category->name }}"
+                         class="w-full h-full object-cover rounded-tl-2xl opacity-90">
+                </div>
+                @endif
             </a>
             @endforeach
         </div>
@@ -177,13 +383,47 @@
 {{-- ─────────────────────────────────────────── --}}
 <section id="content" class="bg-[#FFF8D4] dark:bg-[#4B2E2B] py-20">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-3 mb-10">
-            {{-- Document-text icon --}}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-amber-600 dark:text-amber-500">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-            </svg>
-            <h2 class="text-2xl font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">Latest Content</h2>
+        {{-- Section heading + search --}}
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
+            <div class="flex items-center gap-3 flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-amber-600 dark:text-amber-500 shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+                <h2 class="text-2xl font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">
+                    @if($search) Search Results @else Latest Content @endif
+                </h2>
+            </div>
+
+            {{-- Search form --}}
+            <form method="GET" action="{{ route('home') }}" class="flex items-center gap-2 w-full sm:w-auto sm:min-w-72">
+                <div class="relative flex-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                         class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8C6040] dark:text-[#C4A080] pointer-events-none">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+                    </svg>
+                    <input type="text" name="search" value="{{ $search }}"
+                           placeholder="Search articles…"
+                           class="w-full rounded-xl border border-[#DDD090] dark:border-[#6B4540] bg-[#FFFEF0] dark:bg-[#5C3835] pl-9 pr-4 py-2.5 text-sm text-[#2C1A0E] dark:text-[#FFF8D4] placeholder-[#A87850] dark:placeholder-[#C4A080] focus:outline-none focus:border-amber-500 dark:focus:border-[#8C5A3C] transition-colors">
+                </div>
+                <button type="submit"
+                        class="rounded-xl bg-amber-600 dark:bg-[#8C5A3C] px-4 py-2.5 text-sm font-semibold text-white hover:bg-amber-700 dark:hover:bg-[#A87050] transition-colors shrink-0">
+                    Search
+                </button>
+                @if($search)
+                <a href="{{ route('home') }}"
+                   class="rounded-xl border border-[#DDD090] dark:border-[#6B4540] px-4 py-2.5 text-sm text-[#8C6040] dark:text-[#C4A080] hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540] transition-colors shrink-0">
+                    Clear
+                </a>
+                @endif
+            </form>
         </div>
+
+        @if($search)
+        <p class="mb-6 text-sm text-[#8C6040] dark:text-[#C4A080]">
+            {{ $latestContents->total() }} {{ Str::plural('result', $latestContents->total()) }} for
+            <span class="font-semibold text-[#2C1A0E] dark:text-[#FFF8D4]">"{{ $search }}"</span>
+        </p>
+        @endif
 
         @if($latestContents->isEmpty())
             <div class="flex flex-col items-center justify-center py-24 text-center">
@@ -218,7 +458,7 @@
                             {{ $content->excerpt }}
                         </p>
                         @endif
-                        <a href="#"
+                        <a href="{{ route('content.show', $content->slug) }}"
                            class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-300 transition-colors">
                             Read more
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
@@ -229,6 +469,12 @@
                 </article>
                 @endforeach
             </div>
+            {{-- Pagination --}}
+            @if($latestContents->hasPages())
+            <div class="mt-12 flex justify-center">
+                {{ $latestContents->appends(request()->query())->links('pagination::tailwind') }}
+            </div>
+            @endif
         @endif
     </div>
 </section>
@@ -241,21 +487,68 @@
 @if($classifications->isNotEmpty())
 <section class="bg-[#F5EDBA] dark:bg-[#3D2220] py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-3 mb-8">
-            {{-- Squares-2x2 icon --}}
+        <div class="flex items-center gap-3 mb-10">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-amber-600 dark:text-amber-500">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
             </svg>
             <h2 class="text-2xl font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">Classifications</h2>
         </div>
-        <div class="flex flex-wrap gap-3">
+        @php $clsColors = ['#FFECD8','#FFF8D4','#FFD8C0','#F8E8C0','#FFE8CC','#FFDAC4']; @endphp
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             @foreach($classifications as $classification)
-            <a href="#"
-               class="inline-flex items-center gap-1.5 rounded-full border border-[#C8B870] dark:border-[#8C5A3C] bg-[#FFFEF0] dark:bg-[#5C3835] px-5 py-2.5 text-sm font-medium text-[#5C3A1E] dark:text-[#E8C9A8] hover:bg-amber-600 dark:hover:bg-[#8C5A3C] hover:border-amber-600 hover:text-white dark:hover:text-[#FFF8D4] transition-all duration-200">
-                {{ $classification->name }}
-                <span class="rounded-full bg-[#EDE5A8] dark:bg-[#6B4540] px-2 py-0.5 text-xs text-[#5C3A1E] dark:text-[#E8C9A8]">
-                    {{ $classification->contents_count }}
-                </span>
+            @php $bg = $clsColors[$loop->index % count($clsColors)]; @endphp
+            <a href="{{ route('home', ['classification' => $classification->id]) }}"
+               class="card-animate group relative overflow-hidden rounded-2xl p-5 flex flex-col min-h-37
+                      dark:bg-[#5C3835] border border-transparent dark:border-[#6B4540]
+                      transition-all duration-300
+                      hover:-translate-y-1.5 hover:shadow-lg hover:border-[#C8B870]
+                      dark:hover:shadow-[0_16px_32px_rgba(0,0,0,0.4)] dark:hover:border-[#8C5A3C]"
+               :style="darkMode ? {} : { backgroundColor: '{{ $bg }}' }">
+
+                {{-- Top row: icon badge + arrow button --}}
+                <div class="flex items-start justify-between mb-3">
+                    @if($classification->icon)
+                    <span class="inline-flex rounded-xl bg-white/60 dark:bg-[#4B2E2B]/50 p-1.5
+                                 group-hover:bg-white/90 dark:group-hover:bg-[#4B2E2B]/80
+                                 transition-colors duration-200">
+                        {!! svg($classification->icon, 'w-4 h-4 text-[#5C3A1E] dark:text-[#E8C9A8]')->toHtml() !!}
+                    </span>
+                    @else
+                    <span></span>
+                    @endif
+                    <span class="inline-flex rounded-full bg-white/50 dark:bg-[#6B4540]/50 p-1.5
+                                 group-hover:bg-amber-600 dark:group-hover:bg-[#8C5A3C]
+                                 transition-all duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke-width="2.5" stroke="currentColor"
+                             class="w-3 h-3 text-[#5C3A1E] dark:text-[#E8C9A8]
+                                    group-hover:text-white
+                                    group-hover:translate-x-0.5 group-hover:-translate-y-0.5
+                                    transition-all duration-200">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+                        </svg>
+                    </span>
+                </div>
+
+                {{-- Name + count --}}
+                <div class="mt-auto {{ $classification->image ? 'pr-16' : '' }}">
+                    <h3 class="font-bold text-[#2C1A0E] dark:text-[#FFF8D4] leading-tight">
+                        {{ $classification->name }}
+                    </h3>
+                    <p class="mt-1 text-xs text-[#8C6040] dark:text-[#C4A080]">
+                        {{ $classification->contents_count }} {{ $classification->contents_count === 1 ? 'article' : 'articles' }}
+                    </p>
+                </div>
+
+                {{-- Image bottom-right --}}
+                @if($classification->image)
+                <div class="absolute bottom-0 right-0 w-20 h-20 pointer-events-none
+                            transition-transform duration-500 group-hover:scale-110 origin-bottom-right">
+                    <img src="{{ asset("storage/{$classification->image}") }}"
+                         alt="{{ $classification->name }}"
+                         class="w-full h-full object-cover rounded-tl-2xl opacity-90">
+                </div>
+                @endif
             </a>
             @endforeach
         </div>
@@ -275,5 +568,25 @@
     </div>
 </footer>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08 });
+
+        document.querySelectorAll('.card-animate').forEach((el, i) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(22px)';
+            el.style.transition = `opacity 0.45s ease ${i * 0.07}s, transform 0.45s ease ${i * 0.07}s`;
+            observer.observe(el);
+        });
+    });
+</script>
 </body>
 </html>
