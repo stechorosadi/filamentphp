@@ -1,28 +1,30 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data x-bind:class="$store.theme.dark ? 'dark' : ''">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet">
+    {{-- Set dark class before render to prevent flash --}}
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <script defer src="https://unpkg.com/alpinejs@3/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300 antialiased">
-
-{{-- Alpine theme store --}}
-<script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.store('theme', {
-            dark: localStorage.getItem('theme') === 'dark' ||
-                  (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches),
-            toggle() {
-                this.dark = !this.dark;
-                localStorage.setItem('theme', this.dark ? 'dark' : 'light');
-            },
-        });
-    });
-</script>
+<body
+    x-data="{
+        darkMode: document.documentElement.classList.contains('dark'),
+        toggleDark() {
+            this.darkMode = !this.darkMode;
+            document.documentElement.classList.toggle('dark', this.darkMode);
+            localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+        }
+    }"
+    class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300 antialiased">
 
 {{-- ─────────────────────────────────────────── --}}
 {{-- NAVBAR --}}
@@ -41,15 +43,15 @@
 
             {{-- Dark mode toggle --}}
             <button
-                @click="$store.theme.toggle()"
+                @click="toggleDark()"
                 class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 aria-label="Toggle dark mode">
-                {{-- Sun --}}
-                <svg x-show="$store.theme.dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-amber-400">
+                {{-- Sun (shown in dark mode) --}}
+                <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-amber-400">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
                 </svg>
-                {{-- Moon --}}
-                <svg x-show="!$store.theme.dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-gray-600">
+                {{-- Moon (shown in light mode) --}}
+                <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-gray-600">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
                 </svg>
             </button>
@@ -217,6 +219,5 @@
     </div>
 </footer>
 
-<script src="//unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </body>
 </html>
