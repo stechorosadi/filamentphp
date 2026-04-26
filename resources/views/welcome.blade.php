@@ -351,57 +351,148 @@
 {{-- CATEGORIES --}}
 {{-- ─────────────────────────────────────────── --}}
 @if($categories->isNotEmpty())
-<section class="bg-[#F5EDBA] dark:bg-[#3D2220] py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-3 mb-10">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-amber-600 dark:text-amber-500">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z"/>
-            </svg>
-            <h2 class="text-2xl font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">Browse by Category</h2>
+@php $bgCategory = $categories->firstWhere('image', '!=', null); @endphp
+<section id="cat-section" class="relative py-16 overflow-hidden">
+    {{-- Parallax background image --}}
+    @if($bgCategory)
+    <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+        <img id="cat-parallax-bg"
+             src="{{ asset('storage/' . $bgCategory->image) }}"
+             alt=""
+             class="absolute inset-x-0 w-full object-cover will-change-transform"
+             style="height:140%; top:-20%; filter:blur(5px); opacity:0.22;">
+    </div>
+    @endif
+    {{-- Warm colour overlay --}}
+    <div class="absolute inset-0 bg-[#F5EDBA]/85 dark:bg-[#3D2220]/90 pointer-events-none"></div>
+    {{-- Dot grid --}}
+    <div class="absolute inset-0 bg-[radial-gradient(#C8B87028_1px,transparent_1px)] dark:bg-[radial-gradient(#6B454028_1px,transparent_1px)] bg-size-[28px_28px] pointer-events-none"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        {{-- Section heading --}}
+        <div class="mb-10">
+            <div class="flex items-center gap-3 mb-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-amber-600 dark:text-amber-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z"/>
+                </svg>
+                <h2 class="text-2xl font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">Browse by Category</h2>
+            </div>
+            <p class="ml-9 text-sm text-[#8C6040] dark:text-[#C4A080]">Explore our content organised by topic</p>
         </div>
+
         @php $catColors = ['#FFF8D4','#FFE8CC','#FFDAC4','#FFECD8','#F8E8C0','#FFD8C0']; @endphp
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             @foreach($categories as $category)
             @php $bg = $catColors[$loop->index % count($catColors)]; @endphp
+
+            @if($loop->first)
+            {{-- ── FEATURED card (spans 2 cols) ── --}}
             <a href="{{ route('home', ['category' => $category->id]) }}"
-               class="card-animate group relative overflow-hidden rounded-2xl p-5 flex flex-col min-h-37
+               class="card-animate group relative overflow-hidden rounded-2xl col-span-2
+                      flex flex-col sm:flex-row
                       dark:bg-[#5C3835] border border-transparent dark:border-[#6B4540]
-                      transition-all duration-300
-                      hover:-translate-y-1.5 hover:shadow-lg hover:border-[#C8B870]
-                      dark:hover:shadow-[0_16px_32px_rgba(0,0,0,0.4)] dark:hover:border-[#8C5A3C]"
+                      shadow-sm transition-all duration-300
+                      hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgba(202,138,4,0.25)]
+                      dark:hover:shadow-[0_8px_30px_rgba(140,90,60,0.4)]
+                      hover:border-[#C8B870] dark:hover:border-[#8C5A3C]"
                :style="darkMode ? {} : { backgroundColor: '{{ $bg }}' }">
 
-                <div class="flex items-start justify-between mb-3">
-                    @if($category->icon)
-                    <span class="inline-flex rounded-xl bg-white/60 dark:bg-[#4B2E2B]/50 p-1.5 group-hover:bg-white/90 dark:group-hover:bg-[#4B2E2B]/80 transition-colors duration-200">
-                        {!! svg($category->icon, 'w-4 h-4 text-[#5C3A1E] dark:text-[#E8C9A8]')->toHtml() !!}
-                    </span>
-                    @else
-                    <span></span>
-                    @endif
-                    <span class="inline-flex rounded-full bg-white/50 dark:bg-[#6B4540]/50 p-1.5 group-hover:bg-amber-600 dark:group-hover:bg-[#8C5A3C] transition-all duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
-                             class="w-3 h-3 text-[#5C3A1E] dark:text-[#E8C9A8] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
-                        </svg>
-                    </span>
+                {{-- Left: icon --}}
+                <div class="flex items-center justify-center p-6 sm:w-40 shrink-0">
+                    <div class="relative">
+                        <div class="absolute inset-0 rounded-full bg-amber-500/20 dark:bg-amber-500/15 scale-110 group-hover:scale-125 blur-md transition-transform duration-500"></div>
+                        <div class="relative h-16 w-16 rounded-full bg-white/70 dark:bg-[#4B2E2B]/60 flex items-center justify-center
+                                    group-hover:bg-white dark:group-hover:bg-[#4B2E2B]/90 transition-colors duration-300 shadow-md">
+                            @if($category->icon)
+                                {!! svg($category->icon, '', ['style' => 'width:1.75rem;height:1.75rem;color:#d97706'])->toHtml() !!}
+                            @else
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1.75rem;height:1.75rem;color:#d97706">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/>
+                                </svg>
+                            @endif
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mt-auto {{ $category->image ? 'pr-16' : '' }}">
-                    <h3 class="font-bold text-[#2C1A0E] dark:text-[#FFF8D4] leading-tight">{{ $category->name }}</h3>
-                    <p class="mt-1 text-xs text-[#8C6040] dark:text-[#C4A080]">
-                        {{ $category->contents_count }} {{ $category->contents_count === 1 ? 'article' : 'articles' }}
-                    </p>
+                {{-- Right: content --}}
+                <div class="flex flex-1 flex-col justify-center px-5 pb-5 sm:pl-0 sm:py-5 sm:pr-6">
+                    <span class="mb-1.5 text-xs font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">Featured</span>
+                    <h3 class="text-lg font-bold text-[#2C1A0E] dark:text-[#FFF8D4] mb-3 leading-tight">{{ $category->name }}</h3>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center rounded-full bg-amber-600 dark:bg-[#8C5A3C] px-3 py-1 text-xs font-semibold text-white shadow-sm">
+                            {{ $category->contents_count }} {{ $category->contents_count === 1 ? 'article' : 'articles' }}
+                        </span>
+                        <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/50 dark:bg-[#6B4540]/50
+                                     group-hover:bg-amber-600 dark:group-hover:bg-[#8C5A3C] transition-all duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                                 class="h-3 w-3 text-[#5C3A1E] dark:text-[#E8C9A8] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+                            </svg>
+                        </span>
+                    </div>
                 </div>
 
+                {{-- Background image --}}
                 @if($category->image)
-                <div class="absolute bottom-0 right-0 w-20 h-20 pointer-events-none transition-transform duration-500 group-hover:scale-110 origin-bottom-right">
+                <div class="absolute bottom-0 right-0 w-24 h-24 pointer-events-none opacity-20 group-hover:opacity-35 transition-opacity duration-300 origin-bottom-right">
                     <img src="{{ asset("storage/{$category->image}") }}" alt="{{ $category->name }}"
-                         loading="lazy" class="w-full h-full object-cover rounded-tl-2xl opacity-90">
+                         loading="lazy" class="w-full h-full object-cover rounded-tl-3xl">
                 </div>
                 @endif
             </a>
+
+            @else
+            {{-- ── REGULAR card ── --}}
+            <a href="{{ route('home', ['category' => $category->id]) }}"
+               class="card-animate group relative overflow-hidden rounded-2xl p-4 flex flex-col items-center text-center
+                      dark:bg-[#5C3835] border border-transparent dark:border-[#6B4540]
+                      shadow-sm transition-all duration-300
+                      hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgba(202,138,4,0.25)]
+                      dark:hover:shadow-[0_8px_30px_rgba(140,90,60,0.4)]
+                      hover:border-[#C8B870] dark:hover:border-[#8C5A3C]"
+               :style="darkMode ? {} : { backgroundColor: '{{ $bg }}' }">
+
+                {{-- Icon with glow ring --}}
+                <div class="relative mb-3 mt-1">
+                    <div class="absolute inset-0 rounded-xl bg-amber-500/20 dark:bg-amber-500/10 scale-110 group-hover:scale-125 blur-sm transition-transform duration-500"></div>
+                    <div class="relative h-12 w-12 rounded-xl bg-white/70 dark:bg-[#4B2E2B]/60 flex items-center justify-center shadow-sm
+                                group-hover:bg-white dark:group-hover:bg-[#4B2E2B]/90
+                                group-hover:scale-110 transition-all duration-300">
+                        @if($category->icon)
+                            {!! svg($category->icon, '', ['style' => 'width:1.25rem;height:1.25rem;color:#d97706'])->toHtml() !!}
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1.25rem;height:1.25rem;color:#d97706">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/>
+                            </svg>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Name --}}
+                <h3 class="text-sm font-bold text-[#2C1A0E] dark:text-[#FFF8D4] leading-tight mb-2">{{ $category->name }}</h3>
+
+                {{-- Count pill --}}
+                <span class="inline-flex items-center rounded-full border border-amber-600/30 dark:border-[#8C5A3C]
+                             bg-amber-600/10 dark:bg-[#8C5A3C]/20 px-2.5 py-0.5 text-xs font-semibold
+                             text-amber-700 dark:text-amber-400
+                             group-hover:bg-amber-600 group-hover:text-white group-hover:border-amber-600
+                             dark:group-hover:bg-[#8C5A3C] dark:group-hover:text-[#FFF8D4]
+                             transition-all duration-300">
+                    {{ $category->contents_count }} {{ $category->contents_count === 1 ? 'article' : 'articles' }}
+                </span>
+
+                {{-- Image --}}
+                @if($category->image)
+                <div class="absolute bottom-0 right-0 w-12 h-12 pointer-events-none opacity-25 group-hover:opacity-40 transition-opacity duration-300 origin-bottom-right">
+                    <img src="{{ asset("storage/{$category->image}") }}" alt="{{ $category->name }}"
+                         loading="lazy" class="w-full h-full object-cover rounded-tl-2xl">
+                </div>
+                @endif
+            </a>
+            @endif
+
             @endforeach
         </div>
     </div>
@@ -629,58 +720,83 @@
 {{-- CLASSIFICATIONS --}}
 {{-- ─────────────────────────────────────────── --}}
 @if($classifications->isNotEmpty())
-<section class="bg-[#F5EDBA] dark:bg-[#3D2220] py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-3 mb-10">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-amber-600 dark:text-amber-500">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
-            </svg>
-            <h2 class="text-2xl font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">Classifications</h2>
+<section class="relative py-16 overflow-hidden bg-[#4B2E2B] dark:bg-[#2E1A18]">
+    {{-- Subtle grid texture --}}
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff07_1px,transparent_1px),linear-gradient(to_bottom,#ffffff07_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
+    {{-- Accent glows --}}
+    <div class="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-amber-600/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[#8C5A3C]/25 blur-3xl pointer-events-none"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        {{-- Section heading --}}
+        <div class="mb-10">
+            <div class="flex items-center gap-3 mb-1.5">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-600/30 bg-amber-600/15">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-amber-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-[#FFF8D4]">Classifications</h2>
+            </div>
+            <p class="ml-12 text-sm text-[#C4A080]">Browse content by type and format</p>
         </div>
-        @php $clsColors = ['#FFECD8','#FFF8D4','#FFD8C0','#F8E8C0','#FFE8CC','#FFDAC4']; @endphp
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        {{-- Cards --}}
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             @foreach($classifications as $classification)
-            @php $bg = $clsColors[$loop->index % count($clsColors)]; @endphp
             <a href="{{ route('home', ['classification' => $classification->id]) }}"
-               class="card-animate group relative overflow-hidden rounded-2xl p-5 flex flex-col min-h-37
-                      dark:bg-[#5C3835] border border-transparent dark:border-[#6B4540]
-                      transition-all duration-300
-                      hover:-translate-y-1.5 hover:shadow-lg hover:border-[#C8B870]
-                      dark:hover:shadow-[0_16px_32px_rgba(0,0,0,0.4)] dark:hover:border-[#8C5A3C]"
-               :style="darkMode ? {} : { backgroundColor: '{{ $bg }}' }">
+               class="card-animate group flex items-center gap-3 rounded-2xl p-3
+                      bg-[#5C3835]/50 backdrop-blur-sm
+                      border border-[#6B4540]/60 border-l-2 border-l-amber-600/50
+                      hover:bg-[#5C3835] hover:border-l-amber-400
+                      hover:shadow-[0_8px_32px_rgba(0,0,0,0.35)]
+                      hover:-translate-y-1 transition-all duration-300">
 
-                <div class="flex items-start justify-between mb-3">
-                    @if($classification->icon)
-                    <span class="inline-flex rounded-xl bg-white/60 dark:bg-[#4B2E2B]/50 p-1.5 group-hover:bg-white/90 dark:group-hover:bg-[#4B2E2B]/80 transition-colors duration-200">
-                        {!! svg($classification->icon, 'w-4 h-4 text-[#5C3A1E] dark:text-[#E8C9A8]')->toHtml() !!}
-                    </span>
-                    @else
-                    <span></span>
-                    @endif
-                    <span class="inline-flex rounded-full bg-white/50 dark:bg-[#6B4540]/50 p-1.5 group-hover:bg-amber-600 dark:group-hover:bg-[#8C5A3C] transition-all duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
-                             class="w-3 h-3 text-[#5C3A1E] dark:text-[#E8C9A8] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
-                        </svg>
+                {{-- Icon --}}
+                <div class="relative shrink-0">
+                    <div class="absolute inset-0 rounded-xl bg-amber-500/20 scale-110 group-hover:scale-125 blur-sm transition-transform duration-500 pointer-events-none"></div>
+                    <div class="relative h-10 w-10 rounded-xl bg-[#6B4540] flex items-center justify-center
+                                group-hover:bg-amber-600 transition-colors duration-300">
+                        @if($classification->icon)
+                            {!! svg($classification->icon, '', ['style' => 'width:1rem;height:1rem;color:#fbbf24'])->toHtml() !!}
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem;color:#fbbf24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
+                            </svg>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Text --}}
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-xs font-bold text-[#FFF8D4] leading-tight truncate">{{ $classification->name }}</h3>
+                    <span class="mt-1 inline-flex items-center rounded-full bg-amber-600/20 border border-amber-600/30 px-2 py-0.5 text-xs font-semibold text-amber-400">
+                        {{ $classification->contents_count }}
                     </span>
                 </div>
 
-                <div class="mt-auto {{ $classification->image ? 'pr-16' : '' }}">
-                    <h3 class="font-bold text-[#2C1A0E] dark:text-[#FFF8D4] leading-tight">{{ $classification->name }}</h3>
-                    <p class="mt-1 text-xs text-[#8C6040] dark:text-[#C4A080]">
-                        {{ $classification->contents_count }} {{ $classification->contents_count === 1 ? 'article' : 'articles' }}
-                    </p>
-                </div>
-
+                {{-- Image thumbnail --}}
                 @if($classification->image)
-                <div class="absolute bottom-0 right-0 w-20 h-20 pointer-events-none transition-transform duration-500 group-hover:scale-110 origin-bottom-right">
-                    <img src="{{ asset("storage/{$classification->image}") }}" alt="{{ $classification->name }}"
-                         loading="lazy" class="w-full h-full object-cover rounded-tl-2xl opacity-90">
+                <div class="w-12 h-10 shrink-0 overflow-hidden rounded-lg border border-[#8C5A3C]/40
+                            group-hover:border-amber-600/50 transition-colors duration-300">
+                    <img src="{{ asset("storage/{$classification->image}") }}"
+                         alt="{{ $classification->name }}"
+                         loading="lazy"
+                         class="h-full w-full object-cover opacity-80 group-hover:opacity-100
+                                group-hover:scale-110 transition-all duration-300">
                 </div>
+                @else
+                {{-- Arrow when no image --}}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                     class="h-4 w-4 shrink-0 text-[#8C5A3C] group-hover:text-amber-400 group-hover:translate-x-1 transition-all duration-200">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+                </svg>
                 @endif
             </a>
             @endforeach
         </div>
+
     </div>
 </section>
 @endif
@@ -689,6 +805,22 @@
 
 @push('scripts')
 <script>
+    // ── Category section parallax ──
+    (function () {
+        const section = document.getElementById('cat-section');
+        const bg      = document.getElementById('cat-parallax-bg');
+        if (!section || !bg) return;
+
+        function onScroll() {
+            const rect     = section.getBoundingClientRect();
+            const center   = rect.top + rect.height / 2 - window.innerHeight / 2;
+            bg.style.transform = 'translateY(' + (center * 0.12).toFixed(2) + 'px)';
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll(); // set initial position
+    })();
+
     document.addEventListener('DOMContentLoaded', () => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
