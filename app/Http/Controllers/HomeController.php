@@ -45,9 +45,37 @@ class HomeController extends Controller
             ->orderBy('name')
             ->get();
 
+        $totalArticles = Content::where('published', true)->count();
+
         return view('welcome', compact(
-            'featuredContents', 'latestContents', 'categories', 'classifications', 'search'
+            'featuredContents', 'latestContents', 'categories', 'classifications', 'search', 'totalArticles'
         ));
+    }
+
+    public function search(): View
+    {
+        $query = request()->string('q')->trim()->value();
+
+        $results = Content::with(['category', 'classification'])
+            ->where('published', true)
+            ->whereNotNull('header_image')
+            ->when($query, fn ($q) => $q->where(fn ($q) => $q
+                ->where('title', 'like', "%{$query}%")
+                ->orWhere('excerpt', 'like', "%{$query}%")
+                ->orWhereHas('category', fn ($c) => $c->where('name', 'like', "%{$query}%"))
+                ->orWhereHas('classification', fn ($c) => $c->where('name', 'like', "%{$query}%"))
+                ->orWhereHas('tags', fn ($t) => $t->where('name', 'like', "%{$query}%"))
+            ))
+            ->latest()
+            ->paginate(12);
+
+        $suggestions = ContentCategory::withCount(['contents' => fn ($q) => $q->where('published', true)])
+            ->having('contents_count', '>', 0)
+            ->inRandomOrder()
+            ->limit(6)
+            ->get();
+
+        return view('search', compact('query', 'results', 'suggestions'));
     }
 
     public function show(string $slug): View
