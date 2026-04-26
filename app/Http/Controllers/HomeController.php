@@ -23,7 +23,7 @@ class HomeController extends Controller
             ->limit(5)
             ->get();
 
-        $latestContents = Content::with(['category', 'classification'])
+        $latestContents = Content::with(['user', 'category', 'classification'])
             ->where('published', true)
             ->whereNotNull('header_image')
             ->when($search, fn ($q) => $q->where(fn ($q) => $q
@@ -47,8 +47,16 @@ class HomeController extends Controller
 
         $totalArticles = Content::where('published', true)->count();
 
+        $popularContents = Content::with(['category', 'user'])
+            ->where('published', true)
+            ->whereNotNull('header_image')
+            ->orderBy('views', 'desc')
+            ->limit(5)
+            ->get();
+
         return view('welcome', compact(
-            'featuredContents', 'latestContents', 'categories', 'classifications', 'search', 'totalArticles'
+            'featuredContents', 'latestContents', 'categories', 'classifications',
+            'search', 'totalArticles', 'popularContents'
         ));
     }
 
@@ -56,7 +64,7 @@ class HomeController extends Controller
     {
         $query = request()->string('q')->trim()->value();
 
-        $results = Content::with(['category', 'classification'])
+        $results = Content::with(['user', 'category', 'classification'])
             ->where('published', true)
             ->whereNotNull('header_image')
             ->when($query, fn ($q) => $q->where(fn ($q) => $q
@@ -88,6 +96,26 @@ class HomeController extends Controller
             ->where('published', true)
             ->firstOrFail();
 
-        return view('content.show', compact('content'));
+        // Count once per session per article
+        $sessionKey = "viewed_content_{$content->getKey()}";
+        if (! session()->has($sessionKey)) {
+            $content->increment('views');
+            session()->put($sessionKey, true);
+        }
+
+        $relatedContents = Content::with(['category', 'user'])
+            ->where('published', true)
+            ->whereNotNull('header_image')
+            ->where('id', '!=', $content->getKey())
+            ->when(
+                $content->content_category_id,
+                fn ($q) => $q->where('content_category_id', $content->content_category_id),
+                fn ($q) => $q->where('content_classification_id', $content->content_classification_id)
+            )
+            ->latest()
+            ->limit(3)
+            ->get();
+
+        return view('content.show', compact('content', 'relatedContents'));
     }
 }

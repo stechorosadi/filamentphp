@@ -228,6 +228,13 @@ class ContentResource extends Resource
                     ->trueColor('warning')
                     ->falseColor('gray'),
 
+                TextColumn::make('views')
+                    ->label('Views')
+                    ->numeric()
+                    ->sortable()
+                    ->icon('heroicon-o-eye')
+                    ->iconColor('gray'),
+
                 TextColumn::make('user.name')
                     ->label('Author')
                     ->sortable()
@@ -370,10 +377,15 @@ class ContentResource extends Resource
 
             Section::make('Timestamps')
                 ->schema([
-                    Grid::make(2)
+                    Grid::make(3)
                         ->schema([
                             TextEntry::make('created_at')->dateTime('M j, Y g:i A'),
                             TextEntry::make('updated_at')->since(),
+                            TextEntry::make('views')
+                                ->label('Page Views')
+                                ->numeric()
+                                ->icon('heroicon-o-eye')
+                                ->iconColor('gray'),
                         ]),
                 ])
                 ->collapsible(),

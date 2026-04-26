@@ -88,6 +88,13 @@
             </svg>
             <span>{{ $content->created_at->format('M d, Y') }}</span>
         </div>
+        <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+            </svg>
+            <span>{{ number_format($content->views) }} {{ Str::plural('view', $content->views) }}</span>
+        </div>
         @if($content->tags->isNotEmpty())
         <div class="flex flex-wrap gap-1.5">
             @foreach($content->tags as $tag)
@@ -198,8 +205,48 @@
     </div>
     @endif
 
+    {{-- Related articles --}}
+    @if($relatedContents->isNotEmpty())
+    <div class="mt-14 pt-10 border-t border-[#DDD090] dark:border-[#6B4540]">
+        <h3 class="mb-6 text-xl font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">You Might Also Like</h3>
+        <div class="grid gap-5 sm:grid-cols-3">
+            @foreach($relatedContents as $related)
+            <a href="{{ route('content.show', $related->slug) }}"
+               class="group flex flex-col rounded-2xl overflow-hidden bg-[#FFFEF0] dark:bg-[#5C3835] border border-[#DDD090] dark:border-[#6B4540] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div class="relative aspect-video overflow-hidden bg-[#EDE5A8] dark:bg-[#6B4540]">
+                    <img src="{{ asset("storage/{$related->header_image}") }}"
+                         alt="{{ $related->title }}"
+                         loading="lazy"
+                         class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    @if($related->category)
+                    <span class="absolute top-2 left-2 rounded-full bg-amber-600/90 px-2.5 py-0.5 text-xs font-semibold text-white">
+                        {{ $related->category->name }}
+                    </span>
+                    @endif
+                </div>
+                <div class="flex flex-1 flex-col p-4">
+                    <h4 class="mb-2 text-sm font-bold text-[#2C1A0E] dark:text-[#FFF8D4] line-clamp-2 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
+                        {{ $related->title }}
+                    </h4>
+                    <div class="mt-auto flex items-center justify-between text-xs text-[#8C6040] dark:text-[#C4A080]">
+                        <span>{{ $related->created_at->format('M d, Y') }}</span>
+                        <span class="inline-flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                            </svg>
+                            {{ number_format($related->views) }}
+                        </span>
+                    </div>
+                </div>
+            </a>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     {{-- Back link --}}
-    <div class="mt-14 pt-8 border-t border-[#DDD090] dark:border-[#6B4540]">
+    <div class="mt-10 pt-8 border-t border-[#DDD090] dark:border-[#6B4540]">
         <a href="{{ route('home') }}"
            class="inline-flex items-center gap-2 text-sm font-semibold text-[#5C3A1E] dark:text-[#E8C9A8] hover:text-amber-700 dark:hover:text-amber-400 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">

@@ -138,10 +138,33 @@
                     @endif
                 </div>
 
+                {{-- Meta strip --}}
+                <div class="flex items-center gap-3 px-5 py-2.5 text-xs text-[#8C6040] dark:text-[#C4A080] border-b border-[#DDD090] dark:border-[#6B4540] bg-[#FFFDF0] dark:bg-[#4B3030]">
+                    <span class="inline-flex items-center gap-1.5 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-amber-500 dark:text-amber-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5"/>
+                        </svg>
+                        {{ $content->created_at->format('M d, Y') }}
+                    </span>
+                    <span class="w-px h-3 bg-[#DDD090] dark:bg-[#6B4540] shrink-0"></span>
+                    <span class="inline-flex items-center gap-1.5 min-w-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-amber-500 dark:text-amber-400 shrink-0">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
+                        </svg>
+                        <span class="truncate">{{ $content->user->name }}</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 shrink-0 ml-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-amber-500 dark:text-amber-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                        </svg>
+                        {{ number_format($content->views) }}
+                    </span>
+                </div>
+
                 {{-- Body --}}
                 <div class="flex flex-1 flex-col p-6">
                     <h3 class="mb-2 text-lg font-bold text-[#2C1A0E] dark:text-[#FFF8D4] line-clamp-2 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors duration-200">
-                        {{-- Highlight matched keyword --}}
                         @if($query)
                             {!! preg_replace('/(' . preg_quote(e($query), '/') . ')/i', '<mark class="bg-amber-200 dark:bg-amber-800/60 text-inherit rounded px-0.5">$1</mark>', e($content->title)) !!}
                         @else
@@ -153,16 +176,13 @@
                         {{ $content->excerpt }}
                     </p>
                     @endif
-                    <div class="mt-auto flex items-center justify-between">
-                        <span class="text-xs text-[#A87850] dark:text-[#C4A080]">{{ $content->created_at->format('M d, Y') }}</span>
-                        <a href="{{ route('content.show', $content->slug) }}"
-                           class="inline-flex items-center gap-1 text-sm font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-300 transition-colors">
-                            Read more
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
-                            </svg>
-                        </a>
-                    </div>
+                    <a href="{{ route('content.show', $content->slug) }}"
+                       class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-300 transition-colors">
+                        Read more
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+                        </svg>
+                    </a>
                 </div>
             </article>
             @endforeach

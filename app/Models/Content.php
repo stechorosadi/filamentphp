@@ -30,6 +30,7 @@ class Content extends Model
         return [
             'published' => 'boolean',
             'featured' => 'boolean',
+            'views' => 'integer',
         ];
     }
 

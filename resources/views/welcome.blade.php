@@ -467,6 +467,32 @@
                         </span>
                         @endif
                     </div>
+
+                    {{-- Meta strip --}}
+                    <div class="flex items-center gap-3 px-5 py-2.5 text-xs text-[#8C6040] dark:text-[#C4A080] border-b border-[#DDD090] dark:border-[#6B4540] bg-[#FFFDF0] dark:bg-[#4B3030]">
+                        <span class="inline-flex items-center gap-1.5 shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-amber-500 dark:text-amber-400">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5"/>
+                            </svg>
+                            {{ $content->created_at->format('M d, Y') }}
+                        </span>
+                        <span class="w-px h-3 bg-[#DDD090] dark:bg-[#6B4540] shrink-0"></span>
+                        <span class="inline-flex items-center gap-1.5 min-w-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-amber-500 dark:text-amber-400 shrink-0">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
+                            </svg>
+                            <span class="truncate">{{ $content->user->name }}</span>
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 shrink-0 ml-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-amber-500 dark:text-amber-400">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                            </svg>
+                            {{ number_format($content->views) }}
+                        </span>
+                    </div>
+
+                    {{-- Body --}}
                     <div class="flex flex-1 flex-col p-6">
                         <h3 class="mb-2 text-lg font-bold text-[#2C1A0E] dark:text-[#FFF8D4] line-clamp-2 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors duration-200">
                             {{ $content->title }}
@@ -495,6 +521,102 @@
         @endif
     </div>
 </section>
+
+<div class="h-px bg-linear-to-r from-transparent via-[#C8B870] dark:via-[#8C5A3C]/50 to-transparent"></div>
+
+{{-- ─────────────────────────────────────────── --}}
+{{-- MOST POPULAR --}}
+{{-- ─────────────────────────────────────────── --}}
+@if($popularContents->isNotEmpty())
+<section class="bg-[#FFFDF0] dark:bg-[#3D2220] py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-3 mb-10">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-amber-600 dark:text-amber-500">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z"/>
+            </svg>
+            <h2 class="text-2xl font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">Most Popular</h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {{-- Featured #1 (large card) --}}
+            @php $top = $popularContents->first(); @endphp
+            <a href="{{ route('content.show', $top->slug) }}"
+               class="card-animate group relative overflow-hidden rounded-2xl bg-[#FFFEF0] dark:bg-[#5C3835] border border-[#DDD090] dark:border-[#6B4540] hover:shadow-xl dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] hover:-translate-y-1 transition-all duration-300">
+                <div class="relative aspect-video overflow-hidden bg-[#EDE5A8] dark:bg-[#6B4540]">
+                    <img src="{{ asset("storage/{$top->header_image}") }}"
+                         alt="{{ $top->title }}"
+                         loading="lazy"
+                         class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-linear-to-t from-[#2C1A0E]/60 to-transparent"></div>
+                    {{-- Rank badge --}}
+                    <span class="absolute top-3 left-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-amber-600 text-sm font-bold text-white shadow-lg">1</span>
+                    @if($top->category)
+                    <span class="absolute top-3 right-3 rounded-full bg-white/20 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-white">
+                        {{ $top->category->name }}
+                    </span>
+                    @endif
+                    <div class="absolute bottom-0 left-0 right-0 p-5">
+                        <h3 class="text-lg font-bold text-white line-clamp-2 mb-2">{{ $top->title }}</h3>
+                        <div class="flex items-center gap-3 text-xs text-white/80">
+                            <span class="inline-flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                                </svg>
+                                {{ number_format($top->views) }} views
+                            </span>
+                            <span>{{ $top->created_at->format('M d, Y') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            {{-- Ranked list #2–5 --}}
+            <div class="flex flex-col gap-3">
+                @foreach($popularContents->skip(1) as $i => $item)
+                <a href="{{ route('content.show', $item->slug) }}"
+                   class="card-animate group flex items-center gap-4 rounded-2xl bg-[#FFFEF0] dark:bg-[#5C3835] border border-[#DDD090] dark:border-[#6B4540] p-3 hover:shadow-md hover:border-[#C8B870] dark:hover:border-[#8C5A3C] hover:-translate-y-0.5 transition-all duration-300">
+                    {{-- Rank number --}}
+                    <span class="text-2xl font-black text-[#EDE5A8] dark:text-[#6B4540] w-7 shrink-0 leading-none select-none">
+                        {{ $i + 2 }}
+                    </span>
+                    {{-- Thumbnail --}}
+                    <div class="relative w-20 h-16 shrink-0 overflow-hidden rounded-xl bg-[#EDE5A8] dark:bg-[#6B4540]">
+                        <img src="{{ asset("storage/{$item->header_image}") }}"
+                             alt="{{ $item->title }}"
+                             loading="lazy"
+                             class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    {{-- Info --}}
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-bold text-[#2C1A0E] dark:text-[#FFF8D4] line-clamp-2 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors mb-1.5">
+                            {{ $item->title }}
+                        </h3>
+                        <div class="flex items-center gap-2.5 text-xs text-[#8C6040] dark:text-[#C4A080]">
+                            <span class="inline-flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3 w-3 text-amber-500 dark:text-amber-400">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                                </svg>
+                                {{ number_format($item->views) }}
+                            </span>
+                            <span class="w-px h-3 bg-[#DDD090] dark:bg-[#6B4540]"></span>
+                            <span>{{ $item->created_at->format('M d, Y') }}</span>
+                        </div>
+                    </div>
+                    {{-- Arrow --}}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                         class="h-4 w-4 text-[#C8B870] dark:text-[#8C5A3C] shrink-0 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+                    </svg>
+                </a>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</section>
+@endif
 
 <div class="h-px bg-linear-to-r from-transparent via-[#C8B870] dark:via-[#8C5A3C]/50 to-transparent"></div>
 
