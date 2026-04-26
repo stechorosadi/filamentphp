@@ -15,7 +15,7 @@ class HomeController extends Controller
         $categoryId = request()->integer('category') ?: null;
         $classificationId = request()->integer('classification') ?: null;
 
-        $featuredContents = Content::with(['category', 'classification'])
+        $featuredContents = Content::with(['user', 'category', 'classification'])
             ->where('featured', true)
             ->where('published', true)
             ->whereNotNull('featured_image')

@@ -63,16 +63,25 @@
 
                         {{-- LEFT: Text --}}
                         <div class="space-y-7">
-                            {{-- Badge --}}
-                            <div class="inline-flex items-center gap-2 rounded-full border border-[#C8B870] dark:border-[#8C5A3C] bg-[#EDE5A8] dark:bg-[#8C5A3C]/20 px-4 py-1.5">
-                                <span class="h-1.5 w-1.5 rounded-full bg-amber-600 dark:bg-amber-400 animate-pulse"></span>
-                                <span class="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400">
-                                    {{ $slide->category?->name ?? 'Featured' }}
+                            {{-- Classification · Category · Date pills --}}
+                            <div class="flex flex-wrap gap-2">
+                                @if($slide->classification?->name)
+                                <span class="inline-flex items-center rounded-full bg-[#5C3A1E] dark:bg-[#5C3835] px-3 py-1 text-xs font-semibold text-white dark:text-[#E8C9A8]">
+                                    {{ $slide->classification->name }}
+                                </span>
+                                @endif
+                                @if($slide->category?->name)
+                                <span class="inline-flex items-center rounded-full bg-amber-600 dark:bg-[#8C5A3C] px-3 py-1 text-xs font-semibold text-white dark:text-[#FFF8D4]">
+                                    {{ $slide->category->name }}
+                                </span>
+                                @endif
+                                <span class="inline-flex items-center rounded-full border border-[#C8B870] dark:border-[#6B4540] bg-[#EDE5A8] dark:bg-[#6B4540] px-3 py-1 text-xs font-semibold text-[#2C1A0E] dark:text-[#E8C9A8]">
+                                    {{ $slide->created_at->format('M d, Y') }}
                                 </span>
                             </div>
 
                             {{-- Title --}}
-                            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#2C1A0E] dark:text-[#FFF8D4] leading-tight">
+                            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#2C1A0E] dark:text-[#FFF8D4] leading-tight">
                                 {{ $slide->title }}
                             </h1>
 
@@ -87,7 +96,7 @@
                             <div class="flex flex-wrap items-center gap-4">
                                 <a href="{{ route('content.show', $slide->slug) }}"
                                    class="inline-flex items-center gap-2 rounded-xl bg-[#2C1A0E] dark:bg-[#FFF8D4] px-6 py-3 text-sm font-semibold text-white dark:text-[#2C1A0E] shadow-lg hover:opacity-90 transition-opacity duration-200">
-                                    Read Article
+                                    Read More
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                                     </svg>
@@ -103,14 +112,6 @@
                                 </button>
                             </div>
 
-                            {{-- Meta --}}
-                            <div class="flex items-center gap-2.5 text-sm text-[#8C6040] dark:text-[#C4A080]">
-                                @if($slide->classification?->name)
-                                <span>{{ $slide->classification->name }}</span>
-                                <span class="h-1 w-1 rounded-full bg-[#C8B870] dark:bg-[#8C5A3C]"></span>
-                                @endif
-                                <span>{{ $slide->created_at->format('M d, Y') }}</span>
-                            </div>
                         </div>
 
                         {{-- RIGHT: Browser mockup --}}
@@ -134,16 +135,20 @@
                                      @if($index === 0) fetchpriority="high" @else loading="lazy" @endif>
                             </div>
 
-                            {{-- Floating category badge --}}
-                            @if($slide->category)
-                            <div class="absolute -bottom-3 -left-3 hidden sm:block rounded-xl bg-amber-600 dark:bg-[#8C5A3C] px-4 py-2 shadow-lg">
-                                <span class="text-xs font-semibold text-white">{{ $slide->category->name }}</span>
+                            {{-- Author badge (bottom-left) --}}
+                            <div class="absolute -bottom-3 -left-3 hidden sm:flex items-center gap-2 rounded-xl bg-[#2C1A0E] dark:bg-[#FFF8D4] px-4 py-2 shadow-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-white dark:text-[#2C1A0E] shrink-0">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
+                                </svg>
+                                <span class="text-xs font-semibold text-white dark:text-[#2C1A0E]">{{ $slide->user?->name ?? config('app.name') }}</span>
                             </div>
-                            @endif
 
-                            {{-- Floating date badge --}}
-                            <div class="absolute -top-3 -right-3 hidden sm:block rounded-xl bg-[#2C1A0E] dark:bg-[#FFF8D4] px-4 py-2 shadow-lg">
-                                <span class="text-xs font-semibold text-white dark:text-[#2C1A0E]">{{ $slide->created_at->format('M d, Y') }}</span>
+                            {{-- Featured badge (top-right) --}}
+                            <div class="absolute -top-3 -right-3 hidden sm:flex items-center gap-1.5 rounded-xl bg-amber-600 dark:bg-[#8C5A3C] px-4 py-2 shadow-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-3.5 w-3.5 text-white shrink-0">
+                                    <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-xs font-semibold text-white">Featured</span>
                             </div>
                         </div>
 
