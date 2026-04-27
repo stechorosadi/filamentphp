@@ -44,13 +44,18 @@
 
             {{-- Desktop nav --}}
             <nav class="hidden md:flex items-center gap-1">
-                <a href="#" class="px-4 py-2 rounded-lg text-sm font-medium text-[#5C3A1E] dark:text-[#E8C9A8] hover:text-amber-700 dark:hover:text-amber-400 hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540] transition-colors">Profile</a>
-                <a href="#" class="px-4 py-2 rounded-lg text-sm font-medium text-[#5C3A1E] dark:text-[#E8C9A8] hover:text-amber-700 dark:hover:text-amber-400 hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540] transition-colors">Portfolio</a>
-                <a href="{{ route('home') }}"
+                @foreach($navMenuItems as $item)
+                @php
+                    $href   = str_starts_with($item->url, 'http') ? $item->url : '/' . ltrim($item->url, '/');
+                    $active = request()->is(ltrim($item->url, '/')) || request()->is(ltrim($item->url, '/') . '/*');
+                @endphp
+                <a href="{{ $href }}"
+                   target="{{ $item->target === '_blank' ? '_blank' : '_self' }}"
                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
-                          {{ request()->routeIs('home', 'content.show') ? 'text-amber-700 dark:text-amber-400 bg-[#EDE5A8] dark:bg-[#6B4540]' : 'text-[#5C3A1E] dark:text-[#E8C9A8] hover:text-amber-700 dark:hover:text-amber-400 hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540]' }}">
-                    Blog
+                          {{ $active ? 'text-amber-700 dark:text-amber-400 bg-[#EDE5A8] dark:bg-[#6B4540]' : 'text-[#5C3A1E] dark:text-[#E8C9A8] hover:text-amber-700 dark:hover:text-amber-400 hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540]' }}">
+                    {{ $item->title }}
                 </a>
+                @endforeach
 
                 {{-- Divider --}}
                 <div class="w-px h-5 bg-[#C8B870] dark:bg-[#8C5A3C] mx-2"></div>
@@ -96,13 +101,19 @@
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
             class="md:hidden border-t border-[#DDD090] dark:border-[#6B4540] pb-4 pt-2">
             <nav class="flex flex-col gap-1">
-                <a @click="mobileMenu = false" href="#" class="px-4 py-3 rounded-lg text-sm font-medium text-[#5C3A1E] dark:text-[#E8C9A8] hover:text-amber-700 dark:hover:text-amber-400 hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540] transition-colors">Profile</a>
-                <a @click="mobileMenu = false" href="#" class="px-4 py-3 rounded-lg text-sm font-medium text-[#5C3A1E] dark:text-[#E8C9A8] hover:text-amber-700 dark:hover:text-amber-400 hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540] transition-colors">Portfolio</a>
-                <a @click="mobileMenu = false" href="{{ route('home') }}"
+                @foreach($navMenuItems as $item)
+                @php
+                    $href   = str_starts_with($item->url, 'http') ? $item->url : '/' . ltrim($item->url, '/');
+                    $active = request()->is(ltrim($item->url, '/')) || request()->is(ltrim($item->url, '/') . '/*');
+                @endphp
+                <a @click="mobileMenu = false"
+                   href="{{ $href }}"
+                   target="{{ $item->target === '_blank' ? '_blank' : '_self' }}"
                    class="px-4 py-3 rounded-lg text-sm font-medium transition-colors
-                          {{ request()->routeIs('home', 'content.show') ? 'text-amber-700 dark:text-amber-400 bg-[#EDE5A8] dark:bg-[#6B4540]' : 'text-[#5C3A1E] dark:text-[#E8C9A8] hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540]' }}">
-                    Blog
+                          {{ $active ? 'text-amber-700 dark:text-amber-400 bg-[#EDE5A8] dark:bg-[#6B4540]' : 'text-[#5C3A1E] dark:text-[#E8C9A8] hover:text-amber-700 dark:hover:text-amber-400 hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540]' }}">
+                    {{ $item->title }}
                 </a>
+                @endforeach
             </nav>
         </div>
     </div>

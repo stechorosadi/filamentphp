@@ -7,6 +7,7 @@ use App\Policies\MenuPolicy;
 use App\Policies\TagPolicy;
 use Datlechin\FilamentMenuBuilder\Models\Menu;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,5 +25,16 @@ class AppServiceProvider extends ServiceProvider
         //             cannot match it to App\Policies\MenuPolicy.
         Gate::policy(Tag::class, TagPolicy::class);
         Gate::policy(Menu::class, MenuPolicy::class);
+
+        // Share the "Header Menu - Top Right" with the front layout.
+        View::composer('layouts.front', function ($view): void {
+            $view->with('navMenuItems',
+                Menu::with(['menuItems' => fn ($q) => $q->whereNull('parent_id')->orderBy('order')])
+                    ->where('name', 'Header Menu - Top Right')
+                    ->first()
+                    ?->menuItems
+                    ?? collect()
+            );
+        });
     }
 }

@@ -351,20 +351,7 @@
 {{-- CATEGORIES --}}
 {{-- ─────────────────────────────────────────── --}}
 @if($categories->isNotEmpty())
-@php $bgCategory = $categories->firstWhere('image', '!=', null); @endphp
-<section id="cat-section" class="relative py-16 overflow-hidden">
-    {{-- Parallax background image --}}
-    @if($bgCategory)
-    <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-        <img id="cat-parallax-bg"
-             src="{{ asset('storage/' . $bgCategory->image) }}"
-             alt=""
-             class="absolute inset-x-0 w-full object-cover will-change-transform"
-             style="height:140%; top:-20%; filter:blur(5px); opacity:0.22;">
-    </div>
-    @endif
-    {{-- Warm colour overlay --}}
-    <div class="absolute inset-0 bg-[#F5EDBA]/85 dark:bg-[#3D2220]/90 pointer-events-none"></div>
+<section id="cat-section" class="relative bg-[#F5EDBA] dark:bg-[#3D2220] py-16 overflow-hidden">
     {{-- Dot grid --}}
     <div class="absolute inset-0 bg-[radial-gradient(#C8B87028_1px,transparent_1px)] dark:bg-[radial-gradient(#6B454028_1px,transparent_1px)] bg-size-[28px_28px] pointer-events-none"></div>
 
@@ -516,8 +503,18 @@
 {{-- ─────────────────────────────────────────── --}}
 {{-- LATEST CONTENT --}}
 {{-- ─────────────────────────────────────────── --}}
-<section id="content" class="bg-[#FFF8D4] dark:bg-[#4B2E2B] py-20">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<section id="content-section" class="relative py-20 overflow-hidden">
+    {{-- Parallax background image --}}
+    <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+        <img id="content-parallax-bg"
+             src="{{ asset('storage/background/bg-01.jpg') }}"
+             alt=""
+             class="absolute inset-x-0 w-full object-cover will-change-transform"
+             style="height:140%; top:-20%; filter:blur(3px);">
+    </div>
+    {{-- Warm colour overlay --}}
+    <div class="absolute inset-0 bg-[#FFF8D4]/70 dark:bg-[#4B2E2B]/82 pointer-events-none"></div>
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {{-- Heading + search --}}
         <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
@@ -903,21 +900,22 @@
         items.forEach(el => obs.observe(el));
     })();
 
-    // ── Category section parallax ──
+    // ── Latest Content section parallax ──
     (function () {
-        const section = document.getElementById('cat-section');
-        const bg      = document.getElementById('cat-parallax-bg');
+        const section = document.getElementById('content-section');
+        const bg      = document.getElementById('content-parallax-bg');
         if (!section || !bg) return;
 
         function onScroll() {
-            const rect     = section.getBoundingClientRect();
-            const center   = rect.top + rect.height / 2 - window.innerHeight / 2;
+            const rect   = section.getBoundingClientRect();
+            const center = rect.top + rect.height / 2 - window.innerHeight / 2;
             bg.style.transform = 'translateY(' + (center * 0.12).toFixed(2) + 'px)';
         }
 
         window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll(); // set initial position
+        onScroll();
     })();
+
 
     document.addEventListener('DOMContentLoaded', () => {
         const observer = new IntersectionObserver((entries) => {
