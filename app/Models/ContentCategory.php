@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-#[Fillable(['name', 'slug', 'icon', 'image'])]
+#[Fillable(['name', 'slug', 'icon', 'image', 'description'])]
 class ContentCategory extends Model
 {
     use HasFactory;

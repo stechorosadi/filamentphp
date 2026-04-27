@@ -419,7 +419,12 @@
                 {{-- Right: content --}}
                 <div class="flex flex-1 flex-col justify-center px-5 pb-5 sm:pl-0 sm:py-5 sm:pr-6">
                     <span class="mb-1.5 text-xs font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">Featured</span>
-                    <h3 class="text-lg font-bold text-[#2C1A0E] dark:text-[#FFF8D4] mb-3 leading-tight">{{ $category->name }}</h3>
+                    <h3 class="text-lg font-bold text-[#2C1A0E] dark:text-[#FFF8D4] mb-1.5 leading-tight">{{ $category->name }}</h3>
+                    @if($category->description)
+                    <p class="text-xs text-[#5C3A1E] dark:text-[#C4A080] leading-relaxed line-clamp-2 mb-3">{{ $category->description }}</p>
+                    @else
+                    <div class="mb-3"></div>
+                    @endif
                     <div class="flex items-center gap-2">
                         <span class="inline-flex items-center rounded-full bg-amber-600 dark:bg-[#8C5A3C] px-3 py-1 text-xs font-semibold text-white shadow-sm">
                             {{ $category->contents_count }} {{ $category->contents_count === 1 ? 'article' : 'articles' }}
@@ -471,7 +476,14 @@
                 </div>
 
                 {{-- Name --}}
-                <h3 class="text-sm font-bold text-[#2C1A0E] dark:text-[#FFF8D4] leading-tight mb-2">{{ $category->name }}</h3>
+                <h3 class="text-sm font-bold text-[#2C1A0E] dark:text-[#FFF8D4] leading-tight mb-1">{{ $category->name }}</h3>
+
+                {{-- Description --}}
+                @if($category->description)
+                <p class="text-xs text-[#5C3A1E] dark:text-[#C4A080] leading-relaxed line-clamp-2 mb-2 px-1">{{ $category->description }}</p>
+                @else
+                <div class="mb-2"></div>
+                @endif
 
                 {{-- Count pill --}}
                 <span class="inline-flex items-center rounded-full border border-amber-600/30 dark:border-[#8C5A3C]

@@ -9,6 +9,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
@@ -45,6 +46,13 @@ class ContentCategoryResource extends Resource
                         ->required()
                         ->readOnly()
                         ->unique(ContentCategory::class, 'slug', ignoreRecord: true),
+
+                    Textarea::make('description')
+                        ->rows(3)
+                        ->maxLength(500)
+                        ->placeholder('Describe the scope and topics covered by this category…')
+                        ->helperText('Max 500 characters.')
+                        ->columnSpanFull(),
                 ])
                 ->columns(2),
 
@@ -96,6 +104,10 @@ class ContentCategoryResource extends Resource
                     ))
                     ->tooltip(fn ($record): string => $record->icon ?? ''),
                 TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('description')
+                    ->limit(60)
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('slug')->searchable(),
                 TextColumn::make('created_at')->dateTime('M j, Y')->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
