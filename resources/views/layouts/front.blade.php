@@ -112,11 +112,46 @@
 @yield('content')
 
 {{-- ── FOOTER ── --}}
-<div class="h-px bg-linear-to-r from-transparent via-[#C8B870] dark:via-[#8C5A3C]/50 to-transparent"></div>
-<footer class="bg-[#4B2E2B] dark:bg-[#2E1A18] py-8">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span class="text-lg font-bold text-amber-400">{{ config('app.name') }}</span>
-        <p class="text-sm text-[#C4A080]">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+<footer class="relative bg-[#4B2E2B] dark:bg-[#2E1A18] overflow-hidden">
+    {{-- Amber top border accent --}}
+    <div class="h-px bg-linear-to-r from-transparent via-amber-600/60 to-transparent"></div>
+
+    {{-- Background decorations --}}
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff07_1px,transparent_1px),linear-gradient(to_bottom,#ffffff07_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
+    <div class="absolute -top-16 right-0 h-56 w-56 rounded-full bg-amber-600/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 -left-16 h-48 w-48 rounded-full bg-[#8C5A3C]/20 blur-3xl pointer-events-none"></div>
+
+    {{-- Main content --}}
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-6">
+
+        {{-- Top row: logo + links --}}
+        <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
+
+            {{-- Brand --}}
+            <div class="text-center md:text-left">
+                <span class="text-2xl font-bold text-amber-400 tracking-tight">{{ config('app.name') }}</span>
+                <p class="mt-2 text-sm text-[#C4A080] max-w-xs leading-relaxed">
+                    Discover articles, research, and resources curated by our team.
+                </p>
+            </div>
+
+            {{-- Quick links --}}
+            <div class="flex flex-wrap justify-center md:justify-end gap-x-8 gap-y-2 text-sm">
+                <a href="{{ route('home') }}" class="text-[#E8C9A8] hover:text-amber-400 transition-colors">Blog</a>
+                <a href="{{ route('search') }}" class="text-[#E8C9A8] hover:text-amber-400 transition-colors">Search</a>
+                <a href="#" class="text-[#E8C9A8] hover:text-amber-400 transition-colors">Profile</a>
+                <a href="#" class="text-[#E8C9A8] hover:text-amber-400 transition-colors">Portfolio</a>
+            </div>
+        </div>
+
+        {{-- Divider --}}
+        <div class="h-px bg-linear-to-r from-transparent via-[#8C5A3C] to-transparent mb-6"></div>
+
+        {{-- Bottom bar --}}
+        <p class="text-center text-xs text-[#8C6040]">
+            &copy; {{ date('Y') }} <span class="text-amber-400 font-medium">{{ config('app.name') }}</span>. All rights reserved.
+        </p>
+
     </div>
 </footer>
 
