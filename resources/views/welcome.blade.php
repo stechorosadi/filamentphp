@@ -659,7 +659,7 @@
         {{-- Cards --}}
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             @foreach($classifications as $classification)
-            <a href="{{ route('home', ['classification' => $classification->id]) }}"
+            <a href="{{ route('classification.show', $classification->slug) }}"
                class="card-animate group flex items-center gap-3 rounded-2xl p-3
                       bg-[#5C3835]/50 backdrop-blur-sm
                       border border-[#6B4540]/60 border-l-2 border-l-amber-600/50
