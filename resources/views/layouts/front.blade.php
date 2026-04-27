@@ -113,10 +113,10 @@
 
 {{-- ── FOOTER ── --}}
 <div class="h-px bg-linear-to-r from-transparent via-[#C8B870] dark:via-[#8C5A3C]/50 to-transparent"></div>
-<footer class="bg-[#E5DC98] dark:bg-[#2E1A18] py-8">
+<footer class="bg-[#4B2E2B] dark:bg-[#2E1A18] py-8">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span class="text-lg font-bold text-amber-700 dark:text-amber-500">{{ config('app.name') }}</span>
-        <p class="text-sm text-[#8C6040] dark:text-[#C4A080]">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+        <span class="text-lg font-bold text-amber-400">{{ config('app.name') }}</span>
+        <p class="text-sm text-[#C4A080]">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
     </div>
 </footer>
 

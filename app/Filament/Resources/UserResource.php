@@ -10,8 +10,6 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -26,6 +24,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
 
 class UserResource extends Resource
 {
@@ -65,7 +65,7 @@ class UserResource extends Resource
                                     ->columnSpanFull(),
                             ])
                             ->columns(2),
-                        
+
                         Section::make('Profile Image')
                             ->schema([
                                 FileUpload::make('avatar_url')
@@ -98,21 +98,28 @@ class UserResource extends Resource
                                     ->revealable()
                                     ->required()
                                     ->minLength(8)
+                                    ->dehydrated(fn (string $operation): bool => $operation === 'create')
                                     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state)),
                             ])
                             ->visible(fn (string $operation): bool => $operation === 'create'),
 
                         Section::make('Change Password')
-                            ->description('Leave all fields blank to keep the current password.')
+                            ->description(fn () => auth()->user()?->hasRole('super_admin')
+                                ? 'As super admin you can set a new password directly. Leave blank to keep the current password.'
+                                : 'Leave all fields blank to keep the current password.'
+                            )
                             ->schema([
                                 TextInput::make('current_password')
                                     ->password()
                                     ->revealable()
-                                    ->dehydrated(false)
+                                    ->visible(fn () => ! auth()->user()?->hasRole('super_admin'))
                                     ->requiredWith('new_password')
                                     ->rules([
                                         fn (?Model $record): \Closure => function (string $attribute, mixed $value, \Closure $fail) use ($record): void {
-                                            if (filled($value) && !Hash::check($value, $record?->password)) {
+                                            if (auth()->user()?->hasRole('super_admin')) {
+                                                return;
+                                            }
+                                            if (filled($value) && ! Hash::check($value, $record?->password)) {
                                                 $fail('The current password is incorrect.');
                                             }
                                         },
@@ -122,7 +129,6 @@ class UserResource extends Resource
                                     ->password()
                                     ->revealable()
                                     ->minLength(8)
-                                    ->dehydrated(false)
                                     ->confirmed()
                                     ->requiredWith('current_password'),
 
@@ -130,7 +136,6 @@ class UserResource extends Resource
                                     ->password()
                                     ->revealable()
                                     ->label('Confirm New Password')
-                                    ->dehydrated(false)
                                     ->requiredWith('new_password'),
                             ])
                             ->visible(fn (string $operation): bool => $operation === 'edit'),
@@ -147,19 +152,18 @@ class UserResource extends Resource
                     ->label('Avatar')
                     ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(fn (User $record): string =>
-                        'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&color=7F9CF5&background=EBF4FF'
+                    ->defaultImageUrl(fn (User $record): string => 'https://ui-avatars.com/api/?name='.urlencode($record->name).'&color=7F9CF5&background=EBF4FF'
                     )
                     ->action(
                         Action::make('previewAvatar')
                             ->label('Preview Avatar')
                             ->modalHeading(fn (User $record): string => $record->name)
                             ->modalContent(fn (User $record): HtmlString => new HtmlString(
-                                '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">' .
-                                '<img src="' . (filled($record->avatar_url)
+                                '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">'.
+                                '<img src="'.(filled($record->avatar_url)
                                     ? Storage::disk('public')->url($record->avatar_url)
-                                    : 'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&color=7F9CF5&background=EBF4FF&size=256'
-                                ) . '" style="width:200px;height:200px;border-radius:50%;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,0.15);">' .
+                                    : 'https://ui-avatars.com/api/?name='.urlencode($record->name).'&color=7F9CF5&background=EBF4FF&size=256'
+                                ).'" style="width:200px;height:200px;border-radius:50%;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,0.15);">'.
                                 '</div>'
                             ))
                             ->modalWidth('sm')
@@ -208,8 +212,7 @@ class UserResource extends Resource
                             ->label('Avatar')
                             ->disk('public')
                             ->circular()
-                            ->defaultImageUrl(fn (User $record): string =>
-                                'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&color=7F9CF5&background=EBF4FF'
+                            ->defaultImageUrl(fn (User $record): string => 'https://ui-avatars.com/api/?name='.urlencode($record->name).'&color=7F9CF5&background=EBF4FF'
                             )
                             ->columnSpanFull(),
 
@@ -262,10 +265,10 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListUsers::route('/'),
+            'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
-            'view'   => Pages\ViewUser::route('/{record}'),
-            'edit'   => Pages\EditUser::route('/{record}/edit'),
+            'view' => Pages\ViewUser::route('/{record}'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

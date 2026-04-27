@@ -624,91 +624,159 @@
 {{-- MOST POPULAR --}}
 {{-- ─────────────────────────────────────────── --}}
 @if($popularContents->isNotEmpty())
-<section class="bg-[#FFFDF0] dark:bg-[#3D2220] py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-3 mb-10">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-amber-600 dark:text-amber-500">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z"/>
-            </svg>
-            <h2 class="text-2xl font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">Most Popular</h2>
+<section class="relative bg-[#FFFDF0] dark:bg-[#3D2220] py-16 overflow-hidden">
+    {{-- Decorative blobs --}}
+    <div class="absolute -top-20 right-0 h-72 w-72 rounded-full bg-amber-400/10 dark:bg-amber-600/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-[#FFDAC4]/40 dark:bg-[#5C3835]/30 blur-3xl pointer-events-none"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        {{-- Heading --}}
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-amber-600 dark:text-amber-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z"/>
+                </svg>
+                <h2 class="text-2xl font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">Most Popular</h2>
+            </div>
+            <p class="ml-9 text-sm text-[#8C6040] dark:text-[#C4A080]">The most read articles right now</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {{-- Featured #1 (large card) --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+            {{-- ── FEATURED #1 (full-bleed image) ── --}}
             @php $top = $popularContents->first(); @endphp
             <a href="{{ route('content.show', $top->slug) }}"
-               class="card-animate group relative overflow-hidden rounded-2xl bg-[#FFFEF0] dark:bg-[#5C3835] border border-[#DDD090] dark:border-[#6B4540] hover:shadow-xl dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] hover:-translate-y-1 transition-all duration-300">
-                <div class="relative aspect-video overflow-hidden bg-[#EDE5A8] dark:bg-[#6B4540]">
-                    <img src="{{ asset("storage/{$top->header_image}") }}"
-                         alt="{{ $top->title }}"
-                         loading="lazy"
-                         class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-linear-to-t from-[#2C1A0E]/60 to-transparent"></div>
-                    {{-- Rank badge --}}
-                    <span class="absolute top-3 left-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-amber-600 text-sm font-bold text-white shadow-lg">1</span>
-                    @if($top->category)
-                    <span class="absolute top-3 right-3 rounded-full bg-white/20 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-white">
+               class="card-animate group relative overflow-hidden rounded-2xl min-h-72 lg:min-h-full
+                      bg-[#EDE5A8] dark:bg-[#6B4540]
+                      hover:shadow-[0_12px_40px_rgba(202,138,4,0.2)] dark:hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]
+                      hover:-translate-y-1 transition-all duration-300">
+
+                {{-- Full-bleed image --}}
+                <img src="{{ asset("storage/{$top->header_image}") }}"
+                     alt="{{ $top->title }}"
+                     loading="lazy"
+                     class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-700">
+
+                {{-- Gradient overlays --}}
+                <div class="absolute inset-0 bg-linear-to-t from-[#2C1A0E]/85 via-[#2C1A0E]/20 to-transparent"></div>
+                <div class="absolute inset-0 bg-linear-to-r from-[#2C1A0E]/30 to-transparent"></div>
+
+                {{-- Rank badge --}}
+                <div class="absolute top-4 left-4 flex items-center gap-2">
+                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-amber-600 text-sm font-black text-white shadow-lg ring-2 ring-white/20">1</span>
+                </div>
+
+                {{-- Category badge --}}
+                @if($top->category)
+                <div class="absolute top-4 right-4">
+                    <span class="rounded-full bg-white/15 backdrop-blur-md border border-white/20 px-3 py-1 text-xs font-semibold text-white">
                         {{ $top->category->name }}
                     </span>
-                    @endif
-                    <div class="absolute bottom-0 left-0 right-0 p-5">
-                        <h3 class="text-lg font-bold text-white line-clamp-2 mb-2">{{ $top->title }}</h3>
-                        <div class="flex items-center gap-3 text-xs text-white/80">
-                            <span class="inline-flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-                                </svg>
-                                {{ number_format($top->views) }} views
+                </div>
+                @endif
+
+                {{-- Bottom content --}}
+                <div class="absolute bottom-0 left-0 right-0 p-6">
+                    <h3 class="text-xl font-bold text-white leading-snug line-clamp-2 mb-3
+                               group-hover:text-amber-300 transition-colors duration-300">
+                        {{ $top->title }}
+                    </h3>
+                    <div class="flex items-center gap-4 text-xs text-white/75">
+                        @if($top->user)
+                        <span class="flex items-center gap-1.5">
+                            <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-600/80 text-white text-xs font-bold shrink-0">
+                                {{ strtoupper(substr($top->user->name, 0, 1)) }}
                             </span>
-                            <span>{{ $top->created_at->format('M d, Y') }}</span>
-                        </div>
+                            {{ $top->user->name }}
+                        </span>
+                        <span class="h-3 w-px bg-white/30"></span>
+                        @endif
+                        <span class="flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                            </svg>
+                            {{ number_format($top->views) }}
+                        </span>
+                        <span class="h-3 w-px bg-white/30"></span>
+                        <span>{{ $top->created_at->format('M d, Y') }}</span>
                     </div>
                 </div>
             </a>
 
-            {{-- Ranked list #2–5 --}}
+            {{-- ── RANKED LIST #2–5 ── --}}
             <div class="flex flex-col gap-3">
-                @foreach($popularContents->skip(1) as $i => $item)
+                @foreach($popularContents->skip(1) as $item)
+                @php $rank = $loop->iteration + 1; @endphp
                 <a href="{{ route('content.show', $item->slug) }}"
-                   class="card-animate group flex items-center gap-4 rounded-2xl bg-[#FFFEF0] dark:bg-[#5C3835] border border-[#DDD090] dark:border-[#6B4540] p-3 hover:shadow-md hover:border-[#C8B870] dark:hover:border-[#8C5A3C] hover:-translate-y-0.5 transition-all duration-300">
-                    {{-- Rank number --}}
-                    <span class="text-2xl font-black text-[#EDE5A8] dark:text-[#6B4540] w-7 shrink-0 leading-none select-none">
-                        {{ $i + 2 }}
+                   class="popular-item group flex items-center gap-4 rounded-2xl p-3.5
+                          bg-[#FFFEF0] dark:bg-[#5C3835]
+                          border border-[#DDD090] dark:border-[#6B4540]
+                          hover:border-amber-400 dark:hover:border-[#8C5A3C]
+                          hover:shadow-[0_4px_20px_rgba(202,138,4,0.15)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.35)]
+                          hover:-translate-y-0.5 transition-all duration-300"
+                   style="opacity:0;transform:translateX(20px)">
+
+                    {{-- Rank --}}
+                    <span class="text-3xl font-black leading-none select-none shrink-0 w-8 text-center
+                                 text-[#EDE5A8] dark:text-[#6B4540]
+                                 group-hover:text-amber-400 dark:group-hover:text-amber-500
+                                 transition-colors duration-300">
+                        {{ $rank }}
                     </span>
+
                     {{-- Thumbnail --}}
                     <div class="relative w-20 h-16 shrink-0 overflow-hidden rounded-xl bg-[#EDE5A8] dark:bg-[#6B4540]">
                         <img src="{{ asset("storage/{$item->header_image}") }}"
                              alt="{{ $item->title }}"
                              loading="lazy"
-                             class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                             class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        {{-- Hover shimmer overlay --}}
+                        <div class="absolute inset-0 bg-amber-500/0 group-hover:bg-amber-500/10 transition-colors duration-300 rounded-xl"></div>
                     </div>
+
                     {{-- Info --}}
                     <div class="flex-1 min-w-0">
-                        <h3 class="text-sm font-bold text-[#2C1A0E] dark:text-[#FFF8D4] line-clamp-2 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors mb-1.5">
+                        <h3 class="text-sm font-bold text-[#2C1A0E] dark:text-[#FFF8D4] line-clamp-2 leading-snug
+                                   group-hover:text-amber-700 dark:group-hover:text-amber-400
+                                   transition-colors duration-200 mb-2">
                             {{ $item->title }}
                         </h3>
-                        <div class="flex items-center gap-2.5 text-xs text-[#8C6040] dark:text-[#C4A080]">
-                            <span class="inline-flex items-center gap-1">
+                        <div class="flex items-center gap-2 text-xs text-[#8C6040] dark:text-[#C4A080]">
+                            @if($item->user)
+                            <span class="inline-flex items-center gap-1 shrink-0">
+                                <span class="inline-flex h-4 w-4 items-center justify-center rounded-full bg-amber-600/80 dark:bg-[#8C5A3C] text-white text-xs font-bold leading-none shrink-0">
+                                    {{ strtoupper(substr($item->user->name, 0, 1)) }}
+                                </span>
+                                <span class="truncate max-w-20">{{ $item->user->name }}</span>
+                            </span>
+                            <span class="w-px h-3 bg-[#DDD090] dark:bg-[#6B4540] shrink-0"></span>
+                            @endif
+                            <span class="flex items-center gap-1 shrink-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3 w-3 text-amber-500 dark:text-amber-400">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                                 </svg>
                                 {{ number_format($item->views) }}
                             </span>
-                            <span class="w-px h-3 bg-[#DDD090] dark:bg-[#6B4540]"></span>
-                            <span>{{ $item->created_at->format('M d, Y') }}</span>
+                            <span class="w-px h-3 bg-[#DDD090] dark:bg-[#6B4540] shrink-0"></span>
+                            <span class="shrink-0">{{ $item->created_at->format('M d, Y') }}</span>
                         </div>
                     </div>
+
                     {{-- Arrow --}}
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                         class="h-4 w-4 text-[#C8B870] dark:text-[#8C5A3C] shrink-0 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                         class="h-4 w-4 shrink-0 text-[#C8B870] dark:text-[#8C5A3C]
+                                group-hover:text-amber-600 dark:group-hover:text-amber-400
+                                group-hover:translate-x-1 transition-all duration-200">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
                     </svg>
                 </a>
                 @endforeach
             </div>
+
         </div>
     </div>
 </section>
@@ -805,6 +873,26 @@
 
 @push('scripts')
 <script>
+    // ── Most Popular list items: staggered slide-in from right ──
+    (function () {
+        const items = document.querySelectorAll('.popular-item');
+        if (!items.length) return;
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const idx = Array.from(items).indexOf(entry.target);
+                    setTimeout(() => {
+                        entry.target.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+                        entry.target.style.opacity   = '1';
+                        entry.target.style.transform = 'translateX(0)';
+                    }, idx * 80);
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        items.forEach(el => obs.observe(el));
+    })();
+
     // ── Category section parallax ──
     (function () {
         const section = document.getElementById('cat-section');
