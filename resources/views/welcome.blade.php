@@ -2,9 +2,9 @@
 
 @section('seo')
 <title>{{ $siteSetting->site_title }} — Stay Informed</title>
-<meta name="description" content="Discover articles, research, and resources curated by our team. Stay informed with the latest content.">
+<meta name="description" content="{{ $siteSetting->site_description ?? 'Discover articles, research, and resources curated by our team. Stay informed with the latest content.' }}">
 <meta property="og:title" content="{{ $siteSetting->site_title }}">
-<meta property="og:description" content="Discover articles, research, and resources curated by our team.">
+<meta property="og:description" content="{{ $siteSetting->site_description ?? 'Discover articles, research, and resources curated by our team.' }}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{{ url('/') }}">
 @if($featuredContents->isNotEmpty() && $featuredContents->first()->featured_image)

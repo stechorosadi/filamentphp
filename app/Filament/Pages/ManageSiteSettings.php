@@ -25,6 +25,11 @@ class ManageSiteSettings extends Page
 
     protected static ?string $title = 'Site Settings';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasRole('super_admin') ?? false;
+    }
+
     public ?array $data = [];
 
     public function mount(): void
