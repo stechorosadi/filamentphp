@@ -1,9 +1,9 @@
 @extends('layouts.front')
 
 @section('seo')
-<title>{{ $classification->name }} — {{ config('app.name') }}</title>
-<meta name="description" content="Browse all articles classified as {{ $classification->name }} on {{ config('app.name') }}.">
-<meta property="og:title" content="{{ $classification->name }} — {{ config('app.name') }}">
+<title>{{ $classification->name }} — {{ $siteSetting->site_title }}</title>
+<meta name="description" content="Browse all articles classified as {{ $classification->name }} on {{ $siteSetting->site_title }}.">
+<meta property="og:title" content="{{ $classification->name }} — {{ $siteSetting->site_title }}">
 <meta property="og:description" content="Browse all articles classified as {{ $classification->name }}.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{{ url()->current() }}">

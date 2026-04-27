@@ -1,7 +1,7 @@
 @extends('layouts.front')
 
 @section('seo')
-<title>{{ $content->title }} — {{ config('app.name') }}</title>
+<title>{{ $content->title }} — {{ $siteSetting->site_title }}</title>
 <meta name="description" content="{{ $content->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($content->content), 160) }}">
 <meta property="og:title" content="{{ $content->title }}">
 <meta property="og:description" content="{{ $content->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($content->content), 160) }}">

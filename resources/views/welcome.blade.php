@@ -1,9 +1,9 @@
 @extends('layouts.front')
 
 @section('seo')
-<title>{{ config('app.name') }} — Stay Informed</title>
+<title>{{ $siteSetting->site_title }} — Stay Informed</title>
 <meta name="description" content="Discover articles, research, and resources curated by our team. Stay informed with the latest content.">
-<meta property="og:title" content="{{ config('app.name') }}">
+<meta property="og:title" content="{{ $siteSetting->site_title }}">
 <meta property="og:description" content="Discover articles, research, and resources curated by our team.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{{ url('/') }}">
@@ -140,7 +140,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-white dark:text-[#2C1A0E] shrink-0">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
                                 </svg>
-                                <span class="text-xs font-semibold text-white dark:text-[#2C1A0E]">{{ $slide->user?->name ?? config('app.name') }}</span>
+                                <span class="text-xs font-semibold text-white dark:text-[#2C1A0E]">{{ $slide->user?->name ?? $siteSetting->site_title }}</span>
                             </div>
 
                             {{-- Featured badge (top-right) --}}
@@ -251,7 +251,7 @@
             Welcome
         </p>
         <h1 class="animate-fade-up-delay-1 text-4xl font-bold tracking-tight text-[#2C1A0E] dark:text-[#FFF8D4] sm:text-6xl lg:text-7xl">
-            {{ config('app.name') }}
+            {{ $siteSetting->site_title }}
         </h1>
         <p class="animate-fade-up-delay-2 mt-6 max-w-2xl mx-auto text-lg leading-8 text-[#5C3A1E] dark:text-[#E8C9A8]">
             Discover articles, research, and resources curated by our team. Stay informed with the latest content.

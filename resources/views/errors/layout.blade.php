@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('error_code') @yield('error_title') — {{ config('app.name') }}</title>
+    <title>@yield('error_code') @yield('error_title') — {{ $siteSetting->site_title }}</title>
     <meta name="robots" content="noindex, nofollow">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet">
@@ -149,7 +149,7 @@
 
         {{-- Brand --}}
         <a href="/" class="mt-12 text-sm font-bold text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-colors">
-            {{ config('app.name') }}
+            {{ $siteSetting->site_title }}
         </a>
     </div>
 

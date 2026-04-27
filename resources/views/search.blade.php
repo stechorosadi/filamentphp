@@ -1,8 +1,8 @@
 @extends('layouts.front')
 
 @section('seo')
-<title>{{ $query ? "Search: {$query}" : 'Search' }} — {{ config('app.name') }}</title>
-<meta name="description" content="{{ $query ? "Search results for \"{$query}\" on " . config('app.name') : 'Search ' . config('app.name') }}">
+<title>{{ $query ? "Search: {$query}" : 'Search' }} — {{ $siteSetting->site_title }}</title>
+<meta name="description" content="{{ $query ? "Search results for \"{$query}\" on " . $siteSetting->site_title : 'Search ' . $siteSetting->site_title }}">
 <meta name="robots" content="noindex, follow">
 @endsection
 

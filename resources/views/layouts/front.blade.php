@@ -4,6 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @yield('seo')
+    {{-- Favicon --}}
+    @if($siteSetting->favicon_path)
+        <link rel="icon" href="{{ Storage::disk('public')->url($siteSetting->favicon_path) }}">
+    @else
+        <link rel="icon" href="/favicon.ico">
+    @endif
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet">
     {{-- Prevent dark mode flash --}}
@@ -38,8 +44,11 @@
         <div class="flex h-16 items-center justify-between">
 
             {{-- Logo --}}
-            <a href="{{ route('home') }}" class="text-xl font-bold text-amber-600 dark:text-amber-500 tracking-tight">
-                {{ config('app.name') }}
+            <a href="{{ route('home') }}" class="flex items-center gap-2 text-xl font-bold text-amber-600 dark:text-amber-500 tracking-tight">
+                @if($siteSetting->logo_path)
+                    <img src="{{ Storage::disk('public')->url($siteSetting->logo_path) }}" alt="{{ $siteSetting->site_title }}" class="h-8 w-auto object-contain">
+                @endif
+                {{ $siteSetting->site_title }}
             </a>
 
             {{-- Desktop nav --}}
@@ -140,9 +149,9 @@
 
             {{-- Brand --}}
             <div class="text-center md:text-left">
-                <span class="text-2xl font-bold text-amber-400 tracking-tight">{{ config('app.name') }}</span>
+                <span class="text-2xl font-bold text-amber-400 tracking-tight">{{ $siteSetting->site_title }}</span>
                 <p class="mt-2 text-sm text-[#C4A080] max-w-xs leading-relaxed">
-                    Discover articles, research, and resources curated by our team.
+                    {{ $siteSetting->site_tagline ?: 'Discover articles, research, and resources curated by our team.' }}
                 </p>
             </div>
 
@@ -160,7 +169,7 @@
 
         {{-- Bottom bar --}}
         <p class="text-center text-xs text-[#8C6040]">
-            &copy; {{ date('Y') }} <span class="text-amber-400 font-medium">{{ config('app.name') }}</span>. All rights reserved.
+            &copy; {{ date('Y') }} <span class="text-amber-400 font-medium">{{ $siteSetting->site_title }}</span>. All rights reserved.
         </p>
 
     </div>
