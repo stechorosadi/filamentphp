@@ -189,20 +189,106 @@
 
             {{-- Image attachments --}}
             @if($content->imageAttachments->isNotEmpty())
-            <div class="mt-12">
+            <div class="mt-12"
+                 x-data="{
+                     open: false,
+                     activeIndex: 0,
+                     images: {{ Js::from($content->imageAttachments->map(fn ($img) => ['src' => asset('storage/' . $img->path), 'caption' => $img->caption])) }},
+                     openModal(index) {
+                         this.activeIndex = index;
+                         this.open = true;
+                         document.body.style.overflow = 'hidden';
+                     },
+                     closeModal() {
+                         this.open = false;
+                         document.body.style.overflow = '';
+                     },
+                     prev() { this.activeIndex = (this.activeIndex - 1 + this.images.length) % this.images.length; },
+                     next() { this.activeIndex = (this.activeIndex + 1) % this.images.length; }
+                 }"
+                 @keydown.escape.window="open && closeModal()"
+                 @keydown.arrow-left.window="open && prev()"
+                 @keydown.arrow-right.window="open && next()">
+
                 <h3 class="mb-5 text-lg font-bold text-[#2C1A0E] dark:text-[#FFF8D4]">Gallery</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    @foreach($content->imageAttachments as $img)
-                    <div class="overflow-hidden rounded-xl border border-[#DDD090] dark:border-[#6B4540]">
+                    @foreach($content->imageAttachments as $index => $img)
+                    <div class="group relative cursor-zoom-in overflow-hidden rounded-xl border border-[#DDD090] dark:border-[#6B4540]"
+                         @click="openModal({{ $index }})">
                         <img src="{{ asset('storage/' . $img->path) }}"
                              alt="{{ $img->caption ?? 'Image' }}"
                              loading="lazy"
-                             class="w-full object-cover aspect-video">
+                             class="w-full object-cover aspect-video transition-transform duration-300 group-hover:scale-105">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-200 group-hover:bg-black/25">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                 class="h-8 w-8 text-white opacity-0 drop-shadow-lg transition-opacity duration-200 group-hover:opacity-100">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6"/>
+                            </svg>
+                        </div>
                         @if($img->caption)
                         <p class="px-3 py-2 text-xs text-[#8C6040] dark:text-[#C4A080]">{{ $img->caption }}</p>
                         @endif
                     </div>
                     @endforeach
+                </div>
+
+                {{-- Lightbox Modal --}}
+                <div x-show="open"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     class="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+                     @click.self="closeModal()"
+                     style="display:none">
+
+                    {{-- Close --}}
+                    <button @click="closeModal()"
+                            class="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/25"
+                            aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+
+                    {{-- Counter --}}
+                    <div x-show="images.length > 1"
+                         class="absolute left-1/2 top-4 -translate-x-1/2 select-none text-sm text-white/60">
+                        <span x-text="activeIndex + 1"></span>&thinsp;/&thinsp;<span x-text="images.length"></span>
+                    </div>
+
+                    {{-- Prev --}}
+                    <button x-show="images.length > 1"
+                            @click.stop="prev()"
+                            class="absolute left-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/25 sm:left-5"
+                            aria-label="Previous image">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
+                        </svg>
+                    </button>
+
+                    {{-- Image + caption --}}
+                    <div class="mx-16 flex max-w-4xl w-full flex-col items-center gap-3 sm:mx-20">
+                        <img :src="images[activeIndex]?.src"
+                             :alt="images[activeIndex]?.caption || 'Image'"
+                             class="max-h-[80vh] max-w-full rounded-xl object-contain shadow-2xl">
+                        <p x-show="images[activeIndex]?.caption"
+                           x-text="images[activeIndex]?.caption"
+                           class="text-center text-sm text-white/70"></p>
+                    </div>
+
+                    {{-- Next --}}
+                    <button x-show="images.length > 1"
+                            @click.stop="next()"
+                            class="absolute right-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/25 sm:right-5"
+                            aria-label="Next image">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+                        </svg>
+                    </button>
+
                 </div>
             </div>
             @endif
