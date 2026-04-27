@@ -389,7 +389,7 @@
 
             @if($loop->first)
             {{-- ── FEATURED card (spans 2 cols) ── --}}
-            <a href="{{ route('home', ['category' => $category->id]) }}"
+            <a href="{{ route('category.show', $category->slug) }}"
                class="card-animate group relative overflow-hidden rounded-2xl col-span-2
                       flex flex-col sm:flex-row
                       dark:bg-[#5C3835] border border-transparent dark:border-[#6B4540]
@@ -450,7 +450,7 @@
 
             @else
             {{-- ── REGULAR card ── --}}
-            <a href="{{ route('home', ['category' => $category->id]) }}"
+            <a href="{{ route('category.show', $category->slug) }}"
                class="card-animate group relative overflow-hidden rounded-2xl p-4 flex flex-col items-center text-center
                       dark:bg-[#5C3835] border border-transparent dark:border-[#6B4540]
                       shadow-sm transition-all duration-300

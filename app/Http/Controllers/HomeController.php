@@ -86,6 +86,26 @@ class HomeController extends Controller
         return view('search', compact('query', 'results', 'suggestions'));
     }
 
+    public function category(string $slug): View
+    {
+        $category = ContentCategory::where('slug', $slug)->firstOrFail();
+
+        $contents = Content::with(['user', 'category', 'classification'])
+            ->where('published', true)
+            ->where('content_category_id', $category->id)
+            ->whereNotNull('header_image')
+            ->latest()
+            ->paginate(9);
+
+        $otherCategories = ContentCategory::withCount(['contents' => fn ($q) => $q->where('published', true)])
+            ->having('contents_count', '>', 0)
+            ->where('id', '!=', $category->id)
+            ->orderBy('name')
+            ->get();
+
+        return view('category.show', compact('category', 'contents', 'otherCategories'));
+    }
+
     public function show(string $slug): View
     {
         $content = Content::with([

@@ -92,7 +92,7 @@
                 <p class="mb-4 text-sm font-medium text-[#8C6040] dark:text-[#C4A080] uppercase tracking-wider">Browse Categories</p>
                 <div class="flex flex-wrap justify-center gap-2">
                     @foreach($suggestions as $cat)
-                    <a href="{{ route('home', ['category' => $cat->id]) }}"
+                    <a href="{{ route('category.show', $cat->slug) }}"
                        class="rounded-full border border-[#C8B870] dark:border-[#8C5A3C] bg-[#FFFEF0] dark:bg-[#5C3835] px-4 py-2 text-sm font-medium text-[#5C3A1E] dark:text-[#E8C9A8] hover:bg-amber-600 hover:border-amber-600 hover:text-white transition-all duration-200">
                         {{ $cat->name }}
                     </a>
