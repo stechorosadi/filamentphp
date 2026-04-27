@@ -1,7 +1,7 @@
 # Architecture
 
-Laravel 13 + Filament 5 admin panel (CMS + user profile management).
-Panel path: `/admin` — accessible to users with `super_admin` or `admin` roles.
+Laravel 13 + Filament 5 admin panel (CMS + user profile management) with a public-facing frontend.
+Panel path: `/admin` — accessible to any authenticated user; FilamentShield policies control per-resource access.
 
 ---
 
@@ -28,7 +28,7 @@ Panel path: `/admin` — accessible to users with `super_admin` or `admin` roles
 | name | varchar | |
 | email | varchar | unique |
 | email_verified_at | timestamp | nullable |
-| password | varchar | hashed |
+| password | varchar | hashed (`'hashed'` cast) |
 | avatar_url | varchar | nullable, public disk `avatars/` |
 | remember_token | varchar | nullable |
 | timestamps | | |
@@ -80,6 +80,9 @@ Panel path: `/admin` — accessible to users with `super_admin` or `admin` roles
 | excerpt | text | nullable |
 | content | longText | required |
 | youtube_url | varchar | nullable |
+| published | boolean | default false — controls frontend visibility |
+| featured | boolean | default false — pins to hero slider |
+| views | unsignedBigInteger | default 0 — incremented once per session per article |
 | timestamps | | |
 
 ### `content_categories`
@@ -88,6 +91,9 @@ Panel path: `/admin` — accessible to users with `super_admin` or `admin` roles
 | id | bigint PK | |
 | name | varchar | required |
 | slug | varchar | unique, auto-generated on create |
+| icon | varchar | nullable — Heroicon string e.g. `heroicon-o-beaker` |
+| image | varchar | nullable, public disk `content-categories/` — PNG, 100×100 1:1 |
+| description | text | nullable — scope/topic description, max 500 chars |
 | timestamps | | |
 
 ### `content_classifications`
@@ -96,6 +102,8 @@ Panel path: `/admin` — accessible to users with `super_admin` or `admin` roles
 | id | bigint PK | |
 | name | varchar | required |
 | slug | varchar | unique, auto-generated on create |
+| icon | varchar | nullable — Heroicon string |
+| image | varchar | nullable, public disk `content-classifications/` — PNG, 100×100 1:1 |
 | timestamps | | |
 
 ### `tags`
@@ -149,35 +157,33 @@ Panel path: `/admin` — accessible to users with `super_admin` or `admin` roles
 ### `User` — `app/Models/User.php`
 - Implements `FilamentUser`, `HasAvatar`
 - Traits: `HasFactory`, `Notifiable`, `HasRoles` (Spatie)
-- Panel access: requires `super_admin` or `admin` role
+- `canAccessPanel()` returns `true` for all authenticated users — FilamentShield policies control per-resource access
+- `'password' => 'hashed'` cast — never store plain text; the cast hashes on `fill()`
 - Auto-deletes `avatar_url` from storage on update/delete
 - **Relationships**: `educationHistory()` HasMany UserEducation, `publications()` HasMany UserPublication
 
-### `UserEducation` — `app/Models/UserEducation.php`
-- Table: `user_educations` (explicit `$table` set)
-- Auto-deletes `certificate_path` from storage on update/delete
-- **Relationships**: `user()` BelongsTo User
-
-### `UserPublication` — `app/Models/UserPublication.php`
-- Table: `user_publications` (explicit `$table` set)
-- Auto-deletes `file_path` from storage on update/delete
-- **Relationships**: `user()` BelongsTo User
-
 ### `Content` — `app/Models/Content.php`
+- Casts: `published → boolean`, `featured → boolean`, `views → integer`
 - Auto-deletes `header_image` and `featured_image` from storage on update/delete
 - **Relationships**: `user()` BelongsTo, `classification()` BelongsTo ContentClassification, `category()` BelongsTo ContentCategory, `tags()` BelongsToMany Tag, `imageAttachments()` HasMany ContentImage, `fileAttachments()` HasMany ContentFile, `linkAttachments()` HasMany ContentLink
 
-### `ContentCategory` / `ContentClassification` / `Tag`
-- All auto-generate `slug` from `name` via `booted()` creating hook using `Str::slug()`
+### `ContentCategory` — `app/Models/ContentCategory.php`
+- Auto-generates `slug` from `name` on creating
+- Auto-deletes `image` from storage on field change (updating) and record delete
+- **Fillable**: `name`, `slug`, `icon`, `image`, `description`
 
-### `ContentImage` — `app/Models/ContentImage.php`
-- Auto-deletes `path` from storage on update/delete
+### `ContentClassification` — `app/Models/ContentClassification.php`
+- Auto-generates `slug` from `name` on creating
+- Auto-deletes `image` from storage on field change (updating) and record delete
+- **Fillable**: `name`, `slug`, `icon`, `image`
 
-### `ContentFile` — `app/Models/ContentFile.php`
-- Auto-deletes `path` from storage on update/delete
+### `Tag` — `app/Models/Tag.php`
+- Traits: `HasFactory`, `HasRoles`
+- Auto-generates `slug` from `name` on creating
+- **Relationships**: `contents()` BelongsToMany Content
 
-### `ContentLink` — `app/Models/ContentLink.php`
-- No file cleanup needed
+### `ContentImage` / `ContentFile` / `ContentLink`
+- All auto-delete their file (where applicable) from storage on update/delete
 
 ---
 
@@ -185,85 +191,136 @@ Panel path: `/admin` — accessible to users with `super_admin` or `admin` roles
 
 ### `UserResource` — `app/Filament/Resources/UserResource.php`
 - Nav icon: `heroicon-o-users`, sort: 1
-- **Form**: name, email, roles (Select multi), avatar_url (FileUpload 200×200 1:1 crop), password (create only), change password (edit only)
+- **Form**: name, email, roles (Select multi), avatar_url (FileUpload 200×200 1:1), password (create only)
+- **Change Password** (edit only):
+  - `super_admin`: sees only New Password + Confirm — no old password required; updates via `DB::table()->update()` to bypass `'hashed'` cast double-hashing
+  - Other roles: must enter Current Password (validated against stored hash), New Password, Confirm
 - **Table**: avatar (circular, click-to-preview modal), name, email, roles (badge), joined date
-- **Infolist**: avatar, name, email, roles, timestamps
-- **Relation Managers**: EducationHistoryRelationManager, PublicationsRelationManager
 - **Pages**: List, Create, View, Edit
 
 ### `ContentResource` — `app/Filament/Resources/ContentResource.php`
 - Nav group: `Content Management`, icon: `heroicon-o-document-text`, sort: 1
-- **Form** (2-col): title (auto-slug with date prefix), slug (readOnly), excerpt, RichEditor (480px min-height), youtube_url | author (disabled, defaults to auth user), classification, category, tags (inline create), header_image (1000×600 5:3 crop), featured_image (1000×600 5:3 crop)
-- **Table**: header_image (click-to-preview modal), title, author, classification, category, tags, created_at
-- **Filters**: classification, category
-- **Infolist**: header_image + featured_image (both click-to-preview modal), title, slug, excerpt, content (`.fi-content-prose` prose styling), youtube_url, author/classification/category/tags, timestamps
-- **Relation Managers**: ImageAttachmentsRelationManager, FileAttachmentsRelationManager, LinkAttachmentsRelationManager
+- **Form** (2-col): title (auto-slug with date prefix), slug (readOnly), excerpt, RichEditor, youtube_url | author, **Publishing section** (Published toggle + Featured toggle), classification, category, tags (inline create), header_image, featured_image
+- **Table**: header_image (preview modal), title, **Published** (ToggleColumn — inline toggle), **Featured** (IconColumn star), **Views** (TextColumn with eye icon), author, classification, category, tags, created_at
+- **Filters**: Published (TernaryFilter), Featured (TernaryFilter), classification, category
+- **Infolist**: images, title, slug, excerpt, content (prose styled), youtube_url | author, classification, category, published (IconEntry), featured (IconEntry), tags | timestamps + **views count**
+- **Relation Managers**: ImageAttachments, FileAttachments, LinkAttachments
 - **Pages**: List, Create, View, Edit
 
 ### `ContentCategoryResource` — `app/Filament/Resources/ContentCategoryResource.php`
 - Nav group: `Content Management`, icon: `heroicon-o-folder`, sort: 4
-- **Form**: name (auto-slug), slug (readOnly)
+- **Form**:
+  - *Category Details*: name (auto-slug live), slug (readOnly), description (Textarea, max 500 chars, full-width)
+  - *Media*: icon (searchable Select of all 1,288 Heroicons), image (FileUpload — PNG, 1:1, 100×100px auto-resize, max 1MB)
+- **Table**: image (ImageColumn 40px), icon (inline SVG via `svg()->toHtml()` + HtmlString to bypass Filament sanitiser), name, slug, description (toggleable, hidden by default)
 - **Pages**: List, Create, Edit
 
 ### `ContentClassificationResource` — `app/Filament/Resources/ContentClassificationResource.php`
 - Nav group: `Content Management`, icon: `heroicon-o-tag`, sort: 3
-- **Form**: name (auto-slug), slug (readOnly)
+- **Form**:
+  - *Classification Details*: name (auto-slug live), slug (readOnly)
+  - *Media*: icon (searchable Heroicon Select), image (FileUpload — PNG, 1:1, 100×100px, max 1MB)
+- **Table**: image (ImageColumn), icon (inline SVG), name, slug
+- **Pages**: List, Create, Edit
+
+### `TagResource` — `app/Filament/Resources/Tags/TagResource.php`
+- Nav group: `Content Management`, icon: `heroicon-o-hashtag`, sort: 5
+- Split into separate schema/table files (`Tags/Schemas/TagForm.php`, `Tags/Tables/TagsTable.php`)
+- **Form** (*Tag Details*): name (live auto-slug), slug (readOnly, unique)
+- **Table**: name, slug, articles count (amber badge, `withCount('contents')` via `modifyQueryUsing`), created_at
 - **Pages**: List, Create, Edit
 
 ---
 
 ## Relation Managers
 
-### `EducationHistoryRelationManager`
-`app/Filament/Resources/UserResource/RelationManagers/EducationHistoryRelationManager.php`
-- Relationship: `educationHistory` (User → UserEducation)
-- Form: institution, degree, field_of_study, start_year, end_year, gpa, description, certificate_path (PDF/image, 2MB)
-- Table: institution, degree, field, period ("2018 – 2022" or "2020 – Present"), gpa
-- Reorderable by `order`
+### `EducationHistoryRelationManager` / `PublicationsRelationManager`
+_(unchanged — see previous version)_
 
-### `PublicationsRelationManager`
-`app/Filament/Resources/UserResource/RelationManagers/PublicationsRelationManager.php`
-- Relationship: `publications` (User → UserPublication)
-- Form: title, type (Select), publisher, year, isbn, doi, url, description, file_path (PDF/image, 5MB)
-- Table: title, type (color-coded badge), publisher, year
-- Type colors: book=green, journal_article=blue, research_paper=yellow, conference_paper=red, other=gray
-- Reorderable by `order`
+### `ImageAttachmentsRelationManager` / `FileAttachmentsRelationManager` / `LinkAttachmentsRelationManager`
+_(unchanged — see previous version)_
 
-### `ImageAttachmentsRelationManager`
-`app/Filament/Resources/ContentResource/RelationManagers/ImageAttachmentsRelationManager.php`
-- Relationship: `imageAttachments` (Content → ContentImage)
-- Form: path (FileUpload, image editor, auto-resize 1000px width contain), caption
-- Table: path (ImageColumn, click-to-preview modal, max-height 700px), caption, order
-- Reorderable by `order`
+---
 
-### `FileAttachmentsRelationManager`
-`app/Filament/Resources/ContentResource/RelationManagers/FileAttachmentsRelationManager.php`
-- Relationship: `fileAttachments` (Content → ContentFile)
-- Form: path (FileUpload, PDF/Office docs, 2MB), original_name
-- Table: original_name, file type (extension badge), order
+## Authorization / Policies
 
-### `LinkAttachmentsRelationManager`
-`app/Filament/Resources/ContentResource/RelationManagers/LinkAttachmentsRelationManager.php`
-- Relationship: `linkAttachments` (Content → ContentLink)
-- Form: url, label
-- Table: label, url (copyable), order
+Policies in `app/Policies/`. Both registered via auto-discovery AND explicitly in `AppServiceProvider` for cases where auto-discovery fails (third-party models).
+
+| Policy | Model | Notes |
+|---|---|---|
+| `ContentPolicy` | `Content` | Auto-discovered |
+| `ContentCategoryPolicy` | `ContentCategory` | Auto-discovered |
+| `ContentClassificationPolicy` | `ContentClassification` | Auto-discovered |
+| `TagPolicy` | `Tag` | Auto-discovered + explicit `Gate::policy()` |
+| `MenuPolicy` | `Datlechin\...\Menu` | Third-party — explicit `Gate::policy()` required |
+| `RolePolicy` | `Spatie\...\Role` | Explicit registration |
+
+All policies delegate to `$authUser->can('Action:ModelName')` (Spatie permission names).
+
+**`canAccessPanel()`** returns `true` for all authenticated users. Users without roles see only the Dashboard — FilamentShield blocks all resource navigation via `viewAny` policy checks.
 
 ---
 
 ## Panel Configuration
 `app/Providers/Filament/AdminPanelProvider.php`
 
-- Path: `/admin`, default panel, login enabled
+- Path: `/admin`, default panel, login + registration enabled
 - Primary color: Amber
 - Plugins: `FilamentShieldPlugin` (RBAC), `FilamentMenuBuilderPlugin` (dynamic menus)
-- Custom CSS: `public/css/filament-admin.css` registered via `Css::make()->relativePublicPath()`
+- Custom CSS: `public/css/filament-admin.css`
+
+`AppServiceProvider::boot()` also registers:
+- `Gate::policy()` for Tag and Menu models
+- `View::composer('layouts.front', ...)` — injects `$navMenuItems` (from "Header Menu - Top Right" DB menu) into every frontend page
 
 ---
 
-## Custom Assets
+## Frontend
 
-### `public/css/filament-admin.css`
-Scoped typography styles for `.fi-content-prose` class applied to the content RichEditor output in the Content infolist. Styles headings (h1–h4), paragraphs, lists, bold/italic, links (amber), blockquotes, inline code, and code blocks. Includes dark mode overrides.
+### Routes — `routes/web.php`
+
+| Method | URI | Name | Controller method |
+|---|---|---|---|
+| GET | `/` | `home` | `HomeController@index` |
+| GET | `/search` | `search` | `HomeController@search` |
+| GET | `/categories/{slug}` | `category.show` | `HomeController@category` |
+| GET | `/classifications/{slug}` | `classification.show` | `HomeController@classification` |
+| GET | `/articles/{slug}` | `content.show` | `HomeController@show` |
+
+### `HomeController` — `app/Http/Controllers/HomeController.php`
+
+| Method | Purpose |
+|---|---|
+| `index()` | Homepage — featured slider, paginate(9) latest, categories, classifications, popular (top 5 by views), total article count; supports `?search=`, `?category=`, `?classification=` |
+| `search()` | Search page — paginate(12), searches title/excerpt/category/classification/tags; random category suggestions for empty state |
+| `category()` | Dedicated category page — paginate(9) by category, fetches other categories |
+| `classification()` | Dedicated classification page — paginate(9) by classification, fetches other classifications |
+| `show()` | Article detail — session-deduplicated view counter (`viewed_content_{id}`), 3 related articles from same category/classification |
+
+### Views
+
+| Path | Description |
+|---|---|
+| `resources/views/layouts/front.blade.php` | Shared frontend layout — navbar (dynamic from FilamentMenuBuilder "Header Menu - Top Right"), footer with quick links |
+| `resources/views/welcome.blade.php` | Homepage — hero slider, search section, categories, latest content (parallax bg), classifications, most popular |
+| `resources/views/search.blade.php` | Search results — keyword highlighting, empty state with category suggestions |
+| `resources/views/category/show.blade.php` | Category detail — dark header with image/name/description, content grid, other categories |
+| `resources/views/classification/show.blade.php` | Classification detail — dark header, content grid, other classifications |
+| `resources/views/content/show.blade.php` | Article detail — title → badges → image → sidebar (author, reading time, views, date) → prose content → attachments → related articles |
+| `resources/views/errors/layout.blade.php` | Shared error page layout (standalone, no DB) |
+| `resources/views/errors/{404,403,500,503,419,429}.blade.php` | Individual error pages |
+
+### Frontend Features
+- **Hero slider** — up to 5 featured+published content items; Alpine.js auto-advance (6s), prev/next arrows, dot navigation, Preview modal
+- **Search section** — article/category/classification counts, redirects to `/search?q=`
+- **Browse by Category** — 4-col grid, first card featured (2-col span), icon glow ring, description, dot grid texture
+- **Latest Content** — search + filter, paginate(9), parallax background image (`storage/background/bg-01.jpg`)
+- **Classifications** — dark `#4B2E2B` section, 4-col horizontal cards with amber left-border, icon + image thumbnail
+- **Most Popular** — featured #1 full-bleed card + ranked list #2–5 with staggered slide-in animation
+- **Dark / Light mode** — Alpine.js toggle, `localStorage` persistence, flash prevention script
+- **Card animations** — `IntersectionObserver` staggered entrance (opacity + translateY)
+- **Page view tracking** — session-deduplicated, stored in `contents.views`
+- **Error pages** — 15-second countdown ring (SVG + Alpine.js) auto-redirects to `/`; dark mode aware
 
 ---
 
@@ -278,7 +335,25 @@ All uploads use Laravel's `public` disk (`storage/app/public/`, symlinked to `pu
 | UserPublication | file_path | `user-publications/` |
 | Content | header_image | `content-headers/` |
 | Content | featured_image | `content-featured/` |
+| ContentCategory | image | `content-categories/` |
+| ContentClassification | image | `content-classifications/` |
 | ContentImage | path | `content-images/` |
 | ContentFile | path | `content-files/` |
+| — | — | `background/` — static parallax images |
 
-All file fields auto-delete from storage via model `booted()` hooks on record update (if field changes) and on record delete.
+All file fields auto-delete via model `booted()` hooks on record update (field changed) and delete.
+
+---
+
+## Custom Assets
+
+### `public/css/filament-admin.css`
+Scoped typography for `.fi-content-prose` applied to the RichEditor output in the Content infolist. Styles headings, paragraphs, lists, links (amber), blockquotes, code blocks, images. Includes dark mode overrides.
+
+### `resources/css/app.css`
+Frontend Tailwind CSS. Includes:
+- `@variant dark` (class-based dark mode)
+- Animate-fade-up keyframes for hero
+- `.prose-content` — article body typography (headings, links, blockquotes, code, images)
+- Scrollbar styling (warm palette)
+- `::selection` color (`#8C5A3C` background)

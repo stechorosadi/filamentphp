@@ -1,6 +1,6 @@
 # Documentation
 
-Operational and developer guide for the Filament CMS admin panel.
+Operational and developer guide for the Filament CMS admin panel and public frontend.
 For technical internals (schema, models, resources) see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ---
@@ -11,9 +11,10 @@ For technical internals (schema, models, resources) see [ARCHITECTURE.md](ARCHIT
 2. [Installation](#installation)
 3. [Configuration](#configuration)
 4. [Roles & Permissions](#roles--permissions)
-5. [Features Guide](#features-guide)
-6. [Extending the App](#extending-the-app)
-7. [Deployment](#deployment)
+5. [Admin Panel Features](#admin-panel-features)
+6. [Public Frontend](#public-frontend)
+7. [Extending the App](#extending-the-app)
+8. [Deployment](#deployment)
 
 ---
 
@@ -26,7 +27,7 @@ For technical internals (schema, models, resources) see [ARCHITECTURE.md](ARCHIT
 | Node.js | 18 |
 | Composer | 2.x |
 
-Required PHP extensions: `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `ctype`, `json`, `bcmath`, `fileinfo`, `gd` (for image resizing)
+Required PHP extensions: `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `ctype`, `json`, `bcmath`, `fileinfo`, `gd`
 
 ---
 
@@ -37,7 +38,6 @@ Required PHP extensions: `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`,
 ```bash
 git clone <repo-url>
 cd filamentphp
-
 composer install
 npm install
 ```
@@ -49,13 +49,11 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Edit `.env` with your database and app settings (see [Configuration](#configuration)).
-
 ### 3. Database
 
 ```bash
 php artisan migrate
-php artisan db:seed   # optional: seed roles and initial admin user
+php artisan db:seed   # optional: seeds roles and initial admin
 ```
 
 ### 4. Storage symlink
@@ -63,8 +61,6 @@ php artisan db:seed   # optional: seed roles and initial admin user
 ```bash
 php artisan storage:link
 ```
-
-This symlinks `storage/app/public/` to `public/storage/` so uploaded files are web-accessible.
 
 ### 5. Build frontend assets
 
@@ -77,7 +73,7 @@ npm run dev          # development with hot reload
 
 ```bash
 php artisan shield:generate --all
-php artisan shield:super-admin --user=1   # make user ID 1 a super admin
+php artisan shield:super-admin --user=1
 ```
 
 ---
@@ -102,16 +98,44 @@ FILESYSTEM_DISK=public
 
 ### Panel URL
 
-The admin panel is accessible at `/admin`. To change this, update the `->path()` value in:
-`app/Providers/Filament/AdminPanelProvider.php`
+`app/Providers/Filament/AdminPanelProvider.php` → `->path('admin')`
 
-```php
-->path('admin')   // change 'admin' to your preferred path
+### Navigation Menu
+
+The public frontend navbar is managed via **Filament → Menu Builder → Header Menu - Top Right**. Add, remove, or reorder items there without touching code. Items support custom titles, URLs, and link targets (`_self` / `_blank`).
+
+---
+
+## Roles & Permissions
+
+### Available Roles
+
+| Role | Description |
+|---|---|
+| `super_admin` | Full access to all resources and features |
+| `Content Manager` | Access limited to Content CRUD (12 permissions) |
+| *(no role)* | Can log in and see the Dashboard only — no resource access |
+
+`canAccessPanel()` returns `true` for all authenticated users. FilamentShield policies block resource access based on assigned permissions.
+
+### Setting Up Shield
+
+```bash
+php artisan shield:generate --all
+php artisan shield:super-admin --user={id}
+```
+
+### Assigning Roles
+
+**Via admin panel:** Users → edit user → Roles field
+
+**Via Tinker:**
+```bash
+php artisan tinker
+App\Models\User::find(1)->assignRole('Content Manager');
 ```
 
 ### File Storage
-
-All uploads use Laravel's `public` disk. Files are stored under `storage/app/public/` and served from `public/storage/` via the symlink.
 
 Upload directories (all relative to `storage/app/public/`):
 
@@ -122,117 +146,32 @@ Upload directories (all relative to `storage/app/public/`):
 | Publication files | `user-publications/` |
 | Content header images | `content-headers/` |
 | Content featured images | `content-featured/` |
+| Category images | `content-categories/` |
+| Classification images | `content-classifications/` |
 | Content image attachments | `content-images/` |
 | Content file attachments | `content-files/` |
+| Parallax background images | `background/` |
 
 > Files are automatically deleted from storage when the associated record is updated (field changed) or deleted.
 
 ---
 
-## Roles & Permissions
-
-### Available Roles
-
-| Role | Description |
-|---|---|
-| `super_admin` | Full access to everything, bypasses all permission checks |
-| `admin` | Access to panel, subject to Shield permission policies |
-
-Both roles can log into the admin panel. Access is controlled in `User::canAccessPanel()`.
-
-### Setting Up Shield
-
-After running migrations, generate permissions for all resources:
-
-```bash
-php artisan shield:generate --all
-```
-
-This creates permission records for every Filament resource (e.g. `view_user`, `create_content`, `delete_content_category`, etc.).
-
-### Assigning Roles
-
-**Via the admin panel:**
-1. Go to **Users** → edit a user
-2. Select one or more roles in the **Roles** field
-
-**Via Artisan:**
-```bash
-php artisan shield:super-admin --user={id}
-```
-
-**Via Tinker:**
-```bash
-php artisan tinker
-$user = App\Models\User::find(1);
-$user->assignRole('admin');
-```
-
----
-
-## Features Guide
+## Admin Panel Features
 
 ### Users
 
 **Location:** Admin panel → Users
 
-Each user has a profile with avatar, name, email, and roles. Users can also have **Education History** and **Publications** entries managed via relation manager tabs on the edit/view page.
-
 **Creating a user:**
-1. Click **New User**
-2. Fill in name, email, roles, and upload an avatar (optional)
-3. Set a password — minimum 8 characters
-4. Save
+1. Click **New User** → fill name, email, roles, optional avatar
+2. Set a password (min 8 characters)
 
-**Changing a password (edit page):**
-- Enter the current password, new password, and confirmation
-- Leave all three blank to keep the existing password
+**Changing a password:**
+- **super_admin editing any user:** sees only New Password + Confirm — no old password required
+- **Other roles editing their own profile:** must enter Current Password, New Password, Confirm
+- Leave all blank to keep the existing password
 
-**Avatar:** Uploaded images are auto-cropped to 200×200px (1:1 ratio). Displayed as a circle in the table — click to preview full size.
-
----
-
-### Education History
-
-**Location:** Users → Edit/View → Education History tab
-
-Tracks a user's academic background.
-
-| Field | Notes |
-|---|---|
-| Institution | Required — school or university name |
-| Degree / Qualification | e.g. Bachelor of Science, Diploma |
-| Field of Study | e.g. Computer Science |
-| Start Year | 4-digit year, required |
-| End Year | 4-digit year, leave blank if ongoing |
-| GPA / Grade | Free text, e.g. "3.8/4.0" or "Distinction" |
-| Description | Optional notes or achievements |
-| Certificate | Upload PDF or image (max 2MB) |
-
-Entries can be **dragged to reorder** using the handle on the left of each row.
-
----
-
-### Publications
-
-**Location:** Users → Edit/View → Publications tab
-
-Tracks books, journal articles, research papers, and conference papers.
-
-| Field | Notes |
-|---|---|
-| Title | Required |
-| Type | Book, Journal Article, Research Paper, Conference Paper, Other |
-| Publisher / Journal | Name of publisher or journal |
-| Year Published | 4-digit year |
-| ISBN | Optional identifier |
-| DOI | Optional digital object identifier |
-| URL | Optional link to publication |
-| Description / Abstract | Optional summary |
-| File / Cover | Upload PDF or image (max 5MB) |
-
-Publication type is displayed as a **color-coded badge** in the table.
-Entries can be **dragged to reorder**.
+**Avatar:** Auto-cropped to 200×200px (1:1). Click the avatar in the table to preview full size.
 
 ---
 
@@ -240,58 +179,21 @@ Entries can be **dragged to reorder**.
 
 **Location:** Admin panel → Content Management → Contents
 
-Rich content with images, classifications, tags, and media attachments.
-
 **Creating content:**
-1. Click **New Content**
-2. Fill in title — the slug is auto-generated as `YYYY-MM-DD-your-title`
-3. Write content in the RichEditor (supports bold, italic, lists, links, images)
-4. Optionally add excerpt, YouTube embed URL, classification, category, and tags
-5. Upload a header image and/or featured image (auto-resized to 1000×600px, 5:3 ratio)
-6. Save — then manage image, file, and link attachments from the tabs below
+1. **New Content** → title (slug auto-generated as `YYYY-MM-DD-your-title`)
+2. Write in the RichEditor, add excerpt, optional YouTube embed URL
+3. Select classification, category, tags (can create tags inline)
+4. Upload header image and/or featured image (auto-resized 1000×600px, 5:3 crop)
+5. Set **Published** toggle (makes content visible on the frontend)
+6. Set **Featured** toggle (pins to the homepage hero slider — requires a featured image)
+7. Save — then manage image, file, and link attachments from the relation manager tabs
 
-**Header / Featured Images:** Uploaded with an image editor for cropping. Auto-resized to 1000×600px cover mode.
+**Published / Featured toggles:**
+- `Published` — content only appears on the frontend when this is ON
+- `Featured` — content appears in the hero slider when ON AND a `featured_image` is uploaded
+- Both can be toggled inline in the content table without opening the edit page
 
-**Content display:** On the view page, the `content` field is rendered as HTML with full prose typography styling (headings, lists, code blocks, links).
-
----
-
-### Image Attachments
-
-**Location:** Contents → Edit/View → Image Attachments tab
-
-Upload images linked to a content item.
-
-- Accepted: JPEG, PNG (max 1MB each)
-- Images auto-resize to 1000px wide (contain mode, no upscaling)
-- Built-in **image editor** for cropping/rotating before save
-- Add an optional **caption** per image
-- Click any image thumbnail to **preview full size** in a modal
-- Drag rows to **reorder**
-
----
-
-### File Attachments
-
-**Location:** Contents → Edit/View → File Attachments tab
-
-Upload documents linked to a content item.
-
-- Accepted: PDF, Word (`.doc`, `.docx`), Excel (`.xls`, `.xlsx`), PowerPoint (`.ppt`, `.pptx`) — max 2MB
-- Set a **Display Name** shown in the table (separate from the filename)
-- File type (extension) is shown as a badge in the table
-
----
-
-### Link Attachments
-
-**Location:** Contents → Edit/View → Link Attachments tab
-
-Add external URLs linked to a content item.
-
-- Enter a **URL** (validated as a valid URL)
-- Optionally add a **Label** (display text)
-- URLs are shown truncated with a **copy** button in the table
+**Page Views:** Automatically tracked — each unique visitor session increments the counter once per article. Visible in the table and infolist.
 
 ---
 
@@ -299,7 +201,11 @@ Add external URLs linked to a content item.
 
 **Location:** Admin panel → Content Management → Categories
 
-Simple name + auto-generated slug. Used to group content broadly.
+Each category has:
+- **Name** — auto-generates a URL slug
+- **Description** — short text describing the scope/topics (max 500 chars); shown on the public category page and homepage cards
+- **Icon** — pick any Heroicon from the searchable dropdown (stored as `heroicon-o-name`)
+- **Image** — PNG, 1:1 ratio, 100×100px, max 1MB; shown as a thumbnail in admin and on the homepage
 
 ---
 
@@ -307,13 +213,99 @@ Simple name + auto-generated slug. Used to group content broadly.
 
 **Location:** Admin panel → Content Management → Classifications
 
-Simple name + auto-generated slug. Used to classify content by type or theme.
+Each classification has:
+- **Name** — auto-generates slug
+- **Icon** — searchable Heroicon picker
+- **Image** — PNG, 1:1, 100×100px, max 1MB
 
 ---
 
 ### Tags
 
-Tags are created **inline** when editing content via the Tags field — no separate management page is needed. Type a new tag name and select "Create" from the dropdown.
+**Location:** Admin panel → Content Management → Tags
+
+Tags can be created here **or inline** when editing content. Each tag has name + auto-slug. The table shows how many articles use each tag.
+
+---
+
+### Menu Builder
+
+**Location:** Admin panel → Menu Builder
+
+Manages the public frontend navigation. The navbar reads from the menu named **"Header Menu - Top Right"**.
+
+To update the navbar:
+1. Open **Header Menu - Top Right**
+2. Add, edit, or reorder menu items
+3. Save — changes appear immediately on the frontend (no rebuild needed)
+
+Each menu item supports: Title, URL (relative path or full URL), Link Target (`_self` / `_blank`), Icon.
+
+---
+
+### Education History & Publications
+
+**Location:** Users → Edit/View → tabs
+
+_(See original documentation — these features are unchanged.)_
+
+---
+
+### Image / File / Link Attachments
+
+**Location:** Contents → Edit/View → tabs
+
+_(See original documentation — these features are unchanged.)_
+
+---
+
+## Public Frontend
+
+### Homepage (`/`)
+
+| Section | Description |
+|---|---|
+| **Hero Slider** | Up to 5 featured+published articles; auto-advances every 6s; Preview modal shows excerpt |
+| **Search** | Prominent search bar with total article/category/classification counts; redirects to `/search` |
+| **Browse by Category** | 4-col grid; first category is "featured" spanning 2 cols; shows icon, description, article count |
+| **Latest Content** | Paginated grid (9/page) with search + filter support; parallax background image |
+| **Classifications** | Dark warm section; 4-col horizontal cards with icon + image thumbnail |
+| **Most Popular** | Featured #1 full-bleed card + ranked list #2–5 sorted by views |
+
+### Search Page (`/search?q=`)
+
+- Searches: title, excerpt, category name, classification name, tag names
+- Keyword highlighted in yellow in result titles
+- Empty state shows 6 random categories as suggestions
+- Paginated (12/page)
+
+### Category Page (`/categories/{slug}`)
+
+- Header: category image, name, description, article count
+- 3-col paginated content grid (9/page)
+- Other categories shown at the bottom for exploration
+
+### Classification Page (`/classifications/{slug}`)
+
+- Header: classification image, name, article count
+- 3-col paginated content grid (9/page)
+- Other classifications at the bottom
+
+### Article Detail (`/articles/{slug}`)
+
+- Breadcrumb → title → tag/category badges → header image → two-column layout
+- Left sidebar (sticky on desktop): author avatar, reading time (auto-calculated), views, published date
+- Right: excerpt, rich content, YouTube embed, gallery, downloads, related links
+- Related articles (same category/classification) at the bottom
+
+### Error Pages
+
+Custom error pages for 404, 403, 500, 503, 419, 429:
+- Match site colour palette with dark/light mode support
+- Giant watermark error code, friendly icon, title, and human-readable description
+- **15-second SVG countdown ring** auto-redirects to homepage
+- Buttons: Go to Homepage, Go Back (when referrer exists), Search
+- Standalone — no database queries, safe for 500/503 scenarios
 
 ---
 
@@ -321,79 +313,50 @@ Tags are created **inline** when editing content via the Tags field — no separ
 
 ### Adding a New Filament Resource
 
-1. Create the model and migration:
 ```bash
 php artisan make:model MyModel -m
-```
-
-2. Create the Filament resource:
-```bash
 php artisan make:filament-resource MyModel --generate
+php artisan shield:generate --all   # generate permissions for the new resource
 ```
 
-3. Customize `form()`, `table()`, and `infolist()` in the generated resource file.
-
-4. Set navigation group and icon in the resource class:
-```php
-protected static ?string $navigationGroup = 'Content Management';
-protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-document';
-```
-
----
-
-### Adding a New Relation Manager
-
-Follow the pattern in any existing relation manager (e.g. `ImageAttachmentsRelationManager`):
-
-1. Create the manager file in `app/Filament/Resources/{Resource}/RelationManagers/`
-2. Set `protected static string $relationship` to match the Eloquent method name on the parent model
-3. Define `form()` and `table()` methods
-4. Register it in the parent resource's `getRelations()`:
-
-```php
-public static function getRelations(): array
-{
-    return [
-        RelationManagers\YourRelationManager::class,
-    ];
-}
-```
-
-5. Add the corresponding `HasMany` relationship on the parent model.
-
----
+Set navigation group and icon in the resource class, then assign permissions to roles via the Shield panel.
 
 ### Adding a New Upload Field with Auto-Cleanup
 
-1. Add the column to your migration:
+Follow the pattern in `ContentCategory::booted()`:
+
 ```php
-$table->string('file_path')->nullable();
+static::updating(function (MyModel $record): void {
+    if ($record->isDirty('file_path') && $record->getOriginal('file_path')) {
+        Storage::disk('public')->delete($record->getOriginal('file_path'));
+    }
+});
+static::deleting(function (MyModel $record): void {
+    if ($record->file_path) {
+        Storage::disk('public')->delete($record->file_path);
+    }
+});
 ```
 
-2. Add auto-cleanup to the model's `booted()` method (same pattern as all existing models):
-```php
-protected static function booted(): void
-{
-    static::updating(function (MyModel $record): void {
-        if ($record->isDirty('file_path') && $record->getOriginal('file_path')) {
-            Storage::disk('public')->delete($record->getOriginal('file_path'));
-        }
-    });
+### Adding a New Frontend Route
 
-    static::deleting(function (MyModel $record): void {
-        if ($record->file_path) {
-            Storage::disk('public')->delete($record->file_path);
-        }
-    });
-}
-```
+1. Add route to `routes/web.php`
+2. Add controller method to `HomeController`
+3. Create view in `resources/views/` extending `layouts.front`
+4. Wire any navbar links via Menu Builder
 
-3. Add a `FileUpload` component in the form:
-```php
-FileUpload::make('file_path')
-    ->disk('public')
-    ->directory('your-directory')
-    ->maxSize(2048),
+### Adding a New Error Page
+
+Create `resources/views/errors/{code}.blade.php` extending `errors.layout`:
+
+```blade
+@extends('errors.layout')
+@section('error_code', '422')
+@section('error_title', 'Unprocessable Content')
+@section('error_description', 'The submitted data was invalid.')
+@section('error_icon')
+    <svg ...>...</svg>
+@endsection
 ```
 
 ---
@@ -410,11 +373,10 @@ php artisan route:cache
 php artisan view:cache
 php artisan migrate --force
 php artisan storage:link
+php artisan shield:generate --all   # if new resources were added
 ```
 
 ### Environment
-
-Set these in your production `.env`:
 
 ```env
 APP_ENV=production
@@ -424,29 +386,7 @@ APP_URL=https://yourdomain.com
 
 ### File permissions
 
-Ensure the web server can write to:
-- `storage/`
-- `bootstrap/cache/`
-
 ```bash
 chmod -R 775 storage bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache
 ```
-
-### Running migrations in production
-
-Always back up the database before migrating:
-
-```bash
-php artisan migrate --force
-```
-
-### Queue (if applicable)
-
-If you add queued jobs or notifications, run a queue worker:
-
-```bash
-php artisan queue:work --daemon
-```
-
-Use a process manager (Supervisor) to keep it running.
