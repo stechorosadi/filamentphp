@@ -45,7 +45,7 @@
                      class="ml-5 h-5 w-5 shrink-0 self-center text-amber-400">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                 </svg>
-                <input type="text" name="q" value="{{ $query }}"
+                <input type="text" name="q" value="{{ $query }}" maxlength="100"
                        placeholder="Search articles, topics, or keywords…"
                        autofocus
                        class="flex-1 bg-transparent px-4 py-4 text-base text-[#FFF8D4] placeholder-[#8C6040] focus:outline-none">

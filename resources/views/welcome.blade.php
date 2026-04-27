@@ -304,7 +304,7 @@
                      class="ml-5 h-5 w-5 shrink-0 self-center text-amber-400">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                 </svg>
-                <input type="text" name="q" value="{{ $search }}"
+                <input type="text" name="q" value="{{ $search }}" maxlength="100"
                        placeholder="Search articles, topics, or keywords…"
                        class="flex-1 bg-transparent px-4 py-4 text-base text-[#FFF8D4] placeholder-[#8C6040] focus:outline-none">
                 <button type="submit"
@@ -533,7 +533,7 @@
                          class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8C6040] dark:text-[#C4A080] pointer-events-none">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                     </svg>
-                    <input type="text" name="q" value="{{ $search }}" placeholder="Search articles…"
+                    <input type="text" name="q" value="{{ $search }}" maxlength="100" placeholder="Search articles…"
                            class="w-full rounded-xl border border-[#DDD090] dark:border-[#6B4540] bg-[#FFFEF0] dark:bg-[#5C3835] pl-9 pr-4 py-2.5 text-sm text-[#2C1A0E] dark:text-[#FFF8D4] placeholder-[#A87850] dark:placeholder-[#C4A080] focus:outline-none focus:border-amber-500 dark:focus:border-[#8C5A3C] transition-colors">
                 </div>
                 <button type="submit" class="rounded-xl bg-amber-600 dark:bg-[#8C5A3C] px-4 py-2.5 text-sm font-semibold text-white hover:bg-amber-700 dark:hover:bg-[#A87050] transition-colors shrink-0">Search</button>

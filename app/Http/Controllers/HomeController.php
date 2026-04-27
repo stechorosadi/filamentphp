@@ -11,7 +11,7 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        $search = request()->string('search')->trim()->value();
+        $search = mb_substr(request()->string('search')->trim()->value(), 0, 100);
         $categoryId = request()->integer('category') ?: null;
         $classificationId = request()->integer('classification') ?: null;
 
@@ -62,7 +62,7 @@ class HomeController extends Controller
 
     public function search(): View
     {
-        $query = request()->string('q')->trim()->value();
+        $query = mb_substr(request()->string('q')->trim()->value(), 0, 100);
 
         $results = Content::with(['user', 'category', 'classification'])
             ->where('published', true)
