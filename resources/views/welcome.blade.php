@@ -630,13 +630,98 @@
     </div>
 </section>
 
+{{-- ─────────────────────────────────────────── --}}
+{{-- CLASSIFICATIONS --}}
+{{-- ─────────────────────────────────────────── --}}
+@if($classifications->isNotEmpty())
+<section class="relative py-16 overflow-hidden bg-[#4B2E2B] dark:bg-[#2E1A18]">
+    {{-- Subtle grid texture --}}
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff07_1px,transparent_1px),linear-gradient(to_bottom,#ffffff07_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
+    {{-- Accent glows --}}
+    <div class="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-amber-600/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[#8C5A3C]/25 blur-3xl pointer-events-none"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        {{-- Section heading --}}
+        <div class="mb-10">
+            <div class="flex items-center gap-3 mb-1.5">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-600/30 bg-amber-600/15">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-amber-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-[#FFF8D4]">Classifications</h2>
+            </div>
+            <p class="ml-12 text-sm text-[#C4A080]">Browse content by type and format</p>
+        </div>
+
+        {{-- Cards --}}
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            @foreach($classifications as $classification)
+            <a href="{{ route('home', ['classification' => $classification->id]) }}"
+               class="card-animate group flex items-center gap-3 rounded-2xl p-3
+                      bg-[#5C3835]/50 backdrop-blur-sm
+                      border border-[#6B4540]/60 border-l-2 border-l-amber-600/50
+                      hover:bg-[#5C3835] hover:border-l-amber-400
+                      hover:shadow-[0_8px_32px_rgba(0,0,0,0.35)]
+                      hover:-translate-y-1 transition-all duration-300">
+
+                {{-- Icon --}}
+                <div class="relative shrink-0">
+                    <div class="absolute inset-0 rounded-xl bg-amber-500/20 scale-110 group-hover:scale-125 blur-sm transition-transform duration-500 pointer-events-none"></div>
+                    <div class="relative h-10 w-10 rounded-xl bg-[#6B4540] flex items-center justify-center
+                                group-hover:bg-amber-600 transition-colors duration-300">
+                        @if($classification->icon)
+                            {!! svg($classification->icon, '', ['style' => 'width:1rem;height:1rem;color:#fbbf24'])->toHtml() !!}
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem;color:#fbbf24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
+                            </svg>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Text --}}
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-xs font-bold text-[#FFF8D4] leading-tight truncate">{{ $classification->name }}</h3>
+                    <span class="mt-1 inline-flex items-center rounded-full bg-amber-600/20 border border-amber-600/30 px-2 py-0.5 text-xs font-semibold text-amber-400">
+                        {{ $classification->contents_count }}
+                    </span>
+                </div>
+
+                {{-- Image thumbnail --}}
+                @if($classification->image)
+                <div class="w-12 h-10 shrink-0 overflow-hidden rounded-lg border border-[#8C5A3C]/40
+                            group-hover:border-amber-600/50 transition-colors duration-300">
+                    <img src="{{ asset("storage/{$classification->image}") }}"
+                         alt="{{ $classification->name }}"
+                         loading="lazy"
+                         class="h-full w-full object-cover opacity-80 group-hover:opacity-100
+                                group-hover:scale-110 transition-all duration-300">
+                </div>
+                @else
+                {{-- Arrow when no image --}}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                     class="h-4 w-4 shrink-0 text-[#8C5A3C] group-hover:text-amber-400 group-hover:translate-x-1 transition-all duration-200">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+                </svg>
+                @endif
+            </a>
+            @endforeach
+        </div>
+
+    </div>
+</section>
+@endif
+
 <div class="h-px bg-linear-to-r from-transparent via-[#C8B870] dark:via-[#8C5A3C]/50 to-transparent"></div>
 
 {{-- ─────────────────────────────────────────── --}}
 {{-- MOST POPULAR --}}
 {{-- ─────────────────────────────────────────── --}}
 @if($popularContents->isNotEmpty())
-<section class="relative bg-[#FFFDF0] dark:bg-[#3D2220] py-16 overflow-hidden">
+<section class="relative bg-[#FFF8D4] dark:bg-[#4B2E2B] py-16 overflow-hidden">
     {{-- Decorative blobs --}}
     <div class="absolute -top-20 right-0 h-72 w-72 rounded-full bg-amber-400/10 dark:bg-amber-600/10 blur-3xl pointer-events-none"></div>
     <div class="absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-[#FFDAC4]/40 dark:bg-[#5C3835]/30 blur-3xl pointer-events-none"></div>
@@ -726,7 +811,7 @@
                    class="popular-item group flex items-center gap-4 rounded-2xl p-3.5
                           bg-[#FFFEF0] dark:bg-[#5C3835]
                           border border-[#DDD090] dark:border-[#6B4540]
-                          hover:border-amber-400 dark:hover:border-[#8C5A3C]
+                          hover:border-[#C8B870] dark:hover:border-[#8C5A3C]
                           hover:shadow-[0_4px_20px_rgba(202,138,4,0.15)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.35)]
                           hover:-translate-y-0.5 transition-all duration-300"
                    style="opacity:0;transform:translateX(20px)">
@@ -790,93 +875,6 @@
             </div>
 
         </div>
-    </div>
-</section>
-@endif
-
-<div class="h-px bg-linear-to-r from-transparent via-[#C8B870] dark:via-[#8C5A3C]/50 to-transparent"></div>
-
-{{-- ─────────────────────────────────────────── --}}
-{{-- CLASSIFICATIONS --}}
-{{-- ─────────────────────────────────────────── --}}
-@if($classifications->isNotEmpty())
-<section class="relative py-16 overflow-hidden bg-[#4B2E2B] dark:bg-[#2E1A18]">
-    {{-- Subtle grid texture --}}
-    <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff07_1px,transparent_1px),linear-gradient(to_bottom,#ffffff07_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
-    {{-- Accent glows --}}
-    <div class="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-amber-600/10 blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[#8C5A3C]/25 blur-3xl pointer-events-none"></div>
-
-    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-        {{-- Section heading --}}
-        <div class="mb-10">
-            <div class="flex items-center gap-3 mb-1.5">
-                <div class="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-600/30 bg-amber-600/15">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-amber-400">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-[#FFF8D4]">Classifications</h2>
-            </div>
-            <p class="ml-12 text-sm text-[#C4A080]">Browse content by type and format</p>
-        </div>
-
-        {{-- Cards --}}
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            @foreach($classifications as $classification)
-            <a href="{{ route('home', ['classification' => $classification->id]) }}"
-               class="card-animate group flex items-center gap-3 rounded-2xl p-3
-                      bg-[#5C3835]/50 backdrop-blur-sm
-                      border border-[#6B4540]/60 border-l-2 border-l-amber-600/50
-                      hover:bg-[#5C3835] hover:border-l-amber-400
-                      hover:shadow-[0_8px_32px_rgba(0,0,0,0.35)]
-                      hover:-translate-y-1 transition-all duration-300">
-
-                {{-- Icon --}}
-                <div class="relative shrink-0">
-                    <div class="absolute inset-0 rounded-xl bg-amber-500/20 scale-110 group-hover:scale-125 blur-sm transition-transform duration-500 pointer-events-none"></div>
-                    <div class="relative h-10 w-10 rounded-xl bg-[#6B4540] flex items-center justify-center
-                                group-hover:bg-amber-600 transition-colors duration-300">
-                        @if($classification->icon)
-                            {!! svg($classification->icon, '', ['style' => 'width:1rem;height:1rem;color:#fbbf24'])->toHtml() !!}
-                        @else
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem;color:#fbbf24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
-                            </svg>
-                        @endif
-                    </div>
-                </div>
-
-                {{-- Text --}}
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-xs font-bold text-[#FFF8D4] leading-tight truncate">{{ $classification->name }}</h3>
-                    <span class="mt-1 inline-flex items-center rounded-full bg-amber-600/20 border border-amber-600/30 px-2 py-0.5 text-xs font-semibold text-amber-400">
-                        {{ $classification->contents_count }}
-                    </span>
-                </div>
-
-                {{-- Image thumbnail --}}
-                @if($classification->image)
-                <div class="w-12 h-10 shrink-0 overflow-hidden rounded-lg border border-[#8C5A3C]/40
-                            group-hover:border-amber-600/50 transition-colors duration-300">
-                    <img src="{{ asset("storage/{$classification->image}") }}"
-                         alt="{{ $classification->name }}"
-                         loading="lazy"
-                         class="h-full w-full object-cover opacity-80 group-hover:opacity-100
-                                group-hover:scale-110 transition-all duration-300">
-                </div>
-                @else
-                {{-- Arrow when no image --}}
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                     class="h-4 w-4 shrink-0 text-[#8C5A3C] group-hover:text-amber-400 group-hover:translate-x-1 transition-all duration-200">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
-                </svg>
-                @endif
-            </a>
-            @endforeach
-        </div>
-
     </div>
 </section>
 @endif
