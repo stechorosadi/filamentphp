@@ -32,44 +32,44 @@
     $readTime  = max(1, (int) ceil($wordCount / 200));
 @endphp
 
-<main class="bg-[#ECF39E] dark:bg-[#132A13] pt-20 pb-16">
+<main class="bg-[var(--bg-primary)] pt-20 pb-16">
 <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
 
     {{-- Breadcrumb --}}
-    <nav class="mb-8 flex items-center gap-2 text-sm text-[#4F772D] dark:text-[#90A955]">
-        <a href="{{ route('home') }}" class="hover:text-[#4F772D] dark:hover:text-[#90A955] transition-colors">Home</a>
+    <nav class="mb-8 flex items-center gap-2 text-sm text-[var(--accent)]">
+        <a href="{{ route('home') }}" class="hover:text-[var(--accent)] dark:hover:text-[#90A955] transition-colors">Home</a>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3 w-3 shrink-0">
             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
         </svg>
         @if($content->category)
         <a href="{{ route('category.show', $content->category->slug) }}"
-           class="hover:text-[#4F772D] dark:hover:text-[#90A955] transition-colors">{{ $content->category->name }}</a>
+           class="hover:text-[var(--accent)] dark:hover:text-[#90A955] transition-colors">{{ $content->category->name }}</a>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3 w-3 shrink-0">
             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
         </svg>
         @endif
-        <span class="truncate text-[#31572C] dark:text-[#c8de70]">{{ \Illuminate\Support\Str::limit($content->title, 50) }}</span>
+        <span class="truncate text-[var(--text-muted)]">{{ \Illuminate\Support\Str::limit($content->title, 50) }}</span>
     </nav>
 
     {{-- Title --}}
-    <h1 class="mb-5 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#132A13] dark:text-[#ECF39E] leading-tight">
+    <h1 class="mb-5 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">
         {{ $content->title }}
     </h1>
 
     {{-- Badges row --}}
     <div class="mb-8 flex flex-wrap gap-2">
         @if($content->classification)
-        <span class="rounded-full border border-[#90A955] dark:border-[#4F772D] bg-[#c8de70] dark:bg-[#1e4a1e] px-3 py-1 text-xs font-semibold text-[#31572C] dark:text-[#90A955]">
+        <span class="rounded-full border border-[var(--accent-dim)] dark:border-[var(--accent)] bg-[var(--accent-dim)] dark:bg-[var(--bg-card)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)] dark:text-[var(--accent)]">
             {{ $content->classification->name }}
         </span>
         @endif
         @if($content->category)
-        <span class="rounded-full bg-[#4F772D] px-3 py-1 text-xs font-semibold text-white">
+        <span class="rounded-full bg-[var(--accent)] px-3 py-1 text-xs font-semibold text-white">
             {{ $content->category->name }}
         </span>
         @endif
         @foreach($content->tags as $tag)
-        <span class="rounded-full border border-[#a0c84a] dark:border-[#2a5c2a] px-3 py-1 text-xs font-medium text-[#31572C] dark:text-[#c8de70]">
+        <span class="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
             {{ $tag->name }}
         </span>
         @endforeach
@@ -95,18 +95,18 @@
 
                 {{-- Contributor --}}
                 <div>
-                    <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-[#4F772D] dark:text-[#90A955]">
+                    <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
                         Contributor
                     </p>
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-10 shrink-0 rounded-full bg-[#4F772D] dark:bg-[#4F772D] flex items-center justify-center text-sm font-bold text-white select-none">
+                        <div class="h-10 w-10 shrink-0 rounded-full bg-[var(--accent)] dark:bg-[var(--accent)] flex items-center justify-center text-sm font-bold text-white select-none">
                             {{ $initials }}
                         </div>
                         <div class="min-w-0">
-                            <p class="text-sm font-semibold text-[#132A13] dark:text-[#ECF39E] truncate">
+                            <p class="text-sm font-semibold text-[var(--text-primary)] truncate">
                                 {{ $content->user->name }}
                             </p>
-                            <p class="text-xs text-[#4F772D] dark:text-[#90A955]">
+                            <p class="text-xs text-[var(--accent)]">
                                 {{ $content->created_at->diffForHumans() }}
                             </p>
                         </div>
@@ -115,11 +115,11 @@
 
                 {{-- Reading time --}}
                 <div>
-                    <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[#4F772D] dark:text-[#90A955]">
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
                         Reading Time
                     </p>
-                    <div class="flex items-center gap-2 text-sm text-[#31572C] dark:text-[#c8de70]">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[#4F772D] dark:text-[#90A955] shrink-0">
+                    <div class="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[var(--accent)] shrink-0">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                         </svg>
                         <span>{{ $readTime }} {{ Str::plural('Minute', $readTime) }}</span>
@@ -128,11 +128,11 @@
 
                 {{-- Views --}}
                 <div>
-                    <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[#4F772D] dark:text-[#90A955]">
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
                         Views
                     </p>
-                    <div class="flex items-center gap-2 text-sm text-[#31572C] dark:text-[#c8de70]">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[#4F772D] dark:text-[#90A955] shrink-0">
+                    <div class="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[var(--accent)] shrink-0">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                         </svg>
@@ -142,11 +142,11 @@
 
                 {{-- Published date --}}
                 <div>
-                    <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[#4F772D] dark:text-[#90A955]">
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
                         Published
                     </p>
-                    <div class="flex items-center gap-2 text-sm text-[#31572C] dark:text-[#c8de70]">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[#4F772D] dark:text-[#90A955] shrink-0">
+                    <div class="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[var(--accent)] shrink-0">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5"/>
                         </svg>
                         <span>{{ $content->created_at->format('M d, Y') }}</span>
@@ -161,7 +161,7 @@
 
             {{-- Excerpt --}}
             @if($content->excerpt)
-            <p class="mb-8 text-lg leading-relaxed font-medium text-[#31572C] dark:text-[#c8de70] border-l-4 border-[#4F772D] pl-5">
+            <p class="mb-8 text-lg leading-relaxed font-medium text-[var(--text-muted)] border-l-4 border-[#4F772D] pl-5">
                 {{ $content->excerpt }}
             </p>
             @endif
@@ -179,7 +179,7 @@
             @endphp
             @if($embedUrl)
             <div class="mt-10">
-                <h3 class="mb-4 text-lg font-bold text-[#132A13] dark:text-[#ECF39E]">Video</h3>
+                <h3 class="mb-4 text-lg font-bold text-[var(--text-primary)]">Video</h3>
                 <div class="aspect-video overflow-hidden rounded-2xl shadow-lg">
                     <iframe src="{{ $embedUrl }}" class="h-full w-full" allowfullscreen loading="lazy"></iframe>
                 </div>
@@ -210,10 +210,10 @@
                  @keydown.arrow-left.window="open && prev()"
                  @keydown.arrow-right.window="open && next()">
 
-                <h3 class="mb-5 text-lg font-bold text-[#132A13] dark:text-[#ECF39E]">Gallery</h3>
+                <h3 class="mb-5 text-lg font-bold text-[var(--text-primary)]">Gallery</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     @foreach($content->imageAttachments as $index => $img)
-                    <div class="group relative cursor-zoom-in overflow-hidden rounded-xl border border-[#a0c84a] dark:border-[#2a5c2a]"
+                    <div class="group relative cursor-zoom-in overflow-hidden rounded-xl border border-[var(--border)]"
                          @click="openModal({{ $index }})">
                         <img src="{{ asset('storage/' . $img->path) }}"
                              alt="{{ $img->caption ?? 'Image' }}"
@@ -226,7 +226,7 @@
                             </svg>
                         </div>
                         @if($img->caption)
-                        <p class="px-3 py-2 text-xs text-[#4F772D] dark:text-[#90A955]">{{ $img->caption }}</p>
+                        <p class="px-3 py-2 text-xs text-[var(--accent)]">{{ $img->caption }}</p>
                         @endif
                     </div>
                     @endforeach
@@ -296,18 +296,18 @@
             {{-- File attachments --}}
             @if($content->fileAttachments->isNotEmpty())
             <div class="mt-12">
-                <h3 class="mb-5 text-lg font-bold text-[#132A13] dark:text-[#ECF39E]">Downloads</h3>
+                <h3 class="mb-5 text-lg font-bold text-[var(--text-primary)]">Downloads</h3>
                 <div class="flex flex-col gap-3">
                     @foreach($content->fileAttachments as $file)
                     <a href="{{ asset('storage/' . $file->path) }}" target="_blank" download
-                       class="flex items-center gap-4 rounded-xl border border-[#a0c84a] dark:border-[#2a5c2a] bg-[#f2fad8] dark:bg-[#1e4a1e] px-5 py-4 hover:border-[#4F772D] dark:hover:border-[#4F772D] transition-colors group">
-                        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#c8de70] dark:bg-[#2a5c2a] text-xs font-bold text-[#31572C] dark:text-[#c8de70] uppercase">
+                       class="flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-5 py-4 hover:border-[#4F772D] dark:hover:border-[#4F772D] transition-colors group">
+                        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-dim)] text-xs font-bold text-[var(--text-muted)] uppercase">
                             {{ strtoupper(pathinfo($file->path, PATHINFO_EXTENSION)) }}
                         </span>
-                        <span class="flex-1 font-medium text-[#132A13] dark:text-[#ECF39E] group-hover:text-[#31572C] dark:group-hover:text-[#90A955] transition-colors">
+                        <span class="flex-1 font-medium text-[var(--text-primary)] group-hover:text-[var(--text-muted)] dark:group-hover:text-[#90A955] transition-colors">
                             {{ $file->original_name }}
                         </span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[#4F772D] dark:text-[#90A955] group-hover:text-[#4F772D] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[var(--accent)] group-hover:text-[var(--accent)] transition-colors">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
                         </svg>
                     </a>
@@ -319,25 +319,25 @@
             {{-- Link attachments --}}
             @if($content->linkAttachments->isNotEmpty())
             <div class="mt-12">
-                <h3 class="mb-5 text-lg font-bold text-[#132A13] dark:text-[#ECF39E]">Related Links</h3>
+                <h3 class="mb-5 text-lg font-bold text-[var(--text-primary)]">Related Links</h3>
                 <div class="flex flex-col gap-3">
                     @foreach($content->linkAttachments as $link)
                     <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer"
-                       class="flex items-center gap-4 rounded-xl border border-[#a0c84a] dark:border-[#2a5c2a] bg-[#f2fad8] dark:bg-[#1e4a1e] px-5 py-4 hover:border-[#4F772D] dark:hover:border-[#4F772D] transition-colors group">
-                        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#e8f9a0] dark:bg-[#2a5c2a]">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[#4F772D] dark:text-[#90A955]">
+                       class="flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-5 py-4 hover:border-[#4F772D] dark:hover:border-[#4F772D] transition-colors group">
+                        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#e8f9a0] dark:bg-[var(--bg-alt)]">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[var(--accent)]">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"/>
                             </svg>
                         </span>
                         <div class="flex-1 min-w-0">
-                            <p class="font-medium text-[#132A13] dark:text-[#ECF39E] group-hover:text-[#31572C] dark:group-hover:text-[#90A955] transition-colors">
+                            <p class="font-medium text-[var(--text-primary)] group-hover:text-[var(--text-muted)] dark:group-hover:text-[#90A955] transition-colors">
                                 {{ $link->label ?: $link->url }}
                             </p>
                             @if($link->label)
-                            <p class="text-xs text-[#4F772D] dark:text-[#90A955] truncate">{{ $link->url }}</p>
+                            <p class="text-xs text-[var(--accent)] truncate">{{ $link->url }}</p>
                             @endif
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0 text-[#4F772D] dark:text-[#90A955]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0 text-[var(--accent)]">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
                         </svg>
                     </a>
@@ -351,28 +351,28 @@
 
     {{-- Related articles --}}
     @if($relatedContents->isNotEmpty())
-    <div class="mt-16 pt-10 border-t border-[#a0c84a] dark:border-[#2a5c2a]">
-        <h3 class="mb-6 text-xl font-bold text-[#132A13] dark:text-[#ECF39E]">You Might Also Like</h3>
+    <div class="mt-16 pt-10 border-t border-[var(--border)]">
+        <h3 class="mb-6 text-xl font-bold text-[var(--text-primary)]">You Might Also Like</h3>
         <div class="grid gap-5 sm:grid-cols-3">
             @foreach($relatedContents as $related)
             <a href="{{ route('content.show', $related->slug) }}"
-               class="group flex flex-col rounded-2xl overflow-hidden bg-[#f2fad8] dark:bg-[#1e4a1e] border border-[#a0c84a] dark:border-[#2a5c2a] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <div class="relative aspect-video overflow-hidden bg-[#c8de70] dark:bg-[#2a5c2a]">
+               class="group flex flex-col rounded-2xl overflow-hidden bg-[var(--bg-card)] border border-[var(--border)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div class="relative aspect-video overflow-hidden bg-[var(--accent-dim)]">
                     <img src="{{ asset("storage/{$related->header_image}") }}"
                          alt="{{ $related->title }}"
                          loading="lazy"
                          class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
                     @if($related->category)
-                    <span class="absolute top-2 left-2 rounded-full bg-[#4F772D]/90 px-2.5 py-0.5 text-xs font-semibold text-white">
+                    <span class="absolute top-2 left-2 rounded-full bg-[var(--accent)]/90 px-2.5 py-0.5 text-xs font-semibold text-white">
                         {{ $related->category->name }}
                     </span>
                     @endif
                 </div>
                 <div class="flex flex-1 flex-col p-4">
-                    <h4 class="mb-2 text-sm font-bold text-[#132A13] dark:text-[#ECF39E] line-clamp-2 group-hover:text-[#31572C] dark:group-hover:text-[#90A955] transition-colors">
+                    <h4 class="mb-2 text-sm font-bold text-[var(--text-primary)] line-clamp-2 group-hover:text-[var(--text-muted)] dark:group-hover:text-[#90A955] transition-colors">
                         {{ $related->title }}
                     </h4>
-                    <div class="mt-auto flex items-center justify-between text-xs text-[#4F772D] dark:text-[#90A955]">
+                    <div class="mt-auto flex items-center justify-between text-xs text-[var(--accent)]">
                         <span>{{ $related->created_at->format('M d, Y') }}</span>
                         <span class="inline-flex items-center gap-1">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
@@ -390,9 +390,9 @@
     @endif
 
     {{-- Back link --}}
-    <div class="mt-10 pt-8 border-t border-[#a0c84a] dark:border-[#2a5c2a]">
+    <div class="mt-10 pt-8 border-t border-[var(--border)]">
         <a href="{{ route('home') }}"
-           class="inline-flex items-center gap-2 text-sm font-semibold text-[#31572C] dark:text-[#c8de70] hover:text-[#31572C] dark:hover:text-[#90A955] transition-colors">
+           class="inline-flex items-center gap-2 text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-muted)] dark:hover:text-[#90A955] transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
             </svg>

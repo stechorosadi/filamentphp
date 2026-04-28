@@ -15,17 +15,25 @@
 /* ── Theme CSS custom properties (defaults; overridden by <style> in <head>) ── */
 :root {
     --bg-primary:   #ECF39E;
+    --bg-card:      #f5fce0;
+    --bg-alt:       #d4eb88;
     --text-primary: #132A13;
-    --text-muted:   #31572C;
+    --text-muted:   #5a8040;
     --accent:       #4F772D;
-    --accent-hover: #31572C;
+    --accent-dim:   #90A955;
+    --border:       #a8c864;
+    --dark-section: #1a3a1a;
 }
 :where(.dark, .dark *) {
     --bg-primary:   #132A13;
+    --bg-card:      #1e4a1e;
+    --bg-alt:       #2a5c2a;
     --text-primary: #ECF39E;
     --text-muted:   #90A955;
     --accent:       #90A955;
-    --accent-hover: #4F772D;
+    --accent-dim:   #6b8c40;
+    --border:       #2a5c2a;
+    --dark-section: #0d2010;
 }
 .site-body {
     background-color: var(--bg-primary);
