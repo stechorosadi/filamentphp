@@ -16,6 +16,12 @@ use Illuminate\Support\Facades\Storage;
     'instagram_url',
     'x_url',
     'youtube_url',
+    'color_light_bg',
+    'color_dark_bg',
+    'color_light_text',
+    'color_dark_text',
+    'color_accent',
+    'color_accent_dark',
 ])]
 class SiteSetting extends Model
 {

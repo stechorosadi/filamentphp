@@ -12,6 +12,38 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
+/* ── Theme CSS custom properties (defaults; overridden by <style> in <head>) ── */
+:root {
+    --bg-primary:   #ECF39E;
+    --text-primary: #132A13;
+    --text-muted:   #31572C;
+    --accent:       #4F772D;
+    --accent-hover: #31572C;
+}
+:where(.dark, .dark *) {
+    --bg-primary:   #132A13;
+    --text-primary: #ECF39E;
+    --text-muted:   #90A955;
+    --accent:       #90A955;
+    --accent-hover: #4F772D;
+}
+.site-body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Text selection */
+::selection {
+    background-color: var(--accent);
+    color: var(--bg-primary);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-hover); }
+
 @keyframes fade-up {
     from { opacity: 0; transform: translateY(24px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -23,43 +55,6 @@
 
 .animate-fade-up-delay-1 { animation: fade-up 0.7s ease 0.15s both; }
 .animate-fade-up-delay-2 { animation: fade-up 0.7s ease 0.3s both; }
-
-/* Text selection */
-::selection {
-    background-color: #8C5A3C;
-    color: #FFF8D4;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #FFF8D4;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #8C5A3C;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #A87050;
-}
-
-html.dark::-webkit-scrollbar-track {
-    background: #4B2E2B;
-}
-
-html.dark::-webkit-scrollbar-thumb {
-    background: #6B4540;
-    border-radius: 4px;
-}
-
-html.dark::-webkit-scrollbar-thumb:hover {
-    background: #8C5A3C;
-}
 
 /* Article prose content */
 .prose-content {

@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\SiteSetting;
 use Filament\Actions\Action;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -118,6 +119,35 @@ class ManageSiteSettings extends Page
                             ->placeholder('https://youtube.com/@yourchannel'),
                     ])
                     ->columns(1),
+
+                Section::make('Theme Colors')
+                    ->description('Customize the site color palette. Changes apply instantly — no rebuild needed.')
+                    ->schema([
+                        ColorPicker::make('color_light_bg')
+                            ->label('Light Background')
+                            ->helperText('Main page background in light mode.'),
+
+                        ColorPicker::make('color_dark_bg')
+                            ->label('Dark Background')
+                            ->helperText('Main page background in dark mode.'),
+
+                        ColorPicker::make('color_light_text')
+                            ->label('Light Text')
+                            ->helperText('Primary text color in light mode.'),
+
+                        ColorPicker::make('color_dark_text')
+                            ->label('Dark Text')
+                            ->helperText('Primary text color in dark mode.'),
+
+                        ColorPicker::make('color_accent')
+                            ->label('Accent — Light Mode')
+                            ->helperText('Buttons, links, and highlights in light mode.'),
+
+                        ColorPicker::make('color_accent_dark')
+                            ->label('Accent — Dark Mode')
+                            ->helperText('Buttons, links, and highlights in dark mode.'),
+                    ])
+                    ->columns(2),
             ]);
     }
 

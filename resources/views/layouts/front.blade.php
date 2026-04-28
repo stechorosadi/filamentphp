@@ -21,6 +21,21 @@
     <script defer src="https://unpkg.com/alpinejs@3/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
+    {{-- Dynamic theme color overrides from Site Settings --}}
+    <style>
+        :root {
+            --bg-primary:   {{ $siteSetting->color_light_bg    ?? '#ECF39E' }};
+            --text-primary: {{ $siteSetting->color_light_text  ?? '#132A13' }};
+            --accent:       {{ $siteSetting->color_accent       ?? '#4F772D' }};
+            --accent-hover: color-mix(in srgb, {{ $siteSetting->color_accent ?? '#4F772D' }} 80%, black);
+        }
+        :where(.dark, .dark *) {
+            --bg-primary:   {{ $siteSetting->color_dark_bg     ?? '#132A13' }};
+            --text-primary: {{ $siteSetting->color_dark_text   ?? '#ECF39E' }};
+            --accent:       {{ $siteSetting->color_accent_dark  ?? '#90A955' }};
+            --accent-hover: color-mix(in srgb, {{ $siteSetting->color_accent_dark ?? '#90A955' }} 80%, black);
+        }
+    </style>
 </head>
 <body
     x-data="{
@@ -34,17 +49,18 @@
         }
     }"
     x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 20 })"
-    class="bg-[#FFF8D4] dark:bg-[#4B2E2B] text-[#2C1A0E] dark:text-[#FFF8D4] transition-colors duration-300 antialiased">
+    class="site-body transition-colors duration-300 antialiased">
 
 {{-- ── NAVBAR ── --}}
 <header
-    :class="scrolled ? 'shadow-md bg-[#FFF8D4]/90 dark:bg-[#3D2220]/90 backdrop-blur' : 'bg-transparent'"
+    :class="scrolled ? 'shadow-md backdrop-blur' : 'bg-transparent'"
+    :style="scrolled ? 'background-color: color-mix(in srgb, var(--bg-primary) 90%, transparent)' : ''"
     class="fixed inset-x-0 top-0 z-50 transition-all duration-300">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
 
             {{-- Logo --}}
-            <a href="{{ route('home') }}" class="flex items-center gap-2 text-xl font-bold text-amber-600 dark:text-amber-500 tracking-tight">
+            <a href="{{ route('home') }}" class="flex items-center gap-2 text-xl font-bold text-[#4F772D] dark:text-[#4F772D] tracking-tight">
                 @if($siteSetting->logo_path)
                     <img src="{{ Storage::disk('public')->url($siteSetting->logo_path) }}" alt="{{ $siteSetting->site_title }}" class="h-8 w-auto object-contain">
                 @endif
@@ -61,20 +77,20 @@
                 <a href="{{ $href }}"
                    target="{{ $item->target === '_blank' ? '_blank' : '_self' }}"
                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
-                          {{ $active ? 'text-amber-700 dark:text-amber-400 bg-[#EDE5A8] dark:bg-[#6B4540]' : 'text-[#5C3A1E] dark:text-[#E8C9A8] hover:text-amber-700 dark:hover:text-amber-400 hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540]' }}">
+                          {{ $active ? 'text-[#31572C] dark:text-[#90A955] bg-[#c8de70] dark:bg-[#2a5c2a]' : 'text-[#31572C] dark:text-[#c8de70] hover:text-[#31572C] dark:hover:text-[#90A955] hover:bg-[#c8de70] dark:hover:bg-[#2a5c2a]' }}">
                     {{ $item->title }}
                 </a>
                 @endforeach
 
                 {{-- Divider --}}
-                <div class="w-px h-5 bg-[#C8B870] dark:bg-[#8C5A3C] mx-2"></div>
+                <div class="w-px h-5 bg-[#90A955] dark:bg-[#4F772D] mx-2"></div>
 
                 {{-- Dark toggle --}}
-                <button @click="toggleDark()" class="rounded-lg p-2 text-[#8C6040] dark:text-[#C4A080] hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540] transition-colors" aria-label="Toggle dark mode">
-                    <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-amber-400">
+                <button @click="toggleDark()" class="rounded-lg p-2 text-[#4F772D] dark:text-[#90A955] hover:bg-[#c8de70] dark:hover:bg-[#2a5c2a] transition-colors" aria-label="Toggle dark mode">
+                    <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[#90A955]">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
                     </svg>
-                    <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[#5C3A1E]">
+                    <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[#31572C]">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/>
                     </svg>
                 </button>
@@ -82,17 +98,17 @@
 
             {{-- Mobile: dark toggle + burger --}}
             <div class="flex md:hidden items-center gap-2">
-                <button @click="toggleDark()" class="rounded-lg p-2 text-[#8C6040] dark:text-[#C4A080] hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540] transition-colors" aria-label="Toggle dark mode">
-                    <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-amber-400">
+                <button @click="toggleDark()" class="rounded-lg p-2 text-[#4F772D] dark:text-[#90A955] hover:bg-[#c8de70] dark:hover:bg-[#2a5c2a] transition-colors" aria-label="Toggle dark mode">
+                    <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[#90A955]">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
                     </svg>
-                    <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[#5C3A1E]">
+                    <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[#31572C]">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/>
                     </svg>
                 </button>
 
                 {{-- Burger / X --}}
-                <button @click="mobileMenu = !mobileMenu" class="rounded-lg p-2 text-[#5C3A1E] dark:text-[#E8C9A8] hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540] transition-colors" aria-label="Toggle menu">
+                <button @click="mobileMenu = !mobileMenu" class="rounded-lg p-2 text-[#31572C] dark:text-[#c8de70] hover:bg-[#c8de70] dark:hover:bg-[#2a5c2a] transition-colors" aria-label="Toggle menu">
                     <svg x-show="!mobileMenu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
                     </svg>
@@ -108,7 +124,7 @@
             x-show="mobileMenu"
             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
-            class="md:hidden border-t border-[#DDD090] dark:border-[#6B4540] pb-4 pt-2">
+            class="md:hidden border-t border-[#a0c84a] dark:border-[#2a5c2a] pb-4 pt-2">
             <nav class="flex flex-col gap-1">
                 @foreach($navMenuItems as $item)
                 @php
@@ -119,7 +135,7 @@
                    href="{{ $href }}"
                    target="{{ $item->target === '_blank' ? '_blank' : '_self' }}"
                    class="px-4 py-3 rounded-lg text-sm font-medium transition-colors
-                          {{ $active ? 'text-amber-700 dark:text-amber-400 bg-[#EDE5A8] dark:bg-[#6B4540]' : 'text-[#5C3A1E] dark:text-[#E8C9A8] hover:text-amber-700 dark:hover:text-amber-400 hover:bg-[#EDE5A8] dark:hover:bg-[#6B4540]' }}">
+                          {{ $active ? 'text-[#31572C] dark:text-[#90A955] bg-[#c8de70] dark:bg-[#2a5c2a]' : 'text-[#31572C] dark:text-[#c8de70] hover:text-[#31572C] dark:hover:text-[#90A955] hover:bg-[#c8de70] dark:hover:bg-[#2a5c2a]' }}">
                     {{ $item->title }}
                 </a>
                 @endforeach
@@ -132,14 +148,14 @@
 @yield('content')
 
 {{-- ── FOOTER ── --}}
-<footer class="relative bg-[#4B2E2B] dark:bg-[#2E1A18] overflow-hidden">
+<footer class="relative bg-[#132A13] dark:bg-[#0d2010] overflow-hidden">
     {{-- Amber top border accent --}}
-    <div class="h-px bg-linear-to-r from-transparent via-amber-600/60 to-transparent"></div>
+    <div class="h-px bg-linear-to-r from-transparent via-[#4F772D]/60 to-transparent"></div>
 
     {{-- Background decorations --}}
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff07_1px,transparent_1px),linear-gradient(to_bottom,#ffffff07_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
-    <div class="absolute -top-16 right-0 h-56 w-56 rounded-full bg-amber-600/10 blur-3xl pointer-events-none"></div>
-    <div class="absolute bottom-0 -left-16 h-48 w-48 rounded-full bg-[#8C5A3C]/20 blur-3xl pointer-events-none"></div>
+    <div class="absolute -top-16 right-0 h-56 w-56 rounded-full bg-[#4F772D]/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 -left-16 h-48 w-48 rounded-full bg-[#4F772D]/20 blur-3xl pointer-events-none"></div>
 
     {{-- Main content --}}
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-6">
@@ -149,8 +165,8 @@
 
             {{-- Brand --}}
             <div class="text-center md:text-left">
-                <span class="text-2xl font-bold text-amber-400 tracking-tight">{{ $siteSetting->site_title }}</span>
-                <p class="mt-2 text-sm text-[#C4A080] max-w-xs leading-relaxed">
+                <span class="text-2xl font-bold text-[#90A955] tracking-tight">{{ $siteSetting->site_title }}</span>
+                <p class="mt-2 text-sm text-[#90A955] max-w-xs leading-relaxed">
                     {{ $siteSetting->site_description ?: 'Discover articles, research, and resources curated by our team.' }}
                 </p>
 
@@ -167,7 +183,7 @@
                 <div class="mt-4 flex items-center gap-3">
                     @foreach($socials as $platform => $url)
                     <a href="{{ $url }}" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-white/8 text-[#C4A080] hover:bg-amber-600/20 hover:text-amber-400 transition-all duration-200"
+                       class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-white/8 text-[#90A955] hover:bg-[#4F772D]/20 hover:text-[#90A955] transition-all duration-200"
                        aria-label="{{ ucfirst($platform) }}">
                         @if($platform === 'facebook')
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
@@ -201,7 +217,7 @@
                 @endphp
                 <a href="{{ $href }}"
                    target="{{ $item->target === '_blank' ? '_blank' : '_self' }}"
-                   class="text-[#E8C9A8] hover:text-amber-400 transition-colors">
+                   class="text-[#c8de70] hover:text-[#90A955] transition-colors">
                     {{ $item->title }}
                 </a>
                 @endforeach
@@ -210,11 +226,11 @@
         </div>
 
         {{-- Divider --}}
-        <div class="h-px bg-linear-to-r from-transparent via-[#8C5A3C] to-transparent mb-6"></div>
+        <div class="h-px bg-linear-to-r from-transparent via-[#4F772D] to-transparent mb-6"></div>
 
         {{-- Bottom bar --}}
-        <p class="text-center text-xs text-[#8C6040]">
-            &copy; {{ date('Y') }} <span class="text-amber-400 font-medium">{{ $siteSetting->site_title }}</span>. All rights reserved.
+        <p class="text-center text-xs text-[#4F772D]">
+            &copy; {{ date('Y') }} <span class="text-[#90A955] font-medium">{{ $siteSetting->site_title }}</span>. All rights reserved.
         </p>
 
     </div>
