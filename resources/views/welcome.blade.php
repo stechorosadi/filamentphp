@@ -382,12 +382,12 @@
             $base   = $siteSetting->color_light_bg ?? '#ECF39E';
             $accent = $siteSetting->color_accent    ?? '#4F772D';
             $catColors = [
-                $base,
-                $mixHex($base, $accent, 0.10),
-                $mixHex($base, $accent, 0.18),
-                $mixHex($base, '#ffffff', 0.25),
-                $mixHex($base, $accent, 0.08),
-                $mixHex($base, $accent, 0.14),
+                $mixHex($base, '#ffffff', 0.55),
+                $mixHex($base, '#ffffff', 0.50),
+                $mixHex($base, '#ffffff', 0.60),
+                $mixHex($base, '#ffffff', 0.45),
+                $mixHex($base, '#ffffff', 0.58),
+                $mixHex($base, '#ffffff', 0.48),
             ];
         @endphp
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">

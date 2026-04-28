@@ -201,7 +201,26 @@
             <h2 class="text-xl font-bold text-[#132A13] dark:text-[#ECF39E]">Other Categories</h2>
         </div>
 
-        @php $catColors = ['#ECF39E','#FFE8CC','#FFDAC4','#FFECD8','#F8E8C0','#FFD8C0']; @endphp
+        @php
+            $mixHex = function (string $hex1, string $hex2, float $ratio): string {
+                $hex1 = ltrim($hex1, '#'); $hex2 = ltrim($hex2, '#');
+                return sprintf('#%02x%02x%02x',
+                    (int) round(hexdec(substr($hex1,0,2)) * (1-$ratio) + hexdec(substr($hex2,0,2)) * $ratio),
+                    (int) round(hexdec(substr($hex1,2,2)) * (1-$ratio) + hexdec(substr($hex2,2,2)) * $ratio),
+                    (int) round(hexdec(substr($hex1,4,2)) * (1-$ratio) + hexdec(substr($hex2,4,2)) * $ratio),
+                );
+            };
+            $base      = $siteSetting->color_light_bg ?? '#ECF39E';
+            $accent    = $siteSetting->color_accent    ?? '#4F772D';
+            $catColors = [
+                $mixHex($base, '#ffffff', 0.55),
+                $mixHex($base, '#ffffff', 0.50),
+                $mixHex($base, '#ffffff', 0.60),
+                $mixHex($base, '#ffffff', 0.45),
+                $mixHex($base, '#ffffff', 0.58),
+                $mixHex($base, '#ffffff', 0.48),
+            ];
+        @endphp
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             @foreach($otherCategories as $cat)
             @php $bg = $catColors[$loop->index % count($catColors)]; @endphp
@@ -218,9 +237,9 @@
                     <div class="relative h-11 w-11 rounded-xl bg-white/70 dark:bg-[#132A13]/60 flex items-center justify-center shadow-sm
                                 group-hover:bg-white dark:group-hover:bg-[#132A13]/90 group-hover:scale-110 transition-all duration-300">
                         @if($cat->icon)
-                            {!! svg($cat->icon, '', ['style' => 'width:1.25rem;height:1.25rem;color:#d97706'])->toHtml() !!}
+                            {!! svg($cat->icon, '', ['style' => 'width:1.25rem;height:1.25rem;color:#4F772D'])->toHtml() !!}
                         @else
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1.25rem;height:1.25rem;color:#d97706">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1.25rem;height:1.25rem;color:#4F772D">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/>
                             </svg>
                         @endif
