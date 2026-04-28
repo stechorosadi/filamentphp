@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
         // Graceful fallback if table doesn't exist yet (e.g. before migrations).
         try {
             $attributes = Cache::remember('site_setting', 3600, fn () => SiteSetting::instance()->getAttributes());
-            $siteSetting = new SiteSetting();
+            $siteSetting = new SiteSetting;
             $siteSetting->setRawAttributes($attributes);
             $siteSetting->exists = true;
         } catch (\Throwable) {
@@ -41,11 +41,19 @@ class AppServiceProvider extends ServiceProvider
         }
         View::share('siteSetting', $siteSetting);
 
-        // Share the "Header Menu - Top Right" with the front layout.
+        // Share navigation menus with the front layout.
         View::composer('layouts.front', function ($view): void {
             $view->with('navMenuItems',
                 Menu::with(['menuItems' => fn ($q) => $q->whereNull('parent_id')->orderBy('order')])
                     ->where('name', 'Header Menu - Top Right')
+                    ->first()
+                    ?->menuItems
+                    ?? collect()
+            );
+
+            $view->with('footerMenuItems',
+                Menu::with(['menuItems' => fn ($q) => $q->whereNull('parent_id')->orderBy('order')])
+                    ->where('name', 'Footer Menu - Bottom Right')
                     ->first()
                     ?->menuItems
                     ?? collect()

@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Storage;
     'site_description',
     'logo_path',
     'favicon_path',
+    'facebook_url',
+    'instagram_url',
+    'x_url',
+    'youtube_url',
 ])]
 class SiteSetting extends Model
 {

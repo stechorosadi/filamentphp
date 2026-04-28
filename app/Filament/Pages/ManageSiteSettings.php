@@ -85,6 +85,39 @@ class ManageSiteSettings extends Page
                             ->helperText('.ico, PNG or SVG · max 128 KB'),
                     ])
                     ->columns(2),
+
+                Section::make('Social Media')
+                    ->description('Add your social media profile URLs. Leave blank to hide.')
+                    ->schema([
+                        TextInput::make('facebook_url')
+                            ->label('Facebook')
+                            ->url()
+                            ->maxLength(255)
+                            ->prefix('🌐')
+                            ->placeholder('https://facebook.com/yourpage'),
+
+                        TextInput::make('instagram_url')
+                            ->label('Instagram')
+                            ->url()
+                            ->maxLength(255)
+                            ->prefix('🌐')
+                            ->placeholder('https://instagram.com/yourhandle'),
+
+                        TextInput::make('x_url')
+                            ->label('X (Twitter)')
+                            ->url()
+                            ->maxLength(255)
+                            ->prefix('🌐')
+                            ->placeholder('https://x.com/yourhandle'),
+
+                        TextInput::make('youtube_url')
+                            ->label('YouTube')
+                            ->url()
+                            ->maxLength(255)
+                            ->prefix('🌐')
+                            ->placeholder('https://youtube.com/@yourchannel'),
+                    ])
+                    ->columns(1),
             ]);
     }
 
