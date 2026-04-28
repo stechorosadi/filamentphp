@@ -87,7 +87,7 @@
 
                             {{-- Excerpt --}}
                             @if($slide->excerpt)
-                            <p class="text-lg leading-relaxed text-[var(--text-muted)] max-w-lg">
+                            <p class="text-md leading-relaxed text-[var(--text-muted)] max-w-lg">
                                 {{ \Illuminate\Support\Str::limit($slide->excerpt, 160) }}
                             </p>
                             @endif
@@ -118,6 +118,20 @@
                         <div class="relative order-first lg:order-0">
                             {{-- Blob glow --}}
                             <div class="absolute inset-0 -z-10 scale-110 rounded-3xl bg-[var(--accent-dim)]/20 dark:bg-[var(--accent)]/25 blur-2xl"></div>
+
+                            {{-- Mobile-only prev/next arrows (positioned on sides of image) --}}
+                            @if($featuredContents->count() > 1)
+                            <button @click="prev()" class="lg:hidden absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
+                                </svg>
+                            </button>
+                            <button @click="next()" class="lg:hidden absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+                                </svg>
+                            </button>
+                            @endif
 
                             {{-- Browser card --}}
                             <div class="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)]">
@@ -168,15 +182,15 @@
             @endforeach
         </div>
 
-        {{-- Prev arrow --}}
-        <button @click="prev()" class="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2.5 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white dark:hover:bg-[var(--accent)] transition-all duration-200">
+        {{-- Prev arrow (desktop only) --}}
+        <button @click="prev()" class="hidden lg:flex absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2.5 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white dark:hover:bg-[var(--accent)] transition-all duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
             </svg>
         </button>
 
-        {{-- Next arrow --}}
-        <button @click="next()" class="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2.5 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white dark:hover:bg-[var(--accent)] transition-all duration-200">
+        {{-- Next arrow (desktop only) --}}
+        <button @click="next()" class="hidden lg:flex absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2.5 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white dark:hover:bg-[var(--accent)] transition-all duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
             </svg>
@@ -288,7 +302,7 @@
         </div>
 
         {{-- Heading --}}
-        <h2 class="mb-4 text-3xl sm:text-4xl lg:text-5xl font-bold text-[#ECF39E] leading-tight">
+        <h2 class="mb-4 text-2xl sm:text-3xl lg:text-4xl font-bold text-[#ECF39E] leading-tight">
             Discover Knowledge<br>Without Limits
         </h2>
 
@@ -299,16 +313,18 @@
 
         {{-- Search bar --}}
         <form method="GET" action="{{ route('search') }}" class="mb-10">
-            <div class="flex overflow-hidden rounded-2xl border-2 border-[#4F772D]/30 bg-white/8 backdrop-blur-sm focus-within:border-[#4F772D]/60 transition-all duration-200 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                     class="ml-5 h-5 w-5 shrink-0 self-center text-[#90A955]">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
-                </svg>
-                <input type="text" name="q" value="{{ $search }}" maxlength="100"
-                       placeholder="Search articles, topics, or keywords…"
-                       class="flex-1 bg-transparent px-4 py-4 text-base text-[#ECF39E] placeholder-[#4F772D] focus:outline-none">
+            <div class="flex rounded-2xl border-2 border-[#4F772D]/30 bg-white/8 backdrop-blur-sm focus-within:border-[#4F772D]/60 transition-all duration-200 shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-2 gap-2">
+                <div class="flex flex-1 items-center min-w-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                         class="ml-3 h-5 w-5 shrink-0 text-[#90A955]">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+                    </svg>
+                    <input type="text" name="q" value="{{ $search }}" maxlength="100"
+                           placeholder="Search articles, topics, or keywords…"
+                           class="min-w-0 flex-1 bg-transparent px-3 py-2 text-base text-[#ECF39E] placeholder-[#4F772D] focus:outline-none">
+                </div>
                 <button type="submit"
-                        class="m-2 rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-[var(--accent)] transition-colors duration-200 shrink-0">
+                        class="shrink-0 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-[var(--accent)] transition-colors duration-200">
                     Search
                 </button>
             </div>

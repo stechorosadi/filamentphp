@@ -79,9 +79,8 @@
 
 {{-- ── NAVBAR ── --}}
 <header
-    :class="scrolled ? 'shadow-md backdrop-blur' : 'bg-transparent'"
-    :style="scrolled ? 'background-color: color-mix(in srgb, var(--bg-primary) 90%, transparent)' : ''"
-    class="fixed inset-x-0 top-0 z-50 transition-all duration-300">
+    class="fixed inset-x-0 top-0 z-50 shadow-md backdrop-blur transition-all duration-300"
+    style="background-color: color-mix(in srgb, var(--bg-primary) 80%, transparent)">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
 
