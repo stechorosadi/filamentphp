@@ -32,8 +32,16 @@
     $readTime  = max(1, (int) ceil($wordCount / 200));
 @endphp
 
-<main class="bg-[var(--bg-primary)] pt-20 pb-16">
-<div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+<main class="bg-[var(--bg-primary)]">
+
+{{-- ── HERO HEADER (breadcrumb → image) ── --}}
+<section class="relative bg-[var(--bg-primary)] pt-20 pb-10 overflow-hidden">
+    {{-- Square grid background --}}
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#00000010_1px,transparent_1px),linear-gradient(to_bottom,#00000010_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
+    {{-- Subtle glow --}}
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-2xl rounded-full bg-[var(--accent)]/10 dark:bg-[var(--accent)]/20 blur-3xl pointer-events-none"></div>
+
+    <div class="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
 
     {{-- Breadcrumb --}}
     <nav class="mb-8 flex items-center gap-2 text-sm text-[var(--accent)]">
@@ -52,38 +60,54 @@
     </nav>
 
     {{-- Title --}}
-    <h1 class="mb-5 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">
+    <h1 class="mb-5 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">
         {{ $content->title }}
     </h1>
 
     {{-- Badges row --}}
-    <div class="mb-8 flex flex-wrap gap-2">
+    <div class="mb-8 flex flex-wrap items-center gap-2">
+        {{-- Left: classification + category --}}
         @if($content->classification)
-        <span class="rounded-full border border-[var(--accent-dim)] dark:border-[var(--accent)] bg-[var(--accent-dim)] dark:bg-[var(--bg-card)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)] dark:text-[var(--accent)]">
+        <span class="inline-flex items-center rounded-full bg-[#31572C] dark:bg-[var(--bg-card)] px-3 py-1 text-xs font-semibold text-white dark:text-[var(--text-muted)]">
             {{ $content->classification->name }}
         </span>
         @endif
         @if($content->category)
-        <span class="rounded-full bg-[var(--accent)] px-3 py-1 text-xs font-semibold text-white">
+        <span class="inline-flex items-center rounded-full bg-[var(--accent)] dark:bg-[var(--accent)] px-3 py-1 text-xs font-semibold text-white dark:text-[var(--text-primary)]">
             {{ $content->category->name }}
         </span>
         @endif
-        @foreach($content->tags as $tag)
-        <span class="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
-            {{ $tag->name }}
-        </span>
-        @endforeach
+
+        {{-- Right: tags --}}
+        @if($content->tags->isNotEmpty())
+        <div class="ml-auto flex flex-wrap items-center gap-2">
+            <span class="text-xs font-semibold text-[var(--text-muted)]">Tags:</span>
+            @foreach($content->tags as $tag)
+            <span class="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
+                {{ $tag->name }}
+            </span>
+            @endforeach
+        </div>
+        @endif
     </div>
 
     {{-- Full-width header image --}}
     @if($content->header_image)
-    <div class="mb-10 overflow-hidden rounded-2xl shadow-md">
+    <div class="overflow-hidden rounded-2xl shadow-md">
         <img src="{{ asset('storage/' . $content->header_image) }}"
              alt="{{ $content->title }}"
              fetchpriority="high"
              class="w-full aspect-16/7 object-cover">
     </div>
     @endif
+
+    </div>{{-- /max-w-5xl --}}
+</section>
+
+<div class="h-px bg-linear-to-r from-transparent via-[var(--accent)] to-transparent opacity-30"></div>
+
+<section class="bg-white/60 dark:bg-[var(--bg-primary)]">
+<div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-10">
 
     {{-- ── TWO-COLUMN LAYOUT ── --}}
     <div class="flex flex-col md:flex-row gap-10 lg:gap-14">
@@ -390,7 +414,7 @@
     @endif
 
     {{-- Back link --}}
-    <div class="mt-10 pt-8 border-t border-[var(--border)]">
+    <div class="mt-10 pt-8 pb-16 border-t border-[var(--border)]">
         <a href="{{ route('home') }}"
            class="inline-flex items-center gap-2 text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-muted)] dark:hover:text-[#90A955] transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
@@ -401,6 +425,7 @@
     </div>
 
 </div>
+</section>
 </main>
 
 @endsection
