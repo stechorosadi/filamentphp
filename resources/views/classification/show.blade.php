@@ -17,7 +17,7 @@
 @section('content')
 
 {{-- ── CLASSIFICATION HEADER ── --}}
-<section class="relative overflow-hidden bg-[#132A13] dark:bg-[var(--dark-section)] pt-28 pb-16">
+<section class="relative overflow-hidden bg-[#132A13] dark:bg-[var(--dark-section)] pt-40 pb-16">
     {{-- Grid texture --}}
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff07_1px,transparent_1px),linear-gradient(to_bottom,#ffffff07_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
     {{-- Decorative blobs --}}

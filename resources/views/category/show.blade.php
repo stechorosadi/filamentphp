@@ -17,7 +17,7 @@
 @section('content')
 
 {{-- ── CATEGORY HEADER ── --}}
-<section class="relative overflow-hidden bg-[#132A13] dark:bg-[#0a1a0a] pt-28 pb-16">
+<section class="relative overflow-hidden bg-[#132A13] dark:bg-[#0a1a0a] pt-40 pb-16">
     {{-- Decorative blobs --}}
     <div class="absolute -top-20 left-1/4 h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-10 right-1/4 h-64 w-64 rounded-full bg-[var(--accent)]/20 blur-3xl pointer-events-none"></div>

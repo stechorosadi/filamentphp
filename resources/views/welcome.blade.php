@@ -693,7 +693,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             @foreach($classifications as $classification)
             <a href="{{ route('classification.show', $classification->slug) }}"
-               class="card-animate group flex items-center gap-3 rounded-2xl p-3
+               class="card-animate group relative overflow-hidden flex items-center gap-3 rounded-2xl p-3
                       bg-[#1e4a1e]/50 backdrop-blur-sm
                       border border-[#2a5c2a]/60 border-l-2 border-l-amber-600/50
                       hover:bg-[#1e4a1e] hover:border-l-amber-400
@@ -723,22 +723,20 @@
                     </span>
                 </div>
 
-                {{-- Image thumbnail --}}
-                @if($classification->image)
-                <div class="w-12 h-10 shrink-0 overflow-hidden rounded-lg border border-[#4F772D]/40
-                            group-hover:border-[#4F772D]/50 transition-colors duration-300">
-                    <img src="{{ asset("storage/{$classification->image}") }}"
-                         alt="{{ $classification->name }}"
-                         loading="lazy"
-                         class="h-full w-full object-cover opacity-80 group-hover:opacity-100
-                                group-hover:scale-110 transition-all duration-300">
-                </div>
-                @else
-                {{-- Arrow when no image --}}
+                {{-- Arrow --}}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                      class="h-4 w-4 shrink-0 text-[var(--accent)] group-hover:text-[#90A955] group-hover:translate-x-1 transition-all duration-200">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                 </svg>
+
+                {{-- Background image --}}
+                @if($classification->image)
+                <div class="absolute bottom-0 right-0 w-20 h-full pointer-events-none opacity-15 group-hover:opacity-30 transition-opacity duration-300">
+                    <img src="{{ asset("storage/{$classification->image}") }}"
+                         alt="{{ $classification->name }}"
+                         loading="lazy"
+                         class="w-full h-full object-cover rounded-tl-2xl">
+                </div>
                 @endif
             </a>
             @endforeach

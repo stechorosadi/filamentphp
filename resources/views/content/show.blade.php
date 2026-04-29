@@ -35,7 +35,7 @@
 <main class="bg-[var(--bg-primary)]">
 
 {{-- ── HERO HEADER (breadcrumb → image) ── --}}
-<section class="relative bg-[var(--bg-primary)] pt-20 pb-10 overflow-hidden">
+<section class="relative bg-[var(--bg-primary)] pt-40 pb-10 overflow-hidden">
     {{-- Square grid background --}}
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#00000010_1px,transparent_1px),linear-gradient(to_bottom,#00000010_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
     {{-- Subtle glow --}}
