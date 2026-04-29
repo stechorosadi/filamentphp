@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
         // Cache the raw attributes array (not the model) to avoid unserialize issues.
         // Graceful fallback if table doesn't exist yet (e.g. before migrations).
         try {
-            $attributes = Cache::remember('site_setting', 3600, fn () => SiteSetting::instance()->getAttributes());
+            $attributes = Cache::remember('site_setting', 300, fn () => SiteSetting::instance()->getAttributes());
             $siteSetting = new SiteSetting;
             $siteSetting->setRawAttributes($attributes);
             $siteSetting->exists = true;

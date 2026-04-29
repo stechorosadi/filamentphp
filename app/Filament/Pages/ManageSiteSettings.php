@@ -72,18 +72,18 @@ class ManageSiteSettings extends Page
                             ->disk('public')
                             ->directory('site')
                             ->visibility('public')
-                            ->acceptedFileTypes(['image/png', 'image/svg+xml', 'image/jpeg'])
+                            ->acceptedFileTypes(['image/png', 'image/jpeg'])
                             ->maxSize(512)
-                            ->helperText('PNG, SVG or JPG · max 512 KB'),
+                            ->helperText('PNG or JPG · max 512 KB'),
 
                         FileUpload::make('favicon_path')
                             ->label('Favicon')
                             ->disk('public')
                             ->directory('site')
                             ->visibility('public')
-                            ->acceptedFileTypes(['image/x-icon', 'image/png', 'image/svg+xml'])
+                            ->acceptedFileTypes(['image/x-icon', 'image/png'])
                             ->maxSize(128)
-                            ->helperText('.ico, PNG or SVG · max 128 KB'),
+                            ->helperText('.ico or PNG · max 128 KB'),
                     ])
                     ->columns(2),
 
