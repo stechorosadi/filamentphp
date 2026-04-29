@@ -874,7 +874,7 @@
                                    transition-colors duration-200 mb-2">
                             {{ $item->title }}
                         </h3>
-                        <div class="flex items-center gap-2 text-xs text-[var(--accent)]">
+                        <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-(--accent)">
                             @if($item->user)
                             <span class="inline-flex items-center gap-1 shrink-0">
                                 <span class="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[var(--accent)]/80 dark:bg-[var(--accent)] text-white text-xs font-bold leading-none shrink-0">
