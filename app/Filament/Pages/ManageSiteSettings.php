@@ -120,6 +120,22 @@ class ManageSiteSettings extends Page
                     ])
                     ->columns(1),
 
+                Section::make('Contact Info')
+                    ->description('Displayed in the top bar above the navigation on the frontend.')
+                    ->schema([
+                        TextInput::make('contact_email')
+                            ->label('Email')
+                            ->email()
+                            ->maxLength(255)
+                            ->placeholder('info@example.com'),
+
+                        TextInput::make('contact_address')
+                            ->label('Address')
+                            ->maxLength(255)
+                            ->placeholder('123 Main St, City, Country'),
+                    ])
+                    ->columns(2),
+
                 Section::make('Theme Colors')
                     ->description('Customize the site color palette. Changes apply instantly — no rebuild needed.')
                     ->schema([

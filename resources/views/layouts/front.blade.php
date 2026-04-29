@@ -77,9 +77,68 @@
     x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 20 })"
     class="site-body transition-colors duration-300 antialiased">
 
+{{-- ── TOP BAR ── --}}
+@if($siteSetting->contact_email || $siteSetting->contact_address)
+<div
+    x-show="!scrolled"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 -translate-y-full"
+    class="fixed inset-x-0 top-0 z-50 py-2 flex items-center bg-(--accent) text-white dark:text-(--bg-primary)">
+    <div class="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 flex justify-between items-center gap-8">
+        {{-- Left: top bar menu (desktop only) --}}
+        @if($topbarMenuItems->isNotEmpty())
+        <nav class="hidden md:flex items-center gap-1">
+            @foreach($topbarMenuItems as $item)
+            @php $href = str_starts_with($item->url, 'http') ? $item->url : '/' . ltrim($item->url, '/'); @endphp
+            <a href="{{ $href }}"
+               target="{{ $item->target === '_blank' ? '_blank' : '_self' }}"
+               class="px-3 py-1 rounded text-sm font-semibold hover:opacity-80 transition-opacity">
+                {{ $item->title }}
+            </a>
+            @endforeach
+        </nav>
+        @else
+        <div class="hidden md:block"></div>
+        @endif
+
+        {{-- Right: contact info --}}
+        <div class="flex items-center gap-8">
+        @if($siteSetting->contact_email)
+        <a href="mailto:{{ $siteSetting->contact_email }}" class="flex items-start gap-2.5 hover:opacity-80 transition-opacity">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 shrink-0 mt-0.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/>
+            </svg>
+            <div class="flex flex-col leading-tight">
+                <span class="text-xs font-semibold uppercase tracking-wide opacity-75">Contact Us</span>
+                <span class="text-sm">{{ $siteSetting->contact_email }}</span>
+            </div>
+        </a>
+        @endif
+        @if($siteSetting->contact_address)
+        @php $addrParts = explode(',', $siteSetting->contact_address, 2); @endphp
+        <span class="flex items-start gap-2.5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 shrink-0 mt-0.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+            </svg>
+            <div class="flex flex-col leading-tight">
+                <span class="text-sm">{{ trim($addrParts[0]) }}</span>
+                @isset($addrParts[1])
+                <span class="text-sm">{{ trim($addrParts[1]) }}</span>
+                @endisset
+            </div>
+        </span>
+        @endif
+        </div>{{-- end right contact info --}}
+    </div>
+</div>
+@endif
+
 {{-- ── NAVBAR ── --}}
 <header
-    class="fixed inset-x-0 top-0 z-50 shadow-md backdrop-blur transition-all duration-300"
+    :class="scrolled ? 'top-0' : '{{ ($siteSetting->contact_email || $siteSetting->contact_address) ? 'top-14' : 'top-0' }}'"
+    class="fixed inset-x-0 z-40 shadow-md backdrop-blur transition-all duration-300"
     style="background-color: color-mix(in srgb, var(--bg-primary) 80%, transparent)">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
@@ -205,7 +264,7 @@
                     ]);
                 @endphp
                 @if($socials)
-                <div class="mt-4 flex items-center gap-3">
+                <div class="mt-4 flex items-center justify-center md:justify-start gap-3">
                     @foreach($socials as $platform => $url)
                     <a href="{{ $url }}" target="_blank" rel="noopener noreferrer"
                        class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-white/8 text-[#90A955] hover:bg-[var(--accent)]/20 hover:text-[#90A955] transition-all duration-200"
@@ -233,18 +292,29 @@
                 @endif
             </div>
 
-            {{-- Footer links from Menu Builder --}}
-            @if($footerMenuItems->isNotEmpty())
-            <div class="flex flex-wrap justify-center md:justify-end gap-x-8 gap-y-2 text-sm">
-                @foreach($footerMenuItems as $item)
-                @php
-                    $href = str_starts_with($item->url, 'http') ? $item->url : '/' . ltrim($item->url, '/');
-                @endphp
-                <a href="{{ $href }}"
-                   target="{{ $item->target === '_blank' ? '_blank' : '_self' }}"
-                   class="text-[#c8de70] hover:text-[#90A955] transition-colors">
-                    {{ $item->title }}
-                </a>
+            {{-- Footer 3-column link lists --}}
+            @if($footerList1 || $footerList2 || $footerList3)
+            <div class="flex gap-12 text-sm">
+                @foreach([$footerList1, $footerList2, $footerList3] as $list)
+                @if($list && $list->menuItems->isNotEmpty())
+                <div class="min-w-30">
+                    <h4 class="mb-4 font-semibold text-white">
+                        {{ str_replace('Footer Menu - ', '', $list->name) }}
+                    </h4>
+                    <ul class="space-y-2.5">
+                        @foreach($list->menuItems as $item)
+                        @php $href = str_starts_with($item->url, 'http') ? $item->url : '/' . ltrim($item->url, '/'); @endphp
+                        <li>
+                            <a href="{{ $href }}"
+                               target="{{ $item->target === '_blank' ? '_blank' : '_self' }}"
+                               class="text-[#90A955] hover:text-white transition-colors">
+                                {{ $item->title }}
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
                 @endforeach
             </div>
             @endif

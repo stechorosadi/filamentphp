@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Storage;
     'instagram_url',
     'x_url',
     'youtube_url',
+    'contact_email',
+    'contact_address',
     'color_light_bg',
     'color_dark_bg',
     'color_light_text',

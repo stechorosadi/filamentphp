@@ -58,6 +58,24 @@ class AppServiceProvider extends ServiceProvider
                     ?->menuItems
                     ?? collect()
             );
+
+            $view->with('topbarMenuItems',
+                Menu::with(['menuItems' => fn ($q) => $q->whereNull('parent_id')->orderBy('order')])
+                    ->where('name', 'Header Menu - Top Left')
+                    ->first()
+                    ?->menuItems
+                    ?? collect()
+            );
+
+            $footerLists = Menu::with(['menuItems' => fn ($q) => $q->whereNull('parent_id')->orderBy('order')])
+                ->whereIn('name', ['Footer Menu - List 1', 'Footer Menu - List 2', 'Footer Menu - List 3'])
+                ->orderByRaw("FIELD(name, 'Footer Menu - List 1', 'Footer Menu - List 2', 'Footer Menu - List 3')")
+                ->get()
+                ->keyBy('name');
+
+            $view->with('footerList1', $footerLists->get('Footer Menu - List 1'));
+            $view->with('footerList2', $footerLists->get('Footer Menu - List 2'));
+            $view->with('footerList3', $footerLists->get('Footer Menu - List 3'));
         });
     }
 }

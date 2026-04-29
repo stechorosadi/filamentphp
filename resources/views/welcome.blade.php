@@ -1,7 +1,7 @@
 @extends('layouts.front')
 
 @section('seo')
-<title>{{ $siteSetting->site_title }} — Stay Informed</title>
+<title>{{ $siteSetting->site_title }}{{ $siteSetting->site_tagline ? ' — ' . $siteSetting->site_tagline : '' }}</title>
 <meta name="description" content="{{ $siteSetting->site_description ?? 'Discover articles, research, and resources curated by our team. Stay informed with the latest content.' }}">
 <meta property="og:title" content="{{ $siteSetting->site_title }}">
 <meta property="og:description" content="{{ $siteSetting->site_description ?? 'Discover articles, research, and resources curated by our team.' }}">

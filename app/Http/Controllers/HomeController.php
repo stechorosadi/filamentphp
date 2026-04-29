@@ -23,9 +23,12 @@ class HomeController extends Controller
             ->limit(5)
             ->get();
 
+        $featuredIds = $featuredContents->modelKeys();
+
         $latestContents = Content::with(['user', 'category', 'classification'])
             ->where('published', true)
             ->whereNotNull('header_image')
+            ->whereNotIn('id', $featuredIds)
             ->when($search, fn ($q) => $q->where(fn ($q) => $q
                 ->where('title', 'like', "%{$search}%")
                 ->orWhere('excerpt', 'like', "%{$search}%")
