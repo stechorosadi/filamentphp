@@ -374,15 +374,17 @@
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {{-- Section heading --}}
-        <div class="mb-10">
-            <div class="flex items-center gap-3 mb-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-[var(--accent)] dark:text-[var(--accent)]">
+        <div class="flex items-center gap-4 mb-10">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-(--border) bg-(--accent)/10">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-(--accent)">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z"/>
                 </svg>
-                <h2 class="text-2xl font-bold text-[var(--text-primary)]">Browse by Category</h2>
             </div>
-            <p class="ml-9 text-sm text-[var(--accent)]">Explore our content organised by topic</p>
+            <div>
+                <h2 class="text-2xl font-bold text-(--text-primary)">Browse by Category</h2>
+                <p class="text-md text-(--text-muted) mt-0.5">Explore our content organised by topic</p>
+            </div>
         </div>
 
         @php
@@ -554,13 +556,18 @@
 
         {{-- Heading + search --}}
         <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
-            <div class="flex items-center gap-3 flex-1">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-[var(--accent)] dark:text-[var(--accent)] shrink-0">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
-                </svg>
-                <h2 class="text-2xl font-bold text-[var(--text-primary)]">
-                    @if($search) Search Results @else Latest Content @endif
-                </h2>
+            <div class="flex items-center gap-4 flex-1">
+                <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-(--border) bg-(--accent)/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-(--accent)">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-(--text-primary)">
+                        @if($search) Search Results @else Latest Content @endif
+                    </h2>
+                    <p class="text-md text-(--text-muted) mt-0.5">Discover our latest articles and resources</p>
+                </div>
             </div>
 
             <form method="GET" action="{{ route('search') }}" class="flex items-center gap-2 w-full sm:w-auto sm:min-w-72">
@@ -677,16 +684,16 @@
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {{-- Section heading --}}
-        <div class="mb-10">
-            <div class="flex items-center gap-3 mb-1.5">
-                <div class="flex h-9 w-9 items-center justify-center rounded-xl border border-[#4F772D]/30 bg-[var(--accent)]/15">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[#90A955]">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-[#ECF39E]">Classifications</h2>
+        <div class="flex items-center gap-4 mb-10">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-(--border) bg-(--accent)/10">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-(--accent)">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
+                </svg>
             </div>
-            <p class="ml-12 text-sm text-[#90A955]">Browse content by type and format</p>
+            <div>
+                <h2 class="text-2xl font-bold text-[#90A955]">Classifications</h2>
+                <p class="text-md text-(--text-muted) mt-0.5">Browse content by type and format</p>
+            </div>
         </div>
 
         {{-- Cards --}}
@@ -758,20 +765,23 @@
     $headClones = $useSlider ? $teamMembers->slice($tmCount - $clones) : collect();
     $tailClones = $useSlider ? $teamMembers->take($clones) : collect();
 @endphp
-<section class="py-16 bg-(--bg-primary) overflow-hidden">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<section class="relative py-16 bg-[var(--bg-alt)] dark:bg-[var(--dark-section)] overflow-hidden">
+    {{-- Dot grid --}}
+    <div class="absolute inset-0 bg-[radial-gradient(#90A95528_1px,transparent_1px)] dark:bg-[radial-gradient(#2a5c2a28_1px,transparent_1px)] bg-size-[28px_28px] pointer-events-none"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {{-- Section heading --}}
-        <div class="mb-10">
-            <div class="flex items-center gap-3 mb-1.5">
-                <div class="flex h-9 w-9 items-center justify-center rounded-xl border border-(--border) bg-(--accent)/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-(--accent)">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/>
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-(--text-primary)">Our Team</h2>
+        <div class="flex items-center gap-4 mb-10">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-(--border) bg-(--accent)/10">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-(--accent)">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/>
+                </svg>
             </div>
-            <p class="ml-12 text-sm text-(--text-muted)">Meet the people behind our work</p>
+            <div>
+                <h2 class="text-2xl font-bold text-(--text-primary)">Our Team</h2>
+                <p class="text-md text-(--text-muted) mt-0.5">Meet the people behind our work</p>
+            </div>
         </div>
 
         @if($useSlider)
@@ -882,23 +892,32 @@
 {{-- MOST POPULAR --}}
 {{-- ─────────────────────────────────────────── --}}
 @if($popularContents->isNotEmpty())
-<section class="relative bg-[var(--bg-primary)] py-16 overflow-hidden">
+<section class="relative py-16 overflow-hidden">
+    {{-- Background image with overlay (matches Latest Content section) --}}
+    <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+        <img src="{{ asset('storage/background/bg-01.jpg') }}" alt=""
+             class="absolute inset-x-0 w-full object-cover"
+             style="height:140%; top:-20%; filter:blur(3px);">
+    </div>
+    <div class="absolute inset-0 bg-[#ECF39E]/70 dark:bg-[#132A13]/82 pointer-events-none"></div>
     {{-- Decorative blobs --}}
     <div class="absolute -top-20 right-0 h-72 w-72 rounded-full bg-[var(--accent-dim)]/10 dark:bg-[var(--accent)]/10 blur-3xl pointer-events-none"></div>
     <div class="absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-[#FFDAC4]/40 dark:bg-[var(--bg-card)]/30 blur-3xl pointer-events-none"></div>
 
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-        {{-- Heading --}}
-        <div class="mb-8">
-            <div class="flex items-center gap-3 mb-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-[var(--accent)] dark:text-[var(--accent)]">
+        {{-- Section Heading --}}
+        <div class="flex items-center gap-4 mb-10">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-(--border) bg-(--accent)/10">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-(--accent)">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z"/>
                 </svg>
-                <h2 class="text-2xl font-bold text-[var(--text-primary)]">Most Popular</h2>
             </div>
-            <p class="ml-9 text-sm text-[var(--accent)]">The most read articles right now</p>
+            <div>
+                <h2 class="text-2xl font-bold text-(--text-primary)">Most Popular</h2>
+                <p class="text-md text-(--text-muted) mt-0.5">The most read articles right now</p>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
