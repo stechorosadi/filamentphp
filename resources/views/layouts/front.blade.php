@@ -249,7 +249,14 @@
 
             {{-- Brand --}}
             <div class="text-center md:text-left">
-                <span class="text-2xl font-bold text-[#90A955] tracking-tight">{{ $siteSetting->site_title }}</span>
+                <div class="flex items-center justify-center md:justify-start gap-2.5 mb-1">
+                    @if($siteSetting->logo_path)
+                    <img src="{{ Storage::disk('public')->url($siteSetting->logo_path) }}"
+                         alt="{{ $siteSetting->site_title }}"
+                         class="h-8 w-auto object-contain">
+                    @endif
+                    <span class="text-2xl font-bold text-[#90A955] tracking-tight">{{ $siteSetting->site_title }}</span>
+                </div>
                 <p class="mt-2 text-sm text-[#90A955] max-w-xs leading-relaxed">
                     {{ $siteSetting->site_description ?: 'Discover articles, research, and resources curated by our team.' }}
                 </p>
