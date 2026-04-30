@@ -70,6 +70,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return $this->hasMany(UserExperience::class)->orderBy('order');
     }
 
+    public function certifications(): HasMany
+    {
+        return $this->hasMany(UserCertification::class)->orderBy('order');
+    }
+
     public function publications(): HasMany
     {
         return $this->hasMany(UserPublication::class)->orderBy('order');
