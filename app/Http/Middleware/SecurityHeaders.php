@@ -25,6 +25,7 @@ class SecurityHeaders
             "img-src 'self' data: blob: *; ".
             "connect-src 'self' https://challenges.cloudflare.com; ".
             "frame-src 'self' https://challenges.cloudflare.com; ".
+            "worker-src 'self' blob:; ".
             "frame-ancestors 'self';"
         );
 

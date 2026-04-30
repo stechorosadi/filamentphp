@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 #[Fillable([
     'user_id',
+    'name',
     'front_title',
     'back_title',
     'position',
@@ -31,7 +32,7 @@ class TeamMember extends Model
 
     public function fullName(): string
     {
-        $name = $this->user->name;
+        $name = $this->user?->name ?? $this->name ?? '';
 
         return trim(
             ($this->front_title ? $this->front_title.' ' : '').

@@ -16,6 +16,8 @@
 
 8. Give me suggestion to make my code and app better and secure after completing task
 
+9. Never run git commit or git push automatically at the end of a task. Only commit and push when the user explicitly asks to "commit", "push", or "commit and push".
+
 <laravel-boost-guidelines>
 === foundation rules ===
 

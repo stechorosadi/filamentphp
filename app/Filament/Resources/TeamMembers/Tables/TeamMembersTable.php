@@ -20,12 +20,18 @@ class TeamMembersTable
                     ->label('Photo')
                     ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name='.urlencode($record->user?->name ?? '?').'&background=4F772D&color=ECF39E'),
+                    ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name='.urlencode($record->fullName() ?: '?').'&background=4F772D&color=ECF39E'),
 
-                TextColumn::make('user.name')
+                TextColumn::make('full_name')
                     ->label('Name')
-                    ->searchable()
-                    ->sortable(),
+                    ->state(fn ($record) => $record->fullName())
+                    ->searchable(query: fn ($query, $search) => $query
+                        ->where('name', 'like', "%{$search}%")
+                        ->orWhereHas('user', fn ($q) => $q->where('name', 'like', "%{$search}%"))
+                    )
+                    ->sortable(query: fn ($query, $direction) => $query
+                        ->orderByRaw("COALESCE(team_members.name, '') {$direction}")
+                    ),
 
                 TextColumn::make('position')
                     ->searchable()

@@ -768,7 +768,7 @@
         </div>
 
         {{-- Cards: 5 columns --}}
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-5">
             @foreach($teamMembers as $member)
             <div class="card-animate group flex flex-col rounded-2xl overflow-hidden border border-(--border) bg-(--bg-card) hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
 

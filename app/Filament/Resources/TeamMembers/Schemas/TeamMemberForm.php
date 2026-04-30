@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class TeamMemberForm
@@ -19,10 +20,20 @@ class TeamMemberForm
                 Section::make('Member')
                     ->schema([
                         Select::make('user_id')
-                            ->label('User')
+                            ->label('Linked User Account')
                             ->options(User::orderBy('name')->pluck('name', 'id'))
                             ->searchable()
-                            ->required(),
+                            ->nullable()
+                            ->live()
+                            ->helperText('Leave blank to enter a name manually.'),
+
+                        TextInput::make('name')
+                            ->label('Full Name')
+                            ->placeholder('Enter name manually')
+                            ->maxLength(150)
+                            ->required(fn (Get $get): bool => blank($get('user_id')))
+                            ->visible(fn (Get $get): bool => blank($get('user_id')))
+                            ->helperText('Required when no user account is linked.'),
 
                         TextInput::make('front_title')
                             ->label('Front Title')
@@ -55,7 +66,10 @@ class TeamMemberForm
                             ->visibility('public')
                             ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
                             ->maxSize(1024)
-                            ->helperText('PNG, JPG or WebP · max 1 MB'),
+                            ->automaticallyResizeImagesMode('cover')
+                            ->automaticallyResizeImagesToWidth('1000')
+                            ->automaticallyResizeImagesToHeight('1000')
+                            ->helperText('PNG, JPG or WebP · max 1 MB · resized to 1000×1000px'),
                     ])
                     ->columns(1),
 
