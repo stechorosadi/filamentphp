@@ -258,6 +258,7 @@ class UserResource extends Resource
     {
         return [
             RelationManagers\EducationHistoryRelationManager::class,
+            RelationManagers\WorkExperienceRelationManager::class,
             RelationManagers\PublicationsRelationManager::class,
         ];
     }
