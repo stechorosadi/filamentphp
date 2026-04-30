@@ -167,4 +167,14 @@ class HomeController extends Controller
 
         return view('content.show', compact('content', 'relatedContents'));
     }
+
+    public function team(): View
+    {
+        $teamMembers = TeamMember::with('user')
+            ->where('is_visible', true)
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('team.index', compact('teamMembers'));
+    }
 }
