@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Content;
 use App\Models\ContentCategory;
 use App\Models\ContentClassification;
+use App\Models\TeamMember;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -57,9 +58,14 @@ class HomeController extends Controller
             ->limit(5)
             ->get();
 
+        $teamMembers = TeamMember::with('user')
+            ->where('is_visible', true)
+            ->orderBy('sort_order')
+            ->get();
+
         return view('welcome', compact(
             'featuredContents', 'latestContents', 'categories', 'classifications',
-            'search', 'totalArticles', 'popularContents'
+            'search', 'totalArticles', 'popularContents', 'teamMembers'
         ));
     }
 
