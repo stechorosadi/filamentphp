@@ -32,13 +32,17 @@
              current: 0,
              slides: {{ $featuredContents->count() }},
              preview: false,
-             slideData: @js($featuredContents->map(fn ($s) => [
-                 'title'    => $s->title,
-                 'excerpt'  => \Illuminate\Support\Str::limit($s->excerpt ?? '', 250),
-                 'url'      => route('content.show', $s->slug),
-                 'category' => $s->category?->name,
-                 'date'     => $s->created_at->format('M d, Y'),
-             ])->values()),
+             slideData: @js($featuredContents->map(function ($s) {
+                 preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\s?]+)/', $s->youtube_url ?? '', $m);
+                 return [
+                     'title'    => $s->title,
+                     'excerpt'  => \Illuminate\Support\Str::limit($s->excerpt ?? '', 250),
+                     'url'      => route('content.show', $s->slug),
+                     'category' => $s->category?->name,
+                     'date'     => $s->created_at->format('M d, Y'),
+                     'embedUrl' => isset($m[1]) ? 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1' : null,
+                 ];
+             })->values()),
              timer: null,
              init() { if (this.slides > 1) this.timer = setInterval(() => this.next(), 6000); },
              next() { this.current = (this.current + 1) % this.slides; },
@@ -101,14 +105,15 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                                     </svg>
                                 </a>
-                                <button @click="preview = true"
+                                <button x-show="slideData[current]?.embedUrl"
+                                        @click="preview = true"
                                         class="inline-flex items-center gap-2.5 rounded-xl border-2 border-(--accent) px-6 py-3 text-sm font-semibold text-(--text-primary) hover:bg-(--accent-dim) transition-colors duration-200">
                                     <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-(--accent)">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-3 w-3 text-white translate-x-0.5">
                                             <path d="M8 5v14l11-7z"/>
                                         </svg>
                                     </span>
-                                    Preview
+                                    Watch Video
                                 </button>
                             </div>
 
@@ -216,43 +221,36 @@
                  x-transition:leave="transition ease-in duration-150"
                  x-transition:leave-start="opacity-100 scale-100"
                  x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-lg rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] shadow-2xl p-8">
+                 class="relative w-full max-w-3xl rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] shadow-2xl overflow-hidden">
 
                 {{-- Close --}}
                 <button @click="preview = false"
-                        class="absolute top-4 right-4 rounded-lg p-1.5 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors">
+                        class="absolute top-3 right-3 z-10 rounded-lg p-1.5 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
                     </svg>
                 </button>
 
-                {{-- Category badge --}}
-                <div class="mb-4">
-                    <span class="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-dim)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)] dark:text-[var(--accent)]">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[var(--accent)]"></span>
-                        <span x-text="slideData[current]?.category ?? 'Featured'"></span>
-                    </span>
+                {{-- YouTube embed — x-if destroys iframe on close, stopping playback --}}
+                <template x-if="preview">
+                    <iframe :src="slideData[current]?.embedUrl"
+                            class="w-full aspect-video"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                    </iframe>
+                </template>
+
+                {{-- Footer: title + read more --}}
+                <div class="flex items-center justify-between gap-4 px-5 py-4">
+                    <p class="text-sm font-semibold text-(--text-primary) line-clamp-1" x-text="slideData[current]?.title"></p>
+                    <a :href="slideData[current]?.url"
+                       class="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-(--accent) px-4 py-2 text-xs font-semibold text-white hover:opacity-90 transition-opacity">
+                        Read Article
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+                        </svg>
+                    </a>
                 </div>
-
-                {{-- Title --}}
-                <h2 class="mb-3 text-xl font-bold text-[var(--text-primary)] leading-snug"
-                    x-text="slideData[current]?.title"></h2>
-
-                {{-- Excerpt --}}
-                <p class="mb-5 text-sm leading-relaxed text-[var(--text-muted)]"
-                   x-text="slideData[current]?.excerpt || 'No preview available.'"></p>
-
-                {{-- Date --}}
-                <p class="mb-6 text-xs text-[var(--accent)]" x-text="slideData[current]?.date"></p>
-
-                {{-- CTA --}}
-                <a :href="slideData[current]?.url"
-                   class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white dark:text-[var(--text-primary)] hover:bg-[var(--accent)] dark:hover:bg-[#6B9A38] transition-colors">
-                    Read Full Article
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
-                    </svg>
-                </a>
             </div>
         </div>
 

@@ -24,7 +24,7 @@ class SecurityHeaders
             "font-src 'self' https://fonts.bunny.net; ".
             "img-src 'self' data: blob: *; ".
             "connect-src 'self' https://challenges.cloudflare.com; ".
-            "frame-src 'self' https://challenges.cloudflare.com; ".
+            "frame-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com; ".
             "worker-src 'self' blob:; ".
             "frame-ancestors 'self';"
         );
