@@ -6,6 +6,8 @@ use App\Models\Content;
 use App\Models\ContentCategory;
 use App\Models\ContentClassification;
 use App\Models\TeamMember;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -176,6 +178,23 @@ class HomeController extends Controller
             ->get();
 
         return view('team.index', compact('teamMembers'));
+    }
+
+    public function pdf(string $slug): Response
+    {
+        $content = Content::with([
+            'user', 'category', 'classification', 'tags',
+            'imageAttachments', 'fileAttachments', 'linkAttachments',
+        ])
+            ->where('slug', $slug)
+            ->where('published', true)
+            ->firstOrFail();
+
+        $pdf = Pdf::setOptions(['enable_remote' => true, 'isRemoteEnabled' => true])
+            ->loadView('content.pdf', compact('content'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download(str($content->slug)->slug().'.pdf');
     }
 
     public function memberShow(TeamMember $member): View
