@@ -197,6 +197,26 @@ class HomeController extends Controller
         return $pdf->download(str($content->slug)->slug().'.pdf');
     }
 
+    public function memberPdf(TeamMember $member): Response
+    {
+        abort_if(! $member->is_visible, 404);
+
+        $member->load([
+            'user.educationHistory',
+            'user.workExperience',
+            'user.certifications',
+            'user.publications',
+        ]);
+
+        $pdf = Pdf::setOptions(['enable_remote' => true, 'isRemoteEnabled' => true])
+            ->loadView('team.pdf', compact('member'))
+            ->setPaper('a4', 'portrait');
+
+        $filename = str($member->fullName())->slug()->append('.pdf')->value();
+
+        return $pdf->download($filename);
+    }
+
     public function memberShow(TeamMember $member): View
     {
         abort_if(! $member->is_visible, 404);

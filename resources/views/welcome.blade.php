@@ -44,10 +44,10 @@
                  ];
              })->values()),
              timer: null,
-             init() { if (this.slides > 1) this.timer = setInterval(() => this.next(), 6000); },
+             init() { if (this.slides > 1) this.timer = setInterval(() => this.next(), 11000); },
              next() { this.current = (this.current + 1) % this.slides; },
              prev() { this.current = (this.current - 1 + this.slides) % this.slides; },
-             go(i) { this.current = i; clearInterval(this.timer); if (this.slides > 1) this.timer = setInterval(() => this.next(), 6000); }
+             go(i) { this.current = i; clearInterval(this.timer); if (this.slides > 1) this.timer = setInterval(() => this.next(), 11000); }
          }">
 
         {{-- Slides --}}
@@ -85,14 +85,14 @@
                             </div>
 
                             {{-- Title --}}
-                            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">
+                            <h1 class="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">
                                 {{ $slide->title }}
                             </h1>
 
                             {{-- Excerpt --}}
                             @if($slide->excerpt)
                             <p class="text-md leading-relaxed text-[var(--text-muted)] max-w-lg">
-                                {{ \Illuminate\Support\Str::limit($slide->excerpt, 160) }}
+                                {{ \Illuminate\Support\Str::limit($slide->excerpt, 300) }}
                             </p>
                             @endif
 
@@ -150,7 +150,7 @@
                                 {{-- Featured image --}}
                                 <img src="{{ asset("storage/{$slide->featured_image}") }}"
                                      alt="{{ $slide->title }}"
-                                     class="aspect-video lg:aspect-4/3 w-full object-cover"
+                                     class="aspect-video lg:aspect-16/9 w-full object-cover"
                                      @if($index === 0) fetchpriority="high" @else loading="lazy" @endif>
                             </div>
 
