@@ -41,6 +41,12 @@ class AppServiceProvider extends ServiceProvider
         }
         View::share('siteSetting', $siteSetting);
 
+        // Ensure dompdf font cache directory exists and is writable.
+        $fontDir = storage_path('app/fonts');
+        if (! is_dir($fontDir)) {
+            mkdir($fontDir, 0755, true);
+        }
+
         // Share navigation menus with the front layout.
         View::composer('layouts.front', function ($view): void {
             $view->with('navMenuItems',

@@ -190,8 +190,7 @@ class HomeController extends Controller
             ->where('published', true)
             ->firstOrFail();
 
-        $pdf = Pdf::setOptions(['enable_remote' => true, 'isRemoteEnabled' => true])
-            ->loadView('content.pdf', compact('content'))
+        $pdf = Pdf::loadView('content.pdf', compact('content'))
             ->setPaper('a4', 'portrait');
 
         return $pdf->download(str($content->slug)->slug().'.pdf');
@@ -208,8 +207,7 @@ class HomeController extends Controller
             'user.publications',
         ]);
 
-        $pdf = Pdf::setOptions(['enable_remote' => true, 'isRemoteEnabled' => true])
-            ->loadView('team.pdf', compact('member'))
+        $pdf = Pdf::loadView('team.pdf', compact('member'))
             ->setPaper('a4', 'portrait');
 
         $filename = str($member->fullName())->slug()->append('.pdf')->value();
