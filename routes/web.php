@@ -11,5 +11,6 @@ Route::middleware('throttle:60,1')->group(function () {
     Route::get('/categories/{slug}', [HomeController::class, 'category'])->name('category.show');
     Route::get('/classifications/{slug}', [HomeController::class, 'classification'])->name('classification.show');
     Route::get('/team', [HomeController::class, 'team'])->name('team');
+    Route::get('/team/{member}', [HomeController::class, 'memberShow'])->name('team.member');
 });
 Route::get('/articles/{slug}', [HomeController::class, 'show'])->name('content.show')->middleware('throttle:30,1');

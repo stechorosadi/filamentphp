@@ -177,4 +177,18 @@ class HomeController extends Controller
 
         return view('team.index', compact('teamMembers'));
     }
+
+    public function memberShow(TeamMember $member): View
+    {
+        abort_if(! $member->is_visible, 404);
+
+        $member->load([
+            'user.educationHistory',
+            'user.workExperience',
+            'user.certifications',
+            'user.publications',
+        ]);
+
+        return view('team.show', compact('member'));
+    }
 }
