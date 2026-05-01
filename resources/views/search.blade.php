@@ -40,26 +40,28 @@
 
         {{-- Search bar --}}
         <form method="GET" action="{{ route('search') }}">
-            <div class="flex overflow-hidden rounded-2xl border-2 border-[#4F772D]/30 bg-white/8 backdrop-blur-sm focus-within:border-[#4F772D]/60 transition-all duration-200 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                     class="ml-5 h-5 w-5 shrink-0 self-center text-[#90A955]">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
-                </svg>
-                <input type="text" name="q" value="{{ $query }}" maxlength="100"
-                       placeholder="Search articles, topics, or keywords…"
-                       autofocus
-                       class="flex-1 bg-transparent px-4 py-4 text-base text-[#ECF39E] placeholder-[#4F772D] focus:outline-none">
-                @if($query)
-                <a href="{{ route('search') }}"
-                   class="self-center mr-2 rounded-lg p-2 text-[var(--accent)] hover:text-[#90A955] transition-colors"
-                   title="Clear search">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+            <div class="flex rounded-2xl border-2 border-[#4F772D]/30 bg-white/8 backdrop-blur-sm focus-within:border-[#4F772D]/60 transition-all duration-200 shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-2 gap-2">
+                <div class="flex flex-1 items-center min-w-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                         class="ml-3 h-5 w-5 shrink-0 text-[#90A955]">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                     </svg>
-                </a>
-                @endif
+                    <input type="text" name="q" value="{{ $query }}" maxlength="100"
+                           placeholder="Search articles, topics, or keywords…"
+                           autofocus
+                           class="min-w-0 flex-1 bg-transparent px-3 py-2 text-base text-[#ECF39E] placeholder-[#4F772D] focus:outline-none">
+                    @if($query)
+                    <a href="{{ route('search') }}"
+                       class="shrink-0 rounded-lg p-2 text-(--accent) hover:text-[#90A955] transition-colors"
+                       title="Clear search">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                        </svg>
+                    </a>
+                    @endif
+                </div>
                 <button type="submit"
-                        class="m-2 rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-[var(--accent)] transition-colors duration-200 shrink-0">
+                        class="shrink-0 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-(--accent) transition-colors duration-200">
                     Search
                 </button>
             </div>
