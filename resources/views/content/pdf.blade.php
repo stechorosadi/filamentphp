@@ -106,6 +106,16 @@
             margin-right: 14px;
         }
 
+        /* ── Header image ── */
+        .header-image {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            border-radius: 6px;
+            display: block;
+            margin-bottom: 18px;
+        }
+
         /* ── Excerpt ── */
         .excerpt {
             background: #f5fbe8;
@@ -378,6 +388,11 @@
         @endif
         <span>Source: {{ url()->route('content.show', $content->slug) }}</span>
     </div>
+
+    {{-- Header image --}}
+    @if($content->header_image)
+    <img class="header-image" src="{{ asset("storage/{$content->header_image}") }}" alt="{{ $content->title }}">
+    @endif
 
     {{-- Excerpt --}}
     @if($content->excerpt)
