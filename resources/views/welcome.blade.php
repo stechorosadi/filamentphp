@@ -607,11 +607,16 @@
                              alt="{{ $content->title }}"
                              loading="lazy"
                              class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        @if($content->category)
-                        <span class="absolute top-3 left-3 rounded-full bg-[var(--accent)] dark:bg-[var(--accent)] px-3 py-1 text-xs font-semibold text-white">
-                            {{ $content->category->name }}
-                        </span>
-                        @endif
+                        <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                            @if($content->category)
+                            <span class="rounded-full bg-[var(--accent)] dark:bg-[var(--accent)] px-3 py-1 text-xs font-semibold text-white">
+                                {{ $content->category->name }}
+                            </span>
+                            @endif
+                            @if($content->archived)
+                            <span class="rounded-full bg-gray-500 px-3 py-1 text-xs font-semibold text-white">Archived</span>
+                            @endif
+                        </div>
                     </div>
 
                     {{-- Meta strip --}}

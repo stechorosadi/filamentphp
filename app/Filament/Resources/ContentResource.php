@@ -118,6 +118,13 @@ class ContentResource extends Resource
                                     ->onColor('warning')
                                     ->offColor('gray')
                                     ->default(false),
+
+                                Toggle::make('archived')
+                                    ->label('Archived')
+                                    ->helperText('Stays public but shows an Archived badge on the site.')
+                                    ->onColor('gray')
+                                    ->offColor('gray')
+                                    ->default(false),
                             ]),
 
                         Section::make('Classification')
@@ -228,6 +235,10 @@ class ContentResource extends Resource
                     ->trueColor('warning')
                     ->falseColor('gray'),
 
+                ToggleColumn::make('archived')
+                    ->label('Archived')
+                    ->sortable(),
+
                 TextColumn::make('views')
                     ->label('Views')
                     ->numeric()
@@ -271,6 +282,11 @@ class ContentResource extends Resource
                     ->label('Featured')
                     ->trueLabel('Featured only')
                     ->falseLabel('Not featured'),
+
+                TernaryFilter::make('archived')
+                    ->label('Archived')
+                    ->trueLabel('Archived only')
+                    ->falseLabel('Not archived'),
 
                 SelectFilter::make('content_classification_id')
                     ->label('Classification')
@@ -371,6 +387,14 @@ class ContentResource extends Resource
                                 ->trueIcon('heroicon-o-star')
                                 ->falseIcon('heroicon-o-star')
                                 ->trueColor('warning')
+                                ->falseColor('gray'),
+
+                            IconEntry::make('archived')
+                                ->label('Archived')
+                                ->boolean()
+                                ->trueIcon('heroicon-o-archive-box')
+                                ->falseIcon('heroicon-o-archive-box')
+                                ->trueColor('gray')
                                 ->falseColor('gray'),
                         ]),
                 ]),

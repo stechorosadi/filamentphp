@@ -119,6 +119,9 @@
                             {{ $content->category->name }}
                         </span>
                         @endif
+                        @if($content->archived)
+                        <span class="rounded-full bg-gray-500/85 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-white">Archived</span>
+                        @endif
                     </div>
                 </div>
 

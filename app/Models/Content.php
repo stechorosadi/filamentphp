@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
     'youtube_url',
     'published',
     'featured',
+    'archived',
 ])]
 class Content extends Model
 {
@@ -30,6 +31,7 @@ class Content extends Model
         return [
             'published' => 'boolean',
             'featured' => 'boolean',
+            'archived' => 'boolean',
             'views' => 'integer',
         ];
     }

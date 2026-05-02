@@ -126,6 +126,9 @@
                         <span class="rounded-full bg-[var(--accent)]/85 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-white">
                             {{ $content->category->name }}
                         </span>
+                        @if($content->archived)
+                        <span class="rounded-full bg-gray-500/85 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-white">Archived</span>
+                        @endif
                     </div>
                 </div>
 
