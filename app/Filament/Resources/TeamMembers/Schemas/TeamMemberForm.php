@@ -65,7 +65,7 @@ class TeamMemberForm
                             ->directory('team')
                             ->visibility('public')
                             ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
-                            ->maxSize(1024)
+                            ->maxSize(5120)
                             ->automaticallyResizeImagesMode('cover')
                             ->automaticallyResizeImagesToWidth('1000')
                             ->automaticallyResizeImagesToHeight('1000')

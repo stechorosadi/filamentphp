@@ -67,7 +67,10 @@ class CertificationsRelationManager extends RelationManager
                         'image/jpeg',
                         'image/png',
                     ])
-                    ->maxSize(2048)
+                    ->maxSize(5120)
+                    ->automaticallyResizeImagesToWidth(1024)
+                    ->automaticallyResizeImagesMode('contain')
+                    ->automaticallyUpscaleImagesWhenResizing(false)
                     ->columnSpanFull(),
             ]);
     }

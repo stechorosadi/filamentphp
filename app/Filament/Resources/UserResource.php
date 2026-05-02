@@ -75,14 +75,14 @@ class UserResource extends Resource
                                     ->directory('avatars')
                                     ->visibility('public')
                                     ->acceptedFileTypes(['image/jpeg', 'image/png'])
-                                    ->maxSize(2048)
+                                    ->maxSize(5120)
                                     ->imageEditor()
                                     ->imageEditorAspectRatioOptions(['1:1'])
-                                    ->automaticallyResizeImagesToWidth(200)
-                                    ->automaticallyResizeImagesToHeight(200)
+                                    ->automaticallyResizeImagesToWidth(240)
+                                    ->automaticallyResizeImagesToHeight(240)
                                     ->automaticallyResizeImagesMode('cover')
                                     ->automaticallyUpscaleImagesWhenResizing()
-                                    ->imagePreviewHeight('150')
+                                    ->imagePreviewHeight('240')
                                     ->columnSpanFull(),
                             ]),
                     ])

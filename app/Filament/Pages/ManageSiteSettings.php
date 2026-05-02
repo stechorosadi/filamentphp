@@ -73,8 +73,11 @@ class ManageSiteSettings extends Page
                             ->directory('site')
                             ->visibility('public')
                             ->acceptedFileTypes(['image/png', 'image/jpeg'])
-                            ->maxSize(512)
-                            ->helperText('PNG or JPG · max 512 KB'),
+                            ->maxSize(2048)
+                            ->automaticallyResizeImagesToHeight(128)
+                            ->automaticallyResizeImagesMode('contain')
+                            ->automaticallyUpscaleImagesWhenResizing(false)
+                            ->helperText('PNG or JPG · max 2 MB · auto-resized to 128px height'),
 
                         FileUpload::make('favicon_path')
                             ->label('Favicon')
@@ -82,8 +85,12 @@ class ManageSiteSettings extends Page
                             ->directory('site')
                             ->visibility('public')
                             ->acceptedFileTypes(['image/x-icon', 'image/png'])
-                            ->maxSize(128)
-                            ->helperText('.ico or PNG · max 128 KB'),
+                            ->maxSize(1024)
+                            ->automaticallyResizeImagesToWidth(32)
+                            ->automaticallyResizeImagesToHeight(32)
+                            ->automaticallyResizeImagesMode('contain')
+                            ->automaticallyUpscaleImagesWhenResizing(false)
+                            ->helperText('.ico or PNG · max 1 MB · auto-resized to 32×32px'),
                     ])
                     ->columns(2),
 

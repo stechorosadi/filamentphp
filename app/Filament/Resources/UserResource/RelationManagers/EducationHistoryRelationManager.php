@@ -71,7 +71,10 @@ class EducationHistoryRelationManager extends RelationManager
                         'image/jpeg',
                         'image/png',
                     ])
-                    ->maxSize(2048)
+                    ->maxSize(5120)
+                    ->automaticallyResizeImagesToWidth(1024)
+                    ->automaticallyResizeImagesMode('contain')
+                    ->automaticallyUpscaleImagesWhenResizing(false)
                     ->columnSpanFull(),
             ]);
     }
@@ -95,8 +98,7 @@ class EducationHistoryRelationManager extends RelationManager
 
                 TextColumn::make('start_year')
                     ->label('Period')
-                    ->formatStateUsing(fn (UserEducation $record): string =>
-                        $record->start_year . ' – ' . ($record->end_year ?? 'Present')
+                    ->formatStateUsing(fn (UserEducation $record): string => $record->start_year.' – '.($record->end_year ?? 'Present')
                     ),
 
                 TextColumn::make('gpa')

@@ -9,7 +9,6 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -17,6 +16,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class ImageAttachmentsRelationManager extends RelationManager
 {
@@ -33,9 +33,9 @@ class ImageAttachmentsRelationManager extends RelationManager
                 ->disk('public')
                 ->directory('content-images')
                 ->acceptedFileTypes(['image/jpeg', 'image/png'])
-                ->maxSize(1024)
+                ->maxSize(5120)
                 ->imageEditor()
-                ->automaticallyResizeImagesToWidth(1000)
+                ->automaticallyResizeImagesToWidth(1024)
                 ->automaticallyResizeImagesMode('contain')
                 ->automaticallyUpscaleImagesWhenResizing(false)
                 ->required()
@@ -61,9 +61,9 @@ class ImageAttachmentsRelationManager extends RelationManager
                         Action::make('previewImage')
                             ->modalHeading(fn (ContentImage $record): string => $record->caption ?: 'Image Preview')
                             ->modalContent(fn (ContentImage $record): HtmlString => new HtmlString(
-                                '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">' .
-                                '<img src="' . asset('storage/' . $record->path) .
-                                '" style="max-width:100%;max-height:700px;object-fit:contain;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.15);">' .
+                                '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">'.
+                                '<img src="'.asset('storage/'.$record->path).
+                                '" style="max-width:100%;max-height:700px;object-fit:contain;border-radius:0.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.15);">'.
                                 '</div>'
                             ))
                             ->modalWidth('xl')

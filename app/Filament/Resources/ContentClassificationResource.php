@@ -67,13 +67,13 @@ class ContentClassificationResource extends Resource
                         ->directory('content-classifications')
                         ->visibility('public')
                         ->acceptedFileTypes(['image/png'])
-                        ->maxSize(1024)
+                        ->maxSize(2048)
                         ->imageAspectRatio('1:1')
                         ->automaticallyCropImagesToAspectRatio()
-                        ->automaticallyResizeImagesToWidth('100')
-                        ->automaticallyResizeImagesToHeight('100')
+                        ->automaticallyResizeImagesToWidth('128')
+                        ->automaticallyResizeImagesToHeight('128')
                         ->automaticallyResizeImagesMode('cover')
-                        ->helperText('PNG only · 1:1 ratio · max 1 MB'),
+                        ->helperText('PNG only · 1:1 ratio · max 2 MB'),
                 ])
                 ->columns(2),
         ]);

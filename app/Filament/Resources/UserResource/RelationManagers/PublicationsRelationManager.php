@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
-use App\Models\UserPublication;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -14,7 +13,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -27,11 +25,11 @@ class PublicationsRelationManager extends RelationManager
     public static function getTypes(): array
     {
         return [
-            'book'             => 'Book',
-            'journal_article'  => 'Journal Article',
-            'research_paper'   => 'Research Paper',
+            'book' => 'Book',
+            'journal_article' => 'Journal Article',
+            'research_paper' => 'Research Paper',
             'conference_paper' => 'Conference Paper',
-            'other'            => 'Other',
+            'other' => 'Other',
         ];
     }
 
@@ -89,6 +87,9 @@ class PublicationsRelationManager extends RelationManager
                         'image/png',
                     ])
                     ->maxSize(5120)
+                    ->automaticallyResizeImagesToWidth(1024)
+                    ->automaticallyResizeImagesMode('contain')
+                    ->automaticallyUpscaleImagesWhenResizing(false)
                     ->columnSpanFull(),
             ]);
     }
@@ -107,11 +108,11 @@ class PublicationsRelationManager extends RelationManager
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => self::getTypes()[$state] ?? $state)
                     ->color(fn (string $state): string => match ($state) {
-                        'book'             => 'success',
-                        'journal_article'  => 'info',
-                        'research_paper'   => 'warning',
+                        'book' => 'success',
+                        'journal_article' => 'info',
+                        'research_paper' => 'warning',
                         'conference_paper' => 'danger',
-                        default            => 'gray',
+                        default => 'gray',
                     }),
 
                 TextColumn::make('publisher')
