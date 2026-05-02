@@ -1,7 +1,11 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sitemap', [SitemapController::class, 'html'])->name('sitemap.html');
 
 Route::middleware('throttle:60,1')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
