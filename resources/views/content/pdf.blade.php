@@ -265,19 +265,14 @@
         }
 
         .img-gallery td {
-            width: 50%;
+            width: 33.33%;
             vertical-align: top;
-            padding: 0 4px 0 0;
+            padding: 4px;
         }
 
-        .img-masonry-item {
-            margin-bottom: 8px;
-            overflow: hidden;
-        }
-
-        .img-masonry-item img {
+        .img-gallery img {
             width: 100%;
-            height: 180px;
+            height: 140px;
             border-radius: 4px;
             display: block;
         }
@@ -435,29 +430,20 @@
     {{-- Image attachments --}}
     @if($content->imageAttachments->isNotEmpty())
     <div class="section-title">Images</div>
-    @php
-        $leftImages  = $content->imageAttachments->filter(fn ($img, $i) => $i % 2 === 0)->values();
-        $rightImages = $content->imageAttachments->filter(fn ($img, $i) => $i % 2 === 1)->values();
-    @endphp
     <table class="img-gallery">
+        @foreach($content->imageAttachments->chunk(3) as $row)
         <tr>
+            @foreach($row as $img)
             <td>
-                @foreach($leftImages as $img)
-                <div class="img-masonry-item">
-                    <img src="{{ asset("storage/{$img->path}") }}" alt="{{ $img->caption ?? '' }}">
-                    @if($img->caption)<div class="img-caption">{{ $img->caption }}</div>@endif
-                </div>
-                @endforeach
+                <img src="{{ asset("storage/{$img->path}") }}" alt="{{ $img->caption ?? '' }}">
+                @if($img->caption)<div class="img-caption">{{ $img->caption }}</div>@endif
             </td>
-            <td>
-                @foreach($rightImages as $img)
-                <div class="img-masonry-item">
-                    <img src="{{ asset("storage/{$img->path}") }}" alt="{{ $img->caption ?? '' }}">
-                    @if($img->caption)<div class="img-caption">{{ $img->caption }}</div>@endif
-                </div>
-                @endforeach
-            </td>
+            @endforeach
+            @for($pad = $row->count(); $pad < 3; $pad++)
+            <td></td>
+            @endfor
         </tr>
+        @endforeach
     </table>
     @endif
 
