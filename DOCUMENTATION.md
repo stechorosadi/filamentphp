@@ -60,6 +60,7 @@ php artisan db:seed   # optional: seeds roles and initial admin
 
 ```bash
 php artisan storage:link
+mkdir -p storage/app/fonts   # required for dompdf font cache
 ```
 
 ### 5. Build frontend assets
@@ -98,25 +99,30 @@ FILESYSTEM_DISK=public
 
 ### Panel URL
 
-`app/Providers/Filament/AdminPanelProvider.php` → `->path('admin')`
+`app/Providers/Filament/AdminPanelProvider.php` → `->path('arsiparis')`
 
 ### Navigation Menu
 
-The public frontend navbar is managed via **Filament → Menu Builder → Header Menu - Top Right**. Add, remove, or reorder items there without touching code. Items support custom titles, URLs, and link targets (`_self` / `_blank`).
+The public frontend navbar is managed via **Filament → Menu Builder → Header Menu - Top Right**. Add, remove, or reorder items there without touching code.
+
+### Site Settings
+
+**Admin panel → Settings → Site Settings** (super_admin only):
+- **Identity**: site title, tagline, meta description
+- **Branding**: logo (auto-resized to 128px height), favicon (auto-resized to 32×32px)
+- **Social Media**: Facebook, Instagram, X, YouTube URLs
+- **Contact Info**: email, address (displayed in the top bar)
+- **Theme Colors**: accent, background, and text colors for light/dark modes
 
 ---
 
 ## Roles & Permissions
 
-### Available Roles
-
 | Role | Description |
 |---|---|
 | `super_admin` | Full access to all resources and features |
-| `Content Manager` | Access limited to Content CRUD (12 permissions) |
-| *(no role)* | Can log in and see the Dashboard only — no resource access |
-
-`canAccessPanel()` returns `true` for all authenticated users. FilamentShield policies block resource access based on assigned permissions.
+| `Content Manager` | Access limited to Content CRUD |
+| *(no role)* | Can log in and see the Dashboard only |
 
 ### Setting Up Shield
 
@@ -129,34 +135,22 @@ php artisan shield:super-admin --user={id}
 
 **Via admin panel:** Users → edit user → Roles field
 
-**Via Tinker:**
-```bash
-php artisan tinker
-App\Models\User::find(1)->assignRole('Content Manager');
-```
-
-### File Storage
-
-Upload directories (all relative to `storage/app/public/`):
-
-| Feature | Directory |
-|---|---|
-| User avatars | `avatars/` |
-| Education certificates | `user-certificates/` |
-| Publication files | `user-publications/` |
-| Content header images | `content-headers/` |
-| Content featured images | `content-featured/` |
-| Category images | `content-categories/` |
-| Classification images | `content-classifications/` |
-| Content image attachments | `content-images/` |
-| Content file attachments | `content-files/` |
-| Parallax background images | `background/` |
-
-> Files are automatically deleted from storage when the associated record is updated (field changed) or deleted.
-
 ---
 
 ## Admin Panel Features
+
+### Dashboard
+
+The dashboard shows four live stat cards:
+
+| Card | Shows |
+|---|---|
+| **Articles** | Total count + published progress bar + featured/archived/draft pills |
+| **Total Views** | Sum of all article views + avg per published article |
+| **Taxonomy** | Combined categories + classifications, split into two sub-boxes |
+| **Team Members** | Total count + visible progress bar + hidden count |
+
+---
 
 ### Users
 
@@ -167,11 +161,24 @@ Upload directories (all relative to `storage/app/public/`):
 2. Set a password (min 8 characters)
 
 **Changing a password:**
-- **super_admin editing any user:** sees only New Password + Confirm — no old password required
-- **Other roles editing their own profile:** must enter Current Password, New Password, Confirm
-- Leave all blank to keep the existing password
+- **super_admin:** sees only New Password + Confirm — no old password required
+- **Other roles:** must enter Current Password, New Password, Confirm
+- Leave all password fields blank to keep the existing password
 
-**Avatar:** Auto-cropped to 200×200px (1:1). Click the avatar in the table to preview full size.
+**Avatar:** Auto-cropped to 200×200px. Click the avatar in the table to preview full size.
+
+**User profile tabs (Education, Work Experience, Certifications, Publications):**
+
+Each tab is a relation manager with drag-to-reorder support.
+
+| Tab | Fields |
+|---|---|
+| Education History | Institution, Degree, Field of Study, Period (start–end year), GPA, Description, Certificate upload |
+| Work Experience | Company, Job Title, Department, Period, Description |
+| Certifications | Title, Issuing Organization, Category (Training/Seminar/Workshop/Professional/Online Course), Year, Description, Certificate upload |
+| Publications | Title, Type (Book/Journal/Research/Conference/Other), Publisher, Year, ISBN, DOI, URL, Abstract, File upload |
+
+Certificate and file image uploads are auto-resized to 1000px width (PDFs are uploaded as-is).
 
 ---
 
@@ -183,17 +190,21 @@ Upload directories (all relative to `storage/app/public/`):
 1. **New Content** → title (slug auto-generated as `YYYY-MM-DD-your-title`)
 2. Write in the RichEditor, add excerpt, optional YouTube embed URL
 3. Select classification, category, tags (can create tags inline)
-4. Upload header image and/or featured image (auto-resized 1000×600px, 5:3 crop)
-5. Set **Published** toggle (makes content visible on the frontend)
-6. Set **Featured** toggle (pins to the homepage hero slider — requires a featured image)
-7. Save — then manage image, file, and link attachments from the relation manager tabs
+4. Upload header image and/or featured image
+5. Set status toggles (see below)
+6. Save — then manage image, file, and link attachments from the relation manager tabs
 
-**Published / Featured toggles:**
-- `Published` — content only appears on the frontend when this is ON
-- `Featured` — content appears in the hero slider when ON AND a `featured_image` is uploaded
-- Both can be toggled inline in the content table without opening the edit page
+**Status toggles:**
 
-**Page Views:** Automatically tracked — each unique visitor session increments the counter once per article. Visible in the table and infolist.
+| Toggle | Effect |
+|---|---|
+| **Published** | Content only appears on the frontend when ON |
+| **Featured** | Content appears in the homepage hero slider when ON + featured_image uploaded |
+| **Archived** | Content is hidden from hero, latest, and popular sections but still public; appears on `/archive` page and in search results with an "Archived" badge |
+
+All three toggles can be flipped inline in the content table without opening the edit page.
+
+**Page Views:** Automatically tracked — each unique visitor session increments the counter once per article.
 
 ---
 
@@ -201,11 +212,10 @@ Upload directories (all relative to `storage/app/public/`):
 
 **Location:** Admin panel → Content Management → Categories
 
-Each category has:
 - **Name** — auto-generates a URL slug
-- **Description** — short text describing the scope/topics (max 500 chars); shown on the public category page and homepage cards
-- **Icon** — pick any Heroicon from the searchable dropdown (stored as `heroicon-o-name`)
-- **Image** — PNG, 1:1 ratio, 100×100px, max 1MB; shown as a thumbnail in admin and on the homepage
+- **Description** — max 500 chars; shown on category page and homepage cards
+- **Icon** — any Heroicon from the searchable dropdown
+- **Image** — PNG, 1:1 ratio, auto-resized to 100×100px
 
 ---
 
@@ -213,18 +223,24 @@ Each category has:
 
 **Location:** Admin panel → Content Management → Classifications
 
-Each classification has:
-- **Name** — auto-generates slug
-- **Icon** — searchable Heroicon picker
-- **Image** — PNG, 1:1, 100×100px, max 1MB
+- **Name**, **Icon**, **Image** (same as categories, no description field)
 
 ---
 
 ### Tags
 
-**Location:** Admin panel → Content Management → Tags
+Tags can be created here **or inline** when editing content. The table shows how many articles use each tag.
 
-Tags can be created here **or inline** when editing content. Each tag has name + auto-slug. The table shows how many articles use each tag.
+---
+
+### Team Members
+
+**Location:** Admin panel → Team Members
+
+- **Photo** — click photo thumbnail in the table to preview full size
+- **Full name** is composed of: `Front Title + User Name + Back Title`
+- **Sort Order** — drag rows to reorder the public team page display
+- **Visible** — hidden members do not appear on the public team page
 
 ---
 
@@ -232,30 +248,11 @@ Tags can be created here **or inline** when editing content. Each tag has name +
 
 **Location:** Admin panel → Menu Builder
 
-Manages the public frontend navigation. The navbar reads from the menu named **"Header Menu - Top Right"**.
+Manages the public frontend navigation. The navbar reads from **"Header Menu - Top Right"**.
 
 To update the navbar:
-1. Open **Header Menu - Top Right**
-2. Add, edit, or reorder menu items
-3. Save — changes appear immediately on the frontend (no rebuild needed)
-
-Each menu item supports: Title, URL (relative path or full URL), Link Target (`_self` / `_blank`), Icon.
-
----
-
-### Education History & Publications
-
-**Location:** Users → Edit/View → tabs
-
-_(See original documentation — these features are unchanged.)_
-
----
-
-### Image / File / Link Attachments
-
-**Location:** Contents → Edit/View → tabs
-
-_(See original documentation — these features are unchanged.)_
+1. Open **Header Menu - Top Right** → add, edit, or reorder menu items → Save
+2. Changes appear immediately (no rebuild needed)
 
 ---
 
@@ -265,47 +262,89 @@ _(See original documentation — these features are unchanged.)_
 
 | Section | Description |
 |---|---|
-| **Hero Slider** | Up to 5 featured+published articles; auto-advances every 6s; Preview modal shows excerpt |
-| **Search** | Prominent search bar with total article/category/classification counts; redirects to `/search` |
-| **Browse by Category** | 4-col grid; first category is "featured" spanning 2 cols; shows icon, description, article count |
-| **Latest Content** | Paginated grid (9/page) with search + filter support; parallax background image |
-| **Classifications** | Dark warm section; 4-col horizontal cards with icon + image thumbnail |
-| **Most Popular** | Featured #1 full-bleed card + ranked list #2–5 sorted by views |
+| **Hero Slider** | Up to 5 featured+published+non-archived articles; auto-advances every 11s; **Watch Video** button appears only when the slide has a YouTube URL — opens a video modal |
+| **Search** | Search bar with article/category/classification counts; redirects to `/search` |
+| **Browse by Category** | 4-col grid; first category spans 2 cols |
+| **Latest Content** | Paginated grid (9/page); excludes archived content |
+| **Classifications** | Dark section; horizontal cards |
+| **Most Popular** | Top 5 by views (non-archived); featured card + ranked list |
+
+---
 
 ### Search Page (`/search?q=`)
 
 - Searches: title, excerpt, category name, classification name, tag names
-- Keyword highlighted in yellow in result titles
-- Empty state shows 6 random categories as suggestions
+- **Includes archived content** — shown with "Archived" badge
 - Paginated (12/page)
+
+---
+
+### Archive Page (`/archive`)
+
+Dedicated page for all published+archived content:
+- Shows articles marked as **Archived** that are excluded from the homepage
+- Each card has the "Archived" badge permanently visible
+- Paginated (12/page)
+- Accessible via direct URL — link this from your navigation if needed
+
+---
 
 ### Category Page (`/categories/{slug}`)
 
-- Header: category image, name, description, article count
+- Includes archived content (shown with badge)
 - 3-col paginated content grid (9/page)
-- Other categories shown at the bottom for exploration
+
+---
 
 ### Classification Page (`/classifications/{slug}`)
 
-- Header: classification image, name, article count
+- Includes archived content (shown with badge)
 - 3-col paginated content grid (9/page)
-- Other classifications at the bottom
+
+---
 
 ### Article Detail (`/articles/{slug}`)
 
-- Breadcrumb → title → tag/category badges → header image → two-column layout
-- Left sidebar (sticky on desktop): author avatar, reading time (auto-calculated), views, published date
-- Right: excerpt, rich content, YouTube embed, gallery, downloads, related links
-- Related articles (same category/classification) at the bottom
+- Breadcrumb → title → classification/category/archived badges → header image
+- **Left sidebar** (sticky on desktop): author, reading time, views, published date, **social share buttons** (Twitter/X, Facebook, WhatsApp, Copy Link), **Export to PDF** button
+- **Right**: excerpt, rich content, YouTube embed, image gallery (masonry 2-col), file downloads, related links
+- **Related articles** at the bottom — non-archived content from same category/classification
+
+**Export to PDF:** Downloads a formatted A4 PDF with logo, header image, content, YouTube thumbnail (if present), 3-col image gallery, file list, and link list.
+
+**Social share buttons:**
+- **Twitter/X**, **Facebook**, **WhatsApp** — open platform share dialogs in new tab
+- **Copy Link** — copies URL to clipboard with 2-second "Copied!" feedback
+
+---
+
+### Team Page (`/team`)
+
+- Lists all visible team members
+- Each card is **clickable** — navigates to the member detail page
+
+---
+
+### Team Member Detail (`/team/{id}`)
+
+| Section | Description |
+|---|---|
+| **Hero** | Photo, full name with titles, position, employee number, social links |
+| **Education & Experience** | Two-column timeline (side by side on desktop) with year badges, institution/company, description |
+| **Certificates** | 2-col grid with category badge, issuer, year |
+| **Publications** | List with type + year badges, publisher, abstract, View link |
+| **Bottom bar** | ← Back to Team Members (left) | Export to PDF (right) |
+
+**Export to PDF:** Downloads an A4 PDF of the member's full profile including all sections.
+
+---
 
 ### Error Pages
 
 Custom error pages for 404, 403, 500, 503, 419, 429:
 - Match site colour palette with dark/light mode support
-- Giant watermark error code, friendly icon, title, and human-readable description
 - **15-second SVG countdown ring** auto-redirects to homepage
-- Buttons: Go to Homepage, Go Back (when referrer exists), Search
-- Standalone — no database queries, safe for 500/503 scenarios
+- Standalone — no database queries (safe for 500/503)
 
 ---
 
@@ -316,10 +355,8 @@ Custom error pages for 404, 403, 500, 503, 419, 429:
 ```bash
 php artisan make:model MyModel -m
 php artisan make:filament-resource MyModel --generate
-php artisan shield:generate --all   # generate permissions for the new resource
+php artisan shield:generate --all
 ```
-
-Set navigation group and icon in the resource class, then assign permissions to roles via the Shield panel.
 
 ### Adding a New Upload Field with Auto-Cleanup
 
@@ -338,16 +375,16 @@ static::deleting(function (MyModel $record): void {
 });
 ```
 
+> **Important:** If child records are deleted via DB-level `cascadeOnDelete()`, their Eloquent `deleting` hooks will NOT fire. Add file cleanup to the parent model's `deleting` hook instead (see `Content::booted()` for the pattern).
+
 ### Adding a New Frontend Route
 
 1. Add route to `routes/web.php`
 2. Add controller method to `HomeController`
 3. Create view in `resources/views/` extending `layouts.front`
-4. Wire any navbar links via Menu Builder
+4. Wire navbar links via Menu Builder
 
 ### Adding a New Error Page
-
-Create `resources/views/errors/{code}.blade.php` extending `errors.layout`:
 
 ```blade
 @extends('errors.layout')
@@ -373,7 +410,8 @@ php artisan route:cache
 php artisan view:cache
 php artisan migrate --force
 php artisan storage:link
-php artisan shield:generate --all   # if new resources were added
+mkdir -p storage/app/fonts        # dompdf font cache
+php artisan shield:generate --all  # if new resources were added
 ```
 
 ### Environment
@@ -390,3 +428,10 @@ APP_URL=https://yourdomain.com
 chmod -R 775 storage bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache
 ```
+
+### Troubleshooting: PDF export 500 error
+
+If PDF export returns 500 on the live server:
+1. Ensure `barryvdh/laravel-dompdf` is in `bootstrap/providers.php` (already committed — bypasses auto-discovery)
+2. Ensure `storage/app/fonts/` directory exists and is writable
+3. Run `php artisan config:cache` to pick up `config/dompdf.php`
