@@ -305,14 +305,14 @@
                  @keydown.arrow-right.window="open && next()">
 
                 <h3 class="mb-5 text-lg font-bold text-[var(--text-primary)]">Gallery</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="columns-1 sm:columns-2 gap-4">
                     @foreach($content->imageAttachments as $index => $img)
-                    <div class="group relative cursor-zoom-in overflow-hidden rounded-xl border border-[var(--border)]"
+                    <div class="break-inside-avoid mb-4 group relative cursor-zoom-in overflow-hidden rounded-xl border border-(--border)"
                          @click="openModal({{ $index }})">
                         <img src="{{ asset('storage/' . $img->path) }}"
                              alt="{{ $img->caption ?? 'Image' }}"
                              loading="lazy"
-                             class="w-full object-cover aspect-video transition-transform duration-300 group-hover:scale-105">
+                             class="w-full object-cover transition-transform duration-300 group-hover:scale-105">
                         <div class="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-200 group-hover:bg-black/25">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                  class="h-8 w-8 text-white opacity-0 drop-shadow-lg transition-opacity duration-200 group-hover:opacity-100">

@@ -129,6 +129,10 @@
         }
 
         /* ── Article content ── */
+        .content {
+            overflow: hidden;
+        }
+
         .content h1, .content h2, .content h3,
         .content h4, .content h5, .content h6 {
             color: #132A13;
@@ -235,14 +239,15 @@
 
         .yt-block {
             margin-bottom: 18px;
+            text-align: center;
+            page-break-inside: avoid;
         }
 
         .yt-thumb {
-            width: 100%;
-            max-height: 220px;
-            object-fit: cover;
+            width: 70%;
+            height: auto;
             border-radius: 6px;
-            display: block;
+            display: inline-block;
         }
 
         .yt-url {
@@ -255,20 +260,24 @@
         .img-gallery {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 8px;
+            border-spacing: 8px 0;
             margin-bottom: 8px;
         }
 
         .img-gallery td {
             width: 50%;
             vertical-align: top;
-            padding: 0;
+            padding: 0 4px 0 0;
         }
 
-        .img-gallery img {
+        .img-masonry-item {
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .img-masonry-item img {
             width: 100%;
-            height: 160px;
-            object-fit: cover;
+            height: 180px;
             border-radius: 4px;
             display: block;
         }
@@ -276,13 +285,9 @@
         .img-caption {
             font-size: 8pt;
             color: #666;
-            margin-top: 4px;
+            margin-top: 3px;
             font-style: italic;
             text-align: center;
-        }
-
-        .img-gallery .empty-cell {
-            width: 50%;
         }
 
         .file-list {
@@ -292,9 +297,7 @@
         }
 
         .file-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
+            display: block;
             padding: 8px 10px;
             background: #f5fbe8;
             border: 1px solid #dde;
@@ -432,23 +435,29 @@
     {{-- Image attachments --}}
     @if($content->imageAttachments->isNotEmpty())
     <div class="section-title">Images</div>
+    @php
+        $leftImages  = $content->imageAttachments->filter(fn ($img, $i) => $i % 2 === 0)->values();
+        $rightImages = $content->imageAttachments->filter(fn ($img, $i) => $i % 2 === 1)->values();
+    @endphp
     <table class="img-gallery">
-        @foreach($content->imageAttachments->chunk(2) as $pair)
         <tr>
-            @foreach($pair as $img)
             <td>
-                <img src="{{ asset("storage/{$img->path}") }}" alt="{{ $img->caption ?? '' }}">
-                @if($img->caption)
-                <div class="img-caption">{{ $img->caption }}</div>
-                @endif
+                @foreach($leftImages as $img)
+                <div class="img-masonry-item">
+                    <img src="{{ asset("storage/{$img->path}") }}" alt="{{ $img->caption ?? '' }}">
+                    @if($img->caption)<div class="img-caption">{{ $img->caption }}</div>@endif
+                </div>
+                @endforeach
             </td>
-            @endforeach
-            {{-- Fill empty cell if odd number of images --}}
-            @if($pair->count() === 1)
-            <td class="empty-cell"></td>
-            @endif
+            <td>
+                @foreach($rightImages as $img)
+                <div class="img-masonry-item">
+                    <img src="{{ asset("storage/{$img->path}") }}" alt="{{ $img->caption ?? '' }}">
+                    @if($img->caption)<div class="img-caption">{{ $img->caption }}</div>@endif
+                </div>
+                @endforeach
+            </td>
         </tr>
-        @endforeach
     </table>
     @endif
 
