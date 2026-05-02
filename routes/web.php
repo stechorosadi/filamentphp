@@ -10,6 +10,7 @@ Route::middleware('throttle:60,1')->group(function () {
 Route::middleware('throttle:60,1')->group(function () {
     Route::get('/categories/{slug}', [HomeController::class, 'category'])->name('category.show');
     Route::get('/classifications/{slug}', [HomeController::class, 'classification'])->name('classification.show');
+    Route::get('/archive', [HomeController::class, 'archive'])->name('archive');
     Route::get('/team', [HomeController::class, 'team'])->name('team');
     Route::get('/team/{member}', [HomeController::class, 'memberShow'])->name('team.member');
     Route::get('/team/{member}/pdf', [HomeController::class, 'memberPdf'])->name('team.member.pdf');

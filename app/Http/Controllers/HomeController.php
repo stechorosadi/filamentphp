@@ -21,6 +21,7 @@ class HomeController extends Controller
         $featuredContents = Content::with(['user', 'category', 'classification'])
             ->where('featured', true)
             ->where('published', true)
+            ->where('archived', false)
             ->whereNotNull('featured_image')
             ->latest()
             ->limit(5)
@@ -30,6 +31,7 @@ class HomeController extends Controller
 
         $latestContents = Content::with(['user', 'category', 'classification'])
             ->where('published', true)
+            ->where('archived', false)
             ->whereNotNull('header_image')
             ->whereNotIn('id', $featuredIds)
             ->when($search, fn ($q) => $q->where(fn ($q) => $q
@@ -55,6 +57,7 @@ class HomeController extends Controller
 
         $popularContents = Content::with(['category', 'user'])
             ->where('published', true)
+            ->where('archived', false)
             ->whereNotNull('header_image')
             ->orderBy('views', 'desc')
             ->limit(5)
@@ -156,6 +159,7 @@ class HomeController extends Controller
 
         $relatedContents = Content::with(['category', 'user'])
             ->where('published', true)
+            ->where('archived', false)
             ->whereNotNull('header_image')
             ->where('id', '!=', $content->getKey())
             ->when(
@@ -168,6 +172,18 @@ class HomeController extends Controller
             ->get();
 
         return view('content.show', compact('content', 'relatedContents'));
+    }
+
+    public function archive(): View
+    {
+        $contents = Content::with(['user', 'category', 'classification'])
+            ->where('published', true)
+            ->where('archived', true)
+            ->whereNotNull('header_image')
+            ->latest()
+            ->paginate(12);
+
+        return view('archive', compact('contents'));
     }
 
     public function team(): View
