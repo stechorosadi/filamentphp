@@ -34,6 +34,26 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             if ($user->avatar_url) {
                 Storage::disk('public')->delete($user->avatar_url);
             }
+
+            // DB cascade bypasses Eloquent hooks on children, so delete
+            // attachment files here before the cascade removes the rows.
+            $user->educationHistory->each(function (UserEducation $edu): void {
+                if ($edu->certificate_path) {
+                    Storage::disk('public')->delete($edu->certificate_path);
+                }
+            });
+
+            $user->certifications->each(function (UserCertification $cert): void {
+                if ($cert->certificate_path) {
+                    Storage::disk('public')->delete($cert->certificate_path);
+                }
+            });
+
+            $user->publications->each(function (UserPublication $pub): void {
+                if ($pub->file_path) {
+                    Storage::disk('public')->delete($pub->file_path);
+                }
+            });
         });
     }
 

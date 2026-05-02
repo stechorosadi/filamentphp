@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
+// Imported for type-hinting in deleting hook closures
+// (DB cascade bypasses Eloquent hooks on child rows)
+
 #[Fillable([
     'user_id',
     'title',
@@ -54,6 +57,15 @@ class Content extends Model
             if ($content->featured_image) {
                 Storage::disk('public')->delete($content->featured_image);
             }
+
+            // DB cascade bypasses Eloquent hooks on children, so delete
+            // attachment files here before the cascade removes the rows.
+            $content->imageAttachments->each(
+                fn (ContentImage $img) => Storage::disk('public')->delete($img->path)
+            );
+            $content->fileAttachments->each(
+                fn (ContentFile $file) => Storage::disk('public')->delete($file->path)
+            );
         });
     }
 

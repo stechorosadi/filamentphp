@@ -49,7 +49,7 @@ class TeamMember extends Model
             }
         });
 
-        static::deleted(function (TeamMember $member): void {
+        static::deleting(function (TeamMember $member): void {
             if ($member->photo) {
                 Storage::disk('public')->delete($member->photo);
             }

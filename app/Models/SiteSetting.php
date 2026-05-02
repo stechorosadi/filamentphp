@@ -41,5 +41,13 @@ class SiteSetting extends Model
                 }
             }
         });
+
+        static::deleting(function (SiteSetting $settings): void {
+            foreach (['logo_path', 'favicon_path'] as $field) {
+                if ($settings->{$field}) {
+                    Storage::disk('public')->delete($settings->{$field});
+                }
+            }
+        });
     }
 }

@@ -26,11 +26,17 @@ class ContentClassification extends Model
             if ($model->isDirty('image') && $model->getOriginal('image')) {
                 Storage::disk('public')->delete($model->getOriginal('image'));
             }
+            if ($model->isDirty('icon') && $model->getOriginal('icon')) {
+                Storage::disk('public')->delete($model->getOriginal('icon'));
+            }
         });
 
         static::deleting(function (ContentClassification $model): void {
             if ($model->image) {
                 Storage::disk('public')->delete($model->image);
+            }
+            if ($model->icon) {
+                Storage::disk('public')->delete($model->icon);
             }
         });
     }
