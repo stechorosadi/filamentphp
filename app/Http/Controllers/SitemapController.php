@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Content;
 use App\Models\ContentCategory;
 use App\Models\ContentClassification;
+use App\Models\Tag;
 use App\Models\TeamMember;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -27,6 +28,11 @@ class SitemapController extends Controller
             ->orderBy('name')
             ->get();
 
+        $tags = Tag::select('slug', 'updated_at')
+            ->whereHas('contents', fn ($q) => $q->where('published', true))
+            ->orderBy('name')
+            ->get();
+
         $teamMembers = TeamMember::select('id', 'updated_at')
             ->where('is_visible', true)
             ->get();
@@ -35,6 +41,7 @@ class SitemapController extends Controller
             'contents',
             'categories',
             'classifications',
+            'tags',
             'teamMembers',
         ))->render();
 
@@ -58,6 +65,11 @@ class SitemapController extends Controller
             ->orderBy('name')
             ->get();
 
+        $tags = Tag::select('slug', 'name', 'updated_at')
+            ->whereHas('contents', fn ($q) => $q->where('published', true))
+            ->orderBy('name')
+            ->get();
+
         $teamMembers = TeamMember::select('id', 'user_id', 'name', 'front_title', 'back_title', 'updated_at')
             ->with('user:id,name')
             ->where('is_visible', true)
@@ -67,6 +79,7 @@ class SitemapController extends Controller
             'contents',
             'categories',
             'classifications',
+            'tags',
             'teamMembers',
         ));
     }

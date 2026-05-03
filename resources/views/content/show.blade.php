@@ -92,9 +92,10 @@
         <div class="ml-auto flex flex-wrap items-center gap-2">
             <span class="text-xs font-semibold text-[var(--text-muted)]">Tags:</span>
             @foreach($content->tags as $tag)
-            <span class="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
-                {{ $tag->name }}
-            </span>
+            <a href="{{ route('tag.show', $tag->slug) }}"
+               class="rounded-full border border-(--border) px-3 py-1 text-xs font-medium text-(--text-muted) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-colors duration-200">
+                #{{ $tag->name }}
+            </a>
             @endforeach
         </div>
         @endif

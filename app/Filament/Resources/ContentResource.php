@@ -220,6 +220,7 @@ class ContentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('article_date', 'desc')
             ->columns([
                 ImageColumn::make('header_image')
                     ->label('Header')

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Content;
 use App\Models\ContentCategory;
 use App\Models\ContentClassification;
+use App\Models\Tag;
 use App\Models\TeamMember;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
@@ -172,6 +173,26 @@ class HomeController extends Controller
             ->get();
 
         return view('content.show', compact('content', 'relatedContents'));
+    }
+
+    public function tag(string $slug): View
+    {
+        $tag = Tag::where('slug', $slug)->firstOrFail();
+
+        $contents = Content::with(['user', 'category', 'classification'])
+            ->where('published', true)
+            ->whereNotNull('header_image')
+            ->whereHas('tags', fn ($q) => $q->where('tags.id', $tag->id))
+            ->latest('article_date')
+            ->paginate(12);
+
+        $otherTags = Tag::whereHas('contents', fn ($q) => $q->where('published', true))
+            ->where('id', '!=', $tag->id)
+            ->orderBy('name')
+            ->limit(12)
+            ->get();
+
+        return view('tag.show', compact('tag', 'contents', 'otherTags'));
     }
 
     public function archive(): View

@@ -26,7 +26,7 @@
         <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">All Pages</p>
         <h1 class="mb-3 text-3xl sm:text-4xl font-bold text-[#ECF39E] leading-tight">Sitemap</h1>
         <p class="text-base text-[#90A955]">
-            {{ $contents->count() + $categories->count() + $classifications->count() + $teamMembers->count() + 4 }}
+            {{ $contents->count() + $categories->count() + $classifications->count() + $tags->count() + $teamMembers->count() + 4 }}
             pages indexed
         </p>
     </div>
@@ -115,6 +115,29 @@
                     </li>
                     @endforeach
                 </ul>
+                @endif
+            </div>
+
+            {{-- Tags --}}
+            <div>
+                <h2 class="mb-5 flex items-center gap-2 text-lg font-bold text-[var(--text-primary)]">
+                    <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-(--accent)/15">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5"/></svg>
+                    </span>
+                    Tags
+                    <span class="ml-auto text-xs font-normal text-(--text-muted)">{{ $tags->count() }}</span>
+                </h2>
+                @if($tags->isEmpty())
+                <p class="text-sm text-(--text-muted)">No tags yet.</p>
+                @else
+                <div class="flex flex-wrap gap-2">
+                    @foreach($tags as $tag)
+                    <a href="{{ route('tag.show', $tag->slug) }}"
+                       class="rounded-full border border-(--border) bg-(--bg-card) px-3 py-1.5 text-sm font-medium text-(--text-muted) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-colors duration-200">
+                        #{{ $tag->name }}
+                    </a>
+                    @endforeach
+                </div>
                 @endif
             </div>
 

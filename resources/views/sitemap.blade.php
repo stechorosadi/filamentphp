@@ -53,6 +53,16 @@
     </url>
     @endforeach
 
+    {{-- ── Tags ── --}}
+    @foreach($tags as $tag)
+    <url>
+        <loc>{{ route('tag.show', $tag->slug) }}</loc>
+        <lastmod>{{ $tag->updated_at->toAtomString() }}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    @endforeach
+
     {{-- ── Team member profiles ── --}}
     @foreach($teamMembers as $member)
     <url>
