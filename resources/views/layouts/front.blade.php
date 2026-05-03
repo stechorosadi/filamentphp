@@ -301,7 +301,7 @@
 
             {{-- Footer 3-column link lists --}}
             @if($footerList1 || $footerList2 || $footerList3)
-            <div class="grid grid-cols-3 gap-6 text-sm w-full md:w-auto">
+            <div class="grid grid-cols-3 gap-12 text-sm w-full md:w-auto">
                 @foreach([$footerList1, $footerList2, $footerList3] as $list)
                 @if($list && $list->menuItems->isNotEmpty())
                 <div>

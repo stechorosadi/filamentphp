@@ -74,14 +74,14 @@ class AppServiceProvider extends ServiceProvider
             );
 
             $footerLists = Menu::with(['menuItems' => fn ($q) => $q->whereNull('parent_id')->orderBy('order')])
-                ->whereIn('name', ['Footer Menu - List 1', 'Footer Menu - List 2', 'Footer Menu - List 3'])
-                ->orderByRaw("FIELD(name, 'Footer Menu - List 1', 'Footer Menu - List 2', 'Footer Menu - List 3')")
+                ->whereIn('name', ['Footer Menu - Quick Links', 'Footer Menu - Resources', 'Footer Menu - Content'])
+                ->orderByRaw("FIELD(name, 'Footer Menu - Quick Links', 'Footer Menu - Content', 'Footer Menu - Resources')")
                 ->get()
                 ->keyBy('name');
 
-            $view->with('footerList1', $footerLists->get('Footer Menu - List 1'));
-            $view->with('footerList2', $footerLists->get('Footer Menu - List 2'));
-            $view->with('footerList3', $footerLists->get('Footer Menu - List 3'));
+            $view->with('footerList1', $footerLists->get('Footer Menu - Quick Links'));
+            $view->with('footerList2', $footerLists->get('Footer Menu - Content'));
+            $view->with('footerList3', $footerLists->get('Footer Menu - Resources'));
         });
     }
 }
