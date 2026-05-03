@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\Register;
+use App\Models\SiteSetting;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -22,6 +23,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -32,6 +34,26 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('arsiparis')
+            ->brandLogo(function (): HtmlString|string {
+                try {
+                    $setting = SiteSetting::instance();
+                    $title = e($setting->site_title ?? config('app.name'));
+                    $logo = $setting->logo_path;
+
+                    if ($logo) {
+                        return new HtmlString(
+                            '<div style="display:flex;align-items:center;gap:0.6rem;">'.
+                            '<img src="'.asset('storage/'.$logo).'" style="height:2rem;width:auto;display:block;">'.
+                            '<span style="font-weight:600;font-size:1rem;">'.$title.'</span>'.
+                            '</div>'
+                        );
+                    }
+
+                    return $title;
+                } catch (\Throwable) {
+                    return config('app.name');
+                }
+            })
             ->login(Login::class)
             ->registration(Register::class)
             ->colors([
