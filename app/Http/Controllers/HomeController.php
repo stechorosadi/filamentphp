@@ -23,7 +23,7 @@ class HomeController extends Controller
             ->where('published', true)
             ->where('archived', false)
             ->whereNotNull('featured_image')
-            ->latest()
+            ->latest('article_date')
             ->limit(5)
             ->get();
 
@@ -40,7 +40,7 @@ class HomeController extends Controller
             ))
             ->when($categoryId, fn ($q) => $q->where('content_category_id', $categoryId))
             ->when($classificationId, fn ($q) => $q->where('content_classification_id', $classificationId))
-            ->latest()
+            ->latest('article_date')
             ->paginate(9);
 
         $categories = ContentCategory::withCount(['contents' => fn ($q) => $q->where('published', true)])
@@ -88,7 +88,7 @@ class HomeController extends Controller
                 ->orWhereHas('classification', fn ($c) => $c->where('name', 'like', "%{$query}%"))
                 ->orWhereHas('tags', fn ($t) => $t->where('name', 'like', "%{$query}%"))
             ))
-            ->latest()
+            ->latest('article_date')
             ->paginate(12);
 
         $suggestions = ContentCategory::withCount(['contents' => fn ($q) => $q->where('published', true)])
@@ -108,7 +108,7 @@ class HomeController extends Controller
             ->where('published', true)
             ->where('content_category_id', $category->id)
             ->whereNotNull('header_image')
-            ->latest()
+            ->latest('article_date')
             ->paginate(9);
 
         $otherCategories = ContentCategory::withCount(['contents' => fn ($q) => $q->where('published', true)])
@@ -128,7 +128,7 @@ class HomeController extends Controller
             ->where('published', true)
             ->where('content_classification_id', $classification->id)
             ->whereNotNull('header_image')
-            ->latest()
+            ->latest('article_date')
             ->paginate(9);
 
         $otherClassifications = ContentClassification::withCount(['contents' => fn ($q) => $q->where('published', true)])
@@ -167,7 +167,7 @@ class HomeController extends Controller
                 fn ($q) => $q->where('content_category_id', $content->content_category_id),
                 fn ($q) => $q->where('content_classification_id', $content->content_classification_id)
             )
-            ->latest()
+            ->latest('article_date')
             ->limit(3)
             ->get();
 
@@ -180,7 +180,7 @@ class HomeController extends Controller
             ->where('published', true)
             ->where('archived', true)
             ->whereNotNull('header_image')
-            ->latest()
+            ->latest('article_date')
             ->paginate(12);
 
         return view('archive', compact('contents'));

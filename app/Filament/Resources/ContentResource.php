@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ContentResource\Pages;
 use App\Filament\Resources\ContentResource\RelationManagers;
 use App\Models\Content;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -22,6 +24,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
@@ -56,12 +59,31 @@ class ContentResource extends Resource
                     ->schema([
                         Section::make('Content Details')
                             ->schema([
+                                DatePicker::make('article_date')
+                                    ->label('Article Date')
+                                    ->required()
+                                    ->default(today())
+                                    ->live()
+                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state): void {
+                                        $title = $get('title');
+                                        if ($title) {
+                                            $date = $state
+                                                ? Carbon::parse($state)->format('Y-m-d')
+                                                : now()->format('Y-m-d');
+                                            $set('slug', $date.'-'.Str::slug($title));
+                                        }
+                                    })
+                                    ->columnSpanFull(),
+
                                 TextInput::make('title')
                                     ->required()
                                     ->maxLength(100)
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(function (Set $set, ?string $state): void {
-                                        $set('slug', now()->format('Y-m-d').'-'.Str::slug((string) $state));
+                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state): void {
+                                        $date = $get('article_date')
+                                            ? Carbon::parse($get('article_date'))->format('Y-m-d')
+                                            : now()->format('Y-m-d');
+                                        $set('slug', $date.'-'.Str::slug((string) $state));
                                     })
                                     ->columnSpanFull(),
 
@@ -122,7 +144,7 @@ class ContentResource extends Resource
                                 Toggle::make('archived')
                                     ->label('Archived')
                                     ->helperText('Stays public but shows an Archived badge on the site.')
-                                    ->onColor('gray')
+                                    ->onColor('info')
                                     ->offColor('gray')
                                     ->default(false),
                             ]),

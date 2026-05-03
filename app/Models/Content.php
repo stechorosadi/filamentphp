@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Storage;
     'excerpt',
     'content',
     'youtube_url',
+    'article_date',
     'published',
     'featured',
     'archived',
@@ -35,6 +36,7 @@ class Content extends Model
             'published' => 'boolean',
             'featured' => 'boolean',
             'archived' => 'boolean',
+            'article_date' => 'date',
             'views' => 'integer',
         ];
     }

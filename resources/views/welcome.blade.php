@@ -39,7 +39,7 @@
                      'excerpt'  => \Illuminate\Support\Str::limit($s->excerpt ?? '', 250),
                      'url'      => route('content.show', $s->slug),
                      'category' => $s->category?->name,
-                     'date'     => $s->created_at->format('M d, Y'),
+                     'date'     => ($s->article_date ?? $s->created_at)->format('M d, Y'),
                      'embedUrl' => isset($m[1]) ? 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1' : null,
                  ];
              })->values()),
@@ -80,7 +80,7 @@
                                 </span>
                                 @endif
                                 <span class="inline-flex items-center rounded-full border border-[var(--accent-dim)] dark:border-[var(--border)] bg-[var(--accent-dim)] px-3 py-1 text-xs font-semibold text-[var(--text-primary)] dark:text-[var(--text-muted)]">
-                                    {{ $slide->created_at->format('M d, Y') }}
+                                    {{ ($slide->article_date ?? $slide->created_at)->format('M d, Y') }}
                                 </span>
                             </div>
 
@@ -268,8 +268,14 @@
         <p class="animate-fade-up-delay-2 mt-6 max-w-2xl mx-auto text-lg leading-8 text-[var(--text-muted)]">
             Discover articles, research, and resources curated by our team. Stay informed with the latest content.
         </p>
-        <div class="animate-fade-up-delay-2 mt-10">
-            <a href="#content" class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-7 py-3.5 text-sm font-semibold text-white dark:text-[var(--text-primary)] shadow-lg hover:bg-[var(--accent)] dark:hover:bg-[#6B9A38] transition-colors duration-200">
+        <div class="animate-fade-up-delay-2 mt-10 flex flex-wrap items-center justify-center gap-4">
+            <a href="#search" class="inline-flex items-center gap-2 rounded-xl border-2 border-[var(--accent)] px-7 py-3.5 text-sm font-semibold text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+                </svg>
+                Search
+            </a>
+            <a href="#content-section" class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-7 py-3.5 text-sm font-semibold text-white dark:text-[var(--text-primary)] shadow-lg hover:bg-[var(--accent)] dark:hover:bg-[#6B9A38] transition-colors duration-200">
                 Browse Content
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"/>
@@ -283,7 +289,7 @@
 {{-- ─────────────────────────────────────────── --}}
 {{-- SEARCH --}}
 {{-- ─────────────────────────────────────────── --}}
-<section class="relative overflow-hidden bg-[#132A13] dark:bg-[#0a1a0a] py-20 sm:py-24">
+<section id="search" class="relative overflow-hidden bg-[#132A13] dark:bg-[#0a1a0a] py-20 sm:py-24">
     {{-- Decorative blobs --}}
     <div class="absolute -top-20 left-1/4 h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-20 right-1/4 h-72 w-72 rounded-full bg-[var(--accent)]/25 blur-3xl pointer-events-none"></div>
@@ -625,7 +631,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-[var(--accent)]">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5"/>
                             </svg>
-                            {{ $content->created_at->format('M d, Y') }}
+                            {{ ($content->article_date ?? $content->created_at)->format('M d, Y') }}
                         </span>
                         <span class="w-px h-3 bg-[#a0c84a] dark:bg-[var(--bg-alt)] shrink-0"></span>
                         <span class="inline-flex items-center gap-1.5 min-w-0">
@@ -981,7 +987,7 @@
                             {{ number_format($top->views) }}
                         </span>
                         <span class="h-3 w-px bg-white/30"></span>
-                        <span>{{ $top->created_at->format('M d, Y') }}</span>
+                        <span>{{ ($top->article_date ?? $top->created_at)->format('M d, Y') }}</span>
                     </div>
                 </div>
             </a>
@@ -1042,7 +1048,7 @@
                                 {{ number_format($item->views) }}
                             </span>
                             <span class="w-px h-3 bg-[#a0c84a] dark:bg-[var(--bg-alt)] shrink-0"></span>
-                            <span class="shrink-0">{{ $item->created_at->format('M d, Y') }}</span>
+                            <span class="shrink-0">{{ ($item->article_date ?? $item->created_at)->format('M d, Y') }}</span>
                         </div>
                     </div>
 

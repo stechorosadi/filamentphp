@@ -380,7 +380,7 @@
     {{-- Meta --}}
     <div class="meta">
         <span>By {{ $content->user->name }}</span>
-        <span>{{ $content->created_at->format('F d, Y') }}</span>
+        <span>{{ ($content->article_date ?? $content->created_at)->format('F d, Y') }}</span>
         @if($content->views)
         <span>{{ number_format($content->views) }} views</span>
         @endif
