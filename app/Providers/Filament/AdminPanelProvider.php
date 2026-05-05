@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
-use App\Filament\Pages\Auth\Register;
 use App\Models\SiteSetting;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin;
@@ -55,7 +54,6 @@ class AdminPanelProvider extends PanelProvider
                 }
             })
             ->login(Login::class)
-            ->registration(Register::class)
             ->colors([
                 'primary' => Color::Amber,
             ])

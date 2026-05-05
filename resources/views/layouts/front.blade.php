@@ -77,6 +77,15 @@
     x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 20 })"
     class="site-body transition-colors duration-300 antialiased">
 
+{{-- Pre-compute locale toggle URLs once, used in both top bar and navbar --}}
+@php
+    $currentLocale = app()->getLocale();
+    $routeName = request()->route()->getName();
+    $routeParams = request()->route()->parameters();
+    $urlId = route($routeName, array_merge($routeParams, ['locale' => 'id']));
+    $urlEn = route($routeName, array_merge($routeParams, ['locale' => 'en']));
+@endphp
+
 {{-- ── TOP BAR ── --}}
 @if($siteSetting->contact_email || $siteSetting->contact_address)
 <div
@@ -102,8 +111,8 @@
         <div class="hidden md:block"></div>
         @endif
 
-        {{-- Right: contact info --}}
-        <div class="flex items-center gap-8">
+        {{-- Right: contact info + mobile lang toggle --}}
+        <div class="flex items-center gap-4 md:gap-8 w-full md:w-auto">
         @if($siteSetting->contact_email)
         <a href="mailto:{{ $siteSetting->contact_email }}" class="flex items-start gap-2.5 hover:opacity-80 transition-opacity">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 shrink-0 mt-0.5">
@@ -115,6 +124,11 @@
             </div>
         </a>
         @endif
+        {{-- Language toggle: mobile only, pushed to the right --}}
+        <div class="md:hidden ml-auto flex items-center gap-0 rounded-lg border border-white/40 overflow-hidden shrink-0">
+            <a href="{{ $urlId }}" class="px-2.5 py-1 text-xs font-semibold transition-colors {{ $currentLocale === 'id' ? 'bg-white/25 text-white' : 'text-white/70 hover:bg-white/15' }}">ID</a>
+            <a href="{{ $urlEn }}" class="px-2.5 py-1 text-xs font-semibold transition-colors {{ $currentLocale === 'en' ? 'bg-white/25 text-white' : 'text-white/70 hover:bg-white/15' }}">EN</a>
+        </div>
         @if($siteSetting->contact_address)
         @php $addrParts = explode(',', $siteSetting->contact_address, 2); @endphp
         <span class="hidden md:flex items-start gap-2.5">
@@ -170,11 +184,10 @@
                 <div class="w-px h-5 bg-[var(--accent-dim)] dark:bg-[var(--accent)] mx-2"></div>
 
                 {{-- Language switcher --}}
-                @php $currentLocale = app()->getLocale(); @endphp
                 <div class="flex items-center gap-0 rounded-lg border border-[var(--accent-dim)] overflow-hidden">
-                    <a href="{{ preg_replace('#^/(en|id)/#', '/id/', url()->current()) }}"
+                    <a href="{{ $urlId }}"
                        class="px-2.5 py-1 text-xs font-semibold transition-colors {{ $currentLocale === 'id' ? 'bg-[var(--accent)] text-white' : 'text-[var(--text-muted)] hover:bg-[var(--accent-dim)]' }}">ID</a>
-                    <a href="{{ preg_replace('#^/(en|id)/#', '/en/', url()->current()) }}"
+                    <a href="{{ $urlEn }}"
                        class="px-2.5 py-1 text-xs font-semibold transition-colors {{ $currentLocale === 'en' ? 'bg-[var(--accent)] text-white' : 'text-[var(--text-muted)] hover:bg-[var(--accent-dim)]' }}">EN</a>
                 </div>
 
@@ -189,15 +202,8 @@
                 </button>
             </nav>
 
-            {{-- Mobile: lang switcher + dark toggle + burger --}}
+            {{-- Mobile: dark toggle + burger --}}
             <div class="flex md:hidden items-center gap-2">
-                {{-- Language switcher (mobile) --}}
-                <div class="flex items-center gap-0 rounded-lg border border-[var(--accent-dim)] overflow-hidden">
-                    <a href="{{ preg_replace('#^/(en|id)/#', '/id/', url()->current()) }}"
-                       class="px-2 py-1 text-xs font-semibold transition-colors {{ ($currentLocale ?? app()->getLocale()) === 'id' ? 'bg-[var(--accent)] text-white' : 'text-[var(--text-muted)] hover:bg-[var(--accent-dim)]' }}">ID</a>
-                    <a href="{{ preg_replace('#^/(en|id)/#', '/en/', url()->current()) }}"
-                       class="px-2 py-1 text-xs font-semibold transition-colors {{ ($currentLocale ?? app()->getLocale()) === 'en' ? 'bg-[var(--accent)] text-white' : 'text-[var(--text-muted)] hover:bg-[var(--accent-dim)]' }}">EN</a>
-                </div>
                 <button @click="toggleDark()" class="rounded-lg p-2 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors" aria-label="{{ __('ui.dark_mode') }}">
                     <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-(--text-primary)">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
