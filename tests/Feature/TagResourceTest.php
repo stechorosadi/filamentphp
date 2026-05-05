@@ -42,14 +42,11 @@ class TagResourceTest extends TestCase
         $this->actingAs($this->admin());
 
         Livewire::test(CreateTag::class)
-            ->fillForm(['name' => 'Laravel'])
+            ->fillForm(['name.id' => 'Laravel'])
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $this->assertDatabaseHas(Tag::class, [
-            'name' => 'Laravel',
-            'slug' => 'laravel',
-        ]);
+        $this->assertDatabaseHas(Tag::class, ['slug' => 'laravel']);
     }
 
     public function test_slug_is_auto_generated(): void
@@ -57,7 +54,7 @@ class TagResourceTest extends TestCase
         $this->actingAs($this->admin());
 
         Livewire::test(CreateTag::class)
-            ->fillForm(['name' => 'Web Development'])
+            ->fillForm(['name.id' => 'Web Development'])
             ->call('create')
             ->assertHasNoFormErrors();
 
@@ -69,9 +66,9 @@ class TagResourceTest extends TestCase
         $this->actingAs($this->admin());
 
         Livewire::test(CreateTag::class)
-            ->fillForm(['name' => null])
+            ->fillForm(['name.id' => null])
             ->call('create')
-            ->assertHasFormErrors(['name' => 'required']);
+            ->assertHasFormErrors(['name.id' => 'required']);
     }
 
     public function test_slug_must_be_unique(): void
@@ -80,7 +77,7 @@ class TagResourceTest extends TestCase
         Tag::factory()->create(['name' => 'Laravel', 'slug' => 'laravel']);
 
         Livewire::test(CreateTag::class)
-            ->fillForm(['name' => 'Laravel'])
+            ->fillForm(['name.id' => 'Laravel'])
             ->call('create')
             ->assertHasFormErrors(['slug']);
     }
@@ -91,14 +88,11 @@ class TagResourceTest extends TestCase
         $tag = Tag::factory()->create(['name' => 'Old Name', 'slug' => 'old-name']);
 
         Livewire::test(EditTag::class, ['record' => $tag->id])
-            ->fillForm(['name' => 'New Name'])
+            ->fillForm(['name.id' => 'New Name'])
             ->call('save')
             ->assertHasNoFormErrors();
 
-        $this->assertDatabaseHas(Tag::class, [
-            'id' => $tag->id,
-            'name' => 'New Name',
-        ]);
+        $this->assertEquals('New Name', $tag->fresh()->getTranslation('name', 'id'));
     }
 
     public function test_can_delete_tag(): void

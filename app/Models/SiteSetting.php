@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Translatable\HasTranslations;
 
 #[Fillable([
     'site_title',
@@ -27,6 +28,10 @@ use Illuminate\Support\Facades\Storage;
 ])]
 class SiteSetting extends Model
 {
+    use HasTranslations;
+
+    public array $translatable = ['site_title', 'site_tagline', 'site_description'];
+
     public static function instance(): self
     {
         return static::firstOrFail();

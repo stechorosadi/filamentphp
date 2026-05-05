@@ -7,6 +7,7 @@ use App\Models\Tag;
 use App\Policies\MenuPolicy;
 use App\Policies\TagPolicy;
 use Datlechin\FilamentMenuBuilder\Models\Menu;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
@@ -28,60 +29,71 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Tag::class, TagPolicy::class);
         Gate::policy(Menu::class, MenuPolicy::class);
 
-        // Share site settings with all views.
-        // Cache the raw attributes array (not the model) to avoid unserialize issues.
-        // Graceful fallback if table doesn't exist yet (e.g. before migrations).
-        try {
-            $attributes = Cache::remember('site_setting', 300, fn () => SiteSetting::instance()->getAttributes());
-            $siteSetting = new SiteSetting;
-            $siteSetting->setRawAttributes($attributes);
-            $siteSetting->exists = true;
-        } catch (\Throwable) {
-            $siteSetting = new SiteSetting(['site_title' => config('app.name')]);
-        }
-        View::share('siteSetting', $siteSetting);
-
         // Ensure dompdf font cache directory exists and is writable.
         $fontDir = storage_path('app/fonts');
         if (! is_dir($fontDir)) {
             mkdir($fontDir, 0755, true);
         }
 
-        // Share navigation menus with the front layout.
-        View::composer('layouts.front', function ($view): void {
-            $view->with('navMenuItems',
-                Menu::with(['menuItems' => fn ($q) => $q->whereNull('parent_id')->orderBy('order')])
-                    ->where('name', 'Header Menu - Top Right')
-                    ->first()
-                    ?->menuItems
-                    ?? collect()
-            );
+        // Share site settings and navigation menus with all views.
+        // Uses a per-request guard so the DB/cache hit happens only once.
+        // Composer on '*' ensures $siteSetting is available in child view @section blocks
+        // that are evaluated before layouts.front itself is rendered.
+        View::composer('*', function ($view): void {
+            if (request()->attributes->has('_view_data_shared')) {
+                return;
+            }
+            request()->attributes->set('_view_data_shared', true);
 
-            $view->with('footerMenuItems',
-                Menu::with(['menuItems' => fn ($q) => $q->whereNull('parent_id')->orderBy('order')])
-                    ->where('name', 'Footer Menu - Bottom Right')
-                    ->first()
-                    ?->menuItems
-                    ?? collect()
-            );
+            $locale = app()->getLocale();
 
-            $view->with('topbarMenuItems',
-                Menu::with(['menuItems' => fn ($q) => $q->whereNull('parent_id')->orderBy('order')])
-                    ->where('name', 'Header Menu - Top Left')
-                    ->first()
-                    ?->menuItems
-                    ?? collect()
-            );
+            // SiteSetting: cached per locale so translatable fields resolve correctly.
+            try {
+                $attrs = Cache::remember("site_setting_{$locale}", 300, fn () => SiteSetting::instance()->getAttributes());
+                $siteSetting = new SiteSetting;
+                $siteSetting->setRawAttributes($attrs);
+                $siteSetting->exists = true;
+            } catch (\Throwable) {
+                $siteSetting = new SiteSetting(['site_title' => config('app.name')]);
+            }
+            View::share('siteSetting', $siteSetting);
 
+            // Navigation menus: load locale-specific version, fall back to base name.
+            $suffix = ' - '.strtoupper($locale);
+
+            View::share('navMenuItems', $this->loadMenu('Header Menu - Top Right', $suffix));
+            View::share('footerMenuItems', $this->loadMenu('Footer Menu - Bottom Right', $suffix));
+            View::share('topbarMenuItems', $this->loadMenu('Header Menu - Top Left', $suffix));
+
+            $baseNames = ['Footer Menu - Quick Links', 'Footer Menu - Resources', 'Footer Menu - Content'];
+            $suffixedNames = array_map(fn ($n) => $n.$suffix, $baseNames);
+
+            // Try locale-specific footer lists first, fall back to base names.
             $footerLists = Menu::with(['menuItems' => fn ($q) => $q->whereNull('parent_id')->orderBy('order')])
-                ->whereIn('name', ['Footer Menu - Quick Links', 'Footer Menu - Resources', 'Footer Menu - Content'])
-                ->orderByRaw("FIELD(name, 'Footer Menu - Quick Links', 'Footer Menu - Content', 'Footer Menu - Resources')")
+                ->whereIn('name', array_merge($suffixedNames, $baseNames))
                 ->get()
                 ->keyBy('name');
 
-            $view->with('footerList1', $footerLists->get('Footer Menu - Quick Links'));
-            $view->with('footerList2', $footerLists->get('Footer Menu - Content'));
-            $view->with('footerList3', $footerLists->get('Footer Menu - Resources'));
+            $resolve = fn (string $base) => $footerLists->get($base.$suffix) ?? $footerLists->get($base);
+
+            View::share('footerList1', $resolve('Footer Menu - Quick Links'));
+            View::share('footerList2', $resolve('Footer Menu - Content'));
+            View::share('footerList3', $resolve('Footer Menu - Resources'));
         });
+    }
+
+    private function loadMenu(string $baseName, string $suffix): Collection
+    {
+        $withItems = fn ($q) => $q->whereNull('parent_id')->orderBy('order');
+
+        return Menu::with(['menuItems' => $withItems])
+            ->where('name', $baseName.$suffix)
+            ->first()
+            ?->menuItems
+            ?? Menu::with(['menuItems' => $withItems])
+                ->where('name', $baseName)
+                ->first()
+                ?->menuItems
+            ?? collect();
     }
 }

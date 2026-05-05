@@ -24,6 +24,8 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -65,25 +67,13 @@ class ContentResource extends Resource
                                     ->default(today())
                                     ->live()
                                     ->afterStateUpdated(function (Set $set, Get $get, ?string $state): void {
-                                        $title = $get('title');
-                                        if ($title) {
+                                        $titleId = $get('title.id');
+                                        if ($titleId) {
                                             $date = $state
                                                 ? Carbon::parse($state)->format('Y-m-d')
                                                 : now()->format('Y-m-d');
-                                            $set('slug', $date.'-'.Str::slug($title));
+                                            $set('slug', $date.'-'.Str::slug($titleId));
                                         }
-                                    })
-                                    ->columnSpanFull(),
-
-                                TextInput::make('title')
-                                    ->required()
-                                    ->maxLength(100)
-                                    ->live(onBlur: true)
-                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state): void {
-                                        $date = $get('article_date')
-                                            ? Carbon::parse($get('article_date'))->format('Y-m-d')
-                                            : now()->format('Y-m-d');
-                                        $set('slug', $date.'-'.Str::slug((string) $state));
                                     })
                                     ->columnSpanFull(),
 
@@ -93,13 +83,53 @@ class ContentResource extends Resource
                                     ->unique(Content::class, 'slug', ignoreRecord: true)
                                     ->columnSpanFull(),
 
-                                Textarea::make('excerpt')
-                                    ->rows(3)
-                                    ->columnSpanFull(),
+                                Tabs::make('Translations')
+                                    ->tabs([
+                                        Tab::make('Indonesian (ID)')
+                                            ->schema([
+                                                TextInput::make('title.id')
+                                                    ->label('Title (ID)')
+                                                    ->required()
+                                                    ->maxLength(100)
+                                                    ->live(onBlur: true)
+                                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state): void {
+                                                        $date = $get('article_date')
+                                                            ? Carbon::parse($get('article_date'))->format('Y-m-d')
+                                                            : now()->format('Y-m-d');
+                                                        $set('slug', $date.'-'.Str::slug((string) $state));
+                                                    })
+                                                    ->columnSpanFull(),
 
-                                RichEditor::make('content')
-                                    ->required()
-                                    ->extraInputAttributes(['style' => 'min-height: 480px'])
+                                                Textarea::make('excerpt.id')
+                                                    ->label('Excerpt (ID)')
+                                                    ->rows(3)
+                                                    ->columnSpanFull(),
+
+                                                RichEditor::make('content.id')
+                                                    ->label('Content (ID)')
+                                                    ->required()
+                                                    ->extraInputAttributes(['style' => 'min-height: 480px'])
+                                                    ->columnSpanFull(),
+                                            ]),
+
+                                        Tab::make('English (EN)')
+                                            ->schema([
+                                                TextInput::make('title.en')
+                                                    ->label('Title (EN)')
+                                                    ->maxLength(100)
+                                                    ->columnSpanFull(),
+
+                                                Textarea::make('excerpt.en')
+                                                    ->label('Excerpt (EN)')
+                                                    ->rows(3)
+                                                    ->columnSpanFull(),
+
+                                                RichEditor::make('content.en')
+                                                    ->label('Content (EN)')
+                                                    ->extraInputAttributes(['style' => 'min-height: 480px'])
+                                                    ->columnSpanFull(),
+                                            ]),
+                                    ])
                                     ->columnSpanFull(),
 
                                 TextInput::make('youtube_url')
@@ -169,10 +199,13 @@ class ContentResource extends Resource
                                     ->preload()
                                     ->searchable()
                                     ->createOptionForm([
-                                        TextInput::make('name')
+                                        TextInput::make('name.id')
+                                            ->label('Tag Name (ID)')
                                             ->required()
                                             ->live(onBlur: true)
                                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug((string) $state))),
+                                        TextInput::make('name.en')
+                                            ->label('Tag Name (EN)'),
                                         TextInput::make('slug')
                                             ->required()
                                             ->readOnly(),
@@ -229,7 +262,7 @@ class ContentResource extends Resource
                     ->action(
                         Action::make('previewHeaderImage')
                             ->label('Preview Header Image')
-                            ->modalHeading(fn (Content $record): string => $record->title)
+                            ->modalHeading(fn (Content $record): string => $record->getTranslation('title', 'id', false))
                             ->modalContent(fn (Content $record): HtmlString => new HtmlString(
                                 '<div style="display:flex;justify-content:center;align-items:center;width:100%;padding:1rem;">'.
                                 '<img src="'.asset('storage/'.$record->header_image).
@@ -242,8 +275,13 @@ class ContentResource extends Resource
                     ),
 
                 TextColumn::make('title')
-                    ->searchable()
-                    ->sortable()
+                    ->getStateUsing(fn (Content $record): string => $record->getTranslation('title', 'id', false))
+                    ->searchable(query: fn ($query, string $search) => $query->whereRaw(
+                        "JSON_UNQUOTE(JSON_EXTRACT(title, '$.id')) LIKE ?", ["%{$search}%"]
+                    ))
+                    ->sortable(query: fn ($query, string $direction) => $query->orderByRaw(
+                        "JSON_UNQUOTE(JSON_EXTRACT(title, '$.id')) {$direction}"
+                    ))
                     ->limit(50),
 
                 ToggleColumn::make('published')
@@ -276,11 +314,13 @@ class ContentResource extends Resource
 
                 TextColumn::make('classification.name')
                     ->label('Classification')
+                    ->getStateUsing(fn (Content $record): string => $record->classification?->getTranslation('name', 'id', false) ?? '')
                     ->badge()
                     ->toggleable(),
 
                 TextColumn::make('category.name')
                     ->label('Category')
+                    ->getStateUsing(fn (Content $record): string => $record->category?->getTranslation('name', 'id', false) ?? '')
                     ->badge()
                     ->toggleable(),
 
@@ -371,13 +411,30 @@ class ContentResource extends Resource
                                 ),
                         ]),
 
-                    TextEntry::make('title')->columnSpanFull(),
+                    TextEntry::make('title')
+                        ->label('Title (ID)')
+                        ->getStateUsing(fn (Content $record): string => $record->getTranslation('title', 'id', false))
+                        ->columnSpanFull(),
+
+                    TextEntry::make('title_en')
+                        ->label('Title (EN)')
+                        ->getStateUsing(fn (Content $record): string => $record->getTranslation('title', 'en', false))
+                        ->columnSpanFull(),
+
                     TextEntry::make('slug')->copyable(),
-                    TextEntry::make('excerpt')->columnSpanFull(),
+
+                    TextEntry::make('excerpt')
+                        ->label('Excerpt (ID)')
+                        ->getStateUsing(fn (Content $record): string => $record->getTranslation('excerpt', 'id', false) ?? '')
+                        ->columnSpanFull(),
+
                     TextEntry::make('content')
+                        ->label('Content (ID)')
+                        ->getStateUsing(fn (Content $record): string => $record->getTranslation('content', 'id', false))
                         ->html()
                         ->columnSpanFull()
                         ->extraAttributes(['class' => 'fi-content-prose']),
+
                     TextEntry::make('youtube_url')->label('YouTube Link')->copyable(),
                 ]),
 

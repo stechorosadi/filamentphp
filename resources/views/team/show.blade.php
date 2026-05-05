@@ -28,9 +28,9 @@
 
         {{-- Breadcrumb --}}
         <nav class="mb-10 flex items-center gap-2 text-sm text-[#90A955]">
-            <a href="{{ route('home') }}" class="hover:text-[#ECF39E] transition-colors">Home</a>
+            <a href="{{ lroute('home') }}" class="hover:text-[#ECF39E] transition-colors">{{ __('ui.home') }}</a>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3 w-3 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
-            <a href="{{ route('team') }}" class="hover:text-[#ECF39E] transition-colors">Team</a>
+            <a href="{{ lroute('team') }}" class="hover:text-[#ECF39E] transition-colors">{{ __('ui.team') }}</a>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3 w-3 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
             <span class="truncate text-[#ECF39E]/70">{{ $member->fullName() }}</span>
         </nav>
@@ -355,7 +355,7 @@
     <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
 
         {{-- Left: back link --}}
-        <a href="{{ route('team') }}"
+        <a href="{{ lroute('team') }}"
            class="inline-flex items-center gap-2 text-sm font-medium text-(--accent) hover:text-(--text-primary) transition-colors group">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                  class="h-4 w-4 group-hover:-translate-x-0.5 transition-transform duration-200">
@@ -365,7 +365,7 @@
         </a>
 
         {{-- Right: export PDF --}}
-        <a href="{{ route('team.member.pdf', $member) }}"
+        <a href="{{ lroute('team.member.pdf', [$member->getKey()]) }}"
            target="_blank"
            class="inline-flex items-center gap-2 rounded-lg border border-(--border) px-4 py-2 text-sm font-semibold text-(--accent) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-all duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0">

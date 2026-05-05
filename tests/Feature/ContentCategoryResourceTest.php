@@ -43,11 +43,11 @@ class ContentCategoryResourceTest extends TestCase
         $this->actingAs($this->admin());
 
         Livewire::test(CreateContentCategory::class)
-            ->fillForm(['name' => 'Technology'])
+            ->fillForm(['name.id' => 'Technology'])
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $this->assertDatabaseHas(ContentCategory::class, ['name' => 'Technology', 'slug' => 'technology']);
+        $this->assertDatabaseHas(ContentCategory::class, ['slug' => 'technology']);
     }
 
     public function test_can_create_category_with_icon(): void
@@ -56,14 +56,14 @@ class ContentCategoryResourceTest extends TestCase
 
         Livewire::test(CreateContentCategory::class)
             ->fillForm([
-                'name' => 'Science',
+                'name.id' => 'Science',
                 'icon' => 'heroicon-o-beaker',
             ])
             ->call('create')
             ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas(ContentCategory::class, [
-            'name' => 'Science',
+            'slug' => 'science',
             'icon' => 'heroicon-o-beaker',
         ]);
     }
@@ -75,13 +75,13 @@ class ContentCategoryResourceTest extends TestCase
 
         Livewire::test(CreateContentCategory::class)
             ->fillForm([
-                'name' => 'Finance',
+                'name.id' => 'Finance',
                 'image' => UploadedFile::fake()->image('finance.png', 100, 100),
             ])
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $this->assertDatabaseHas(ContentCategory::class, ['name' => 'Finance']);
+        $this->assertDatabaseHas(ContentCategory::class, ['slug' => 'finance']);
     }
 
     public function test_image_rejects_non_png(): void
@@ -91,7 +91,7 @@ class ContentCategoryResourceTest extends TestCase
 
         Livewire::test(CreateContentCategory::class)
             ->fillForm([
-                'name' => 'Arts',
+                'name.id' => 'Arts',
                 'image' => UploadedFile::fake()->image('arts.jpg', 100, 100),
             ])
             ->call('create')
@@ -105,8 +105,8 @@ class ContentCategoryResourceTest extends TestCase
 
         Livewire::test(CreateContentCategory::class)
             ->fillForm([
-                'name' => 'Arts',
-                'image' => UploadedFile::fake()->image('arts.png')->size(1025),
+                'name.id' => 'Arts',
+                'image' => UploadedFile::fake()->image('arts.png')->size(2049),
             ])
             ->call('create')
             ->assertHasFormErrors(['image']);
@@ -137,8 +137,8 @@ class ContentCategoryResourceTest extends TestCase
         $this->actingAs($this->admin());
 
         Livewire::test(CreateContentCategory::class)
-            ->fillForm(['name' => null])
+            ->fillForm(['name.id' => null])
             ->call('create')
-            ->assertHasFormErrors(['name' => 'required']);
+            ->assertHasFormErrors(['name.id' => 'required']);
     }
 }

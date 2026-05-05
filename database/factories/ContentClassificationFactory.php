@@ -21,7 +21,7 @@ class ContentClassificationFactory extends Factory
         $name = fake()->unique()->words(2, true);
 
         return [
-            'name' => $name,
+            'name' => ['id' => $name, 'en' => ''],
             'slug' => Str::slug($name),
             'icon' => null,
             'image' => null,

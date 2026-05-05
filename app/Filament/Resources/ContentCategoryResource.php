@@ -13,6 +13,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ImageColumn;
@@ -36,22 +38,47 @@ class ContentCategoryResource extends Resource
         return $schema->schema([
             Section::make('Category Details')
                 ->schema([
-                    TextInput::make('name')
-                        ->required()
-                        ->maxLength(255)
-                        ->live(onBlur: true)
-                        ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug((string) $state))),
-
                     TextInput::make('slug')
                         ->required()
                         ->readOnly()
-                        ->unique(ContentCategory::class, 'slug', ignoreRecord: true),
+                        ->unique(ContentCategory::class, 'slug', ignoreRecord: true)
+                        ->columnSpanFull(),
 
-                    Textarea::make('description')
-                        ->rows(3)
-                        ->maxLength(500)
-                        ->placeholder('Describe the scope and topics covered by this category…')
-                        ->helperText('Max 500 characters.')
+                    Tabs::make('Translations')
+                        ->tabs([
+                            Tab::make('Indonesian (ID)')
+                                ->schema([
+                                    TextInput::make('name.id')
+                                        ->label('Name (ID)')
+                                        ->required()
+                                        ->maxLength(255)
+                                        ->live(onBlur: true)
+                                        ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug((string) $state)))
+                                        ->columnSpanFull(),
+
+                                    Textarea::make('description.id')
+                                        ->label('Description (ID)')
+                                        ->rows(3)
+                                        ->maxLength(500)
+                                        ->placeholder('Describe the scope and topics covered by this category…')
+                                        ->helperText('Max 500 characters.')
+                                        ->columnSpanFull(),
+                                ]),
+
+                            Tab::make('English (EN)')
+                                ->schema([
+                                    TextInput::make('name.en')
+                                        ->label('Name (EN)')
+                                        ->maxLength(255)
+                                        ->columnSpanFull(),
+
+                                    Textarea::make('description.en')
+                                        ->label('Description (EN)')
+                                        ->rows(3)
+                                        ->maxLength(500)
+                                        ->columnSpanFull(),
+                                ]),
+                        ])
                         ->columnSpanFull(),
                 ])
                 ->columns(2),
@@ -103,8 +130,14 @@ class ContentCategoryResource extends Resource
                             : '<span class="text-gray-400">—</span>'
                     ))
                     ->tooltip(fn ($record): string => $record->icon ?? ''),
-                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('name')
+                    ->getStateUsing(fn (ContentCategory $record): string => $record->getTranslation('name', 'id', false))
+                    ->searchable(query: fn ($query, string $search) => $query->whereRaw(
+                        "JSON_UNQUOTE(JSON_EXTRACT(name, '$.id')) LIKE ?", ["%{$search}%"]
+                    ))
+                    ->sortable(),
                 TextColumn::make('description')
+                    ->getStateUsing(fn (ContentCategory $record): string => $record->getTranslation('description', 'id', false) ?? '')
                     ->limit(60)
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),

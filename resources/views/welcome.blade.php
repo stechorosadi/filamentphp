@@ -37,7 +37,7 @@
                  return [
                      'title'    => $s->title,
                      'excerpt'  => \Illuminate\Support\Str::limit($s->excerpt ?? '', 250),
-                     'url'      => route('content.show', $s->slug),
+                     'url'      => lroute('content.show', [$s->slug]),
                      'category' => $s->category?->name,
                      'date'     => ($s->article_date ?? $s->created_at)->format('M d, Y'),
                      'embedUrl' => isset($m[1]) ? 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1' : null,
@@ -98,9 +98,9 @@
 
                             {{-- CTA buttons --}}
                             <div class="flex flex-wrap items-center gap-4">
-                                <a href="{{ route('content.show', $slide->slug) }}"
+                                <a href="{{ lroute('content.show', [$slide->slug]) }}"
                                    class="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-6 py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition-opacity duration-200">
-                                    Read More
+                                    {{ __('ui.read_more') }}
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                                     </svg>
@@ -167,7 +167,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-3.5 w-3.5 text-white shrink-0">
                                     <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/>
                                 </svg>
-                                <span class="text-xs font-semibold text-white">Featured</span>
+                                <span class="text-xs font-semibold text-white">{{ __('ui.featured') }}</span>
                             </div>
                         </div>
 
@@ -296,7 +296,7 @@
     {{-- Subtle grid --}}
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-size-[48px_48px]"></div>
 
-    <div class="relative mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+    <div class="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
 
         {{-- Icon --}}
         <div class="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-[#4F772D]/30 bg-[var(--accent)]/15">
@@ -311,12 +311,12 @@
         </h2>
 
         {{-- Subtitle --}}
-        <p class="mb-10 text-base sm:text-lg leading-relaxed text-[#90A955] max-w-xl mx-auto">
-            Search across our entire collection of articles, research, and resources — all curated and organised in one place, ready for you to explore.
+        <p class="mb-10 text-base sm:text-lg leading-relaxed text-[#90A955] max-w-3xl mx-auto">
+            Search across our entire collection of articles, tutorial, and documentation — all curated and organised in one place, ready for you to explore.
         </p>
 
         {{-- Search bar --}}
-        <form method="GET" action="{{ route('search') }}" class="mb-10">
+        <form method="GET" action="{{ lroute('search') }}" class="mb-10">
             <div class="flex rounded-2xl border-2 border-[#4F772D]/30 bg-white/8 backdrop-blur-sm focus-within:border-[#4F772D]/60 transition-all duration-200 shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-2 gap-2">
                 <div class="flex flex-1 items-center min-w-0">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -418,7 +418,7 @@
 
             @if($loop->first)
             {{-- ── FEATURED card (spans 2 cols) ── --}}
-            <a href="{{ route('category.show', $category->slug) }}"
+            <a href="{{ lroute('category.show', [$category->slug]) }}"
                class="card-animate group relative overflow-hidden rounded-2xl col-span-2
                       flex flex-col sm:flex-row
                       dark:bg-[var(--bg-card)] border border-transparent dark:border-[var(--border)]
@@ -479,7 +479,7 @@
 
             @else
             {{-- ── REGULAR card ── --}}
-            <a href="{{ route('category.show', $category->slug) }}"
+            <a href="{{ lroute('category.show', [$category->slug]) }}"
                class="card-animate group relative overflow-hidden rounded-2xl p-4 flex flex-col items-center text-center
                       dark:bg-[var(--bg-card)] border border-transparent dark:border-[var(--border)]
                       shadow-sm transition-all duration-300
@@ -574,7 +574,7 @@
                 </div>
             </div>
 
-            <form method="GET" action="{{ route('search') }}" class="flex items-center gap-2 w-full sm:w-auto sm:min-w-72">
+            <form method="GET" action="{{ lroute('search') }}" class="flex items-center gap-2 w-full sm:w-auto sm:min-w-72">
                 <div class="relative flex-1">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                          class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--accent)] pointer-events-none">
@@ -585,7 +585,7 @@
                 </div>
                 <button type="submit" class="rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[var(--accent)] dark:hover:bg-[#6B9A38] transition-colors shrink-0">Search</button>
                 @if($search)
-                <a href="{{ route('search') }}" class="rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors shrink-0">Clear</a>
+                <a href="{{ lroute('search') }}" class="rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors shrink-0">Clear</a>
                 @endif
             </form>
         </div>
@@ -659,7 +659,7 @@
                             {{ $content->excerpt }}
                         </p>
                         @endif
-                        <a href="{{ route('content.show', $content->slug) }}"
+                        <a href="{{ lroute('content.show', [$content->slug]) }}"
                            class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-muted)] dark:text-[var(--accent)] hover:text-[var(--accent)] dark:hover:text-[#b8d864] transition-colors">
                             Read more
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
@@ -708,7 +708,7 @@
         {{-- Cards --}}
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             @foreach($classifications as $classification)
-            <a href="{{ route('classification.show', $classification->slug) }}"
+            <a href="{{ lroute('classification.show', [$classification->slug]) }}"
                class="card-animate group relative overflow-hidden flex items-center gap-3 rounded-2xl p-3
                       bg-[#1e4a1e]/50 backdrop-blur-sm
                       border border-[#2a5c2a]/60 border-l-2 border-l-amber-600/50
@@ -933,7 +933,7 @@
 
             {{-- ── FEATURED #1 (full-bleed image) ── --}}
             @php $top = $popularContents->first(); @endphp
-            <a href="{{ route('content.show', $top->slug) }}"
+            <a href="{{ lroute('content.show', [$top->slug]) }}"
                class="card-animate group relative overflow-hidden rounded-2xl min-h-72 lg:min-h-full
                       bg-[var(--accent-dim)]
                       hover:shadow-[0_12px_40px_rgba(202,138,4,0.2)] dark:hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]
@@ -996,7 +996,7 @@
             <div class="flex flex-col gap-3">
                 @foreach($popularContents->skip(1) as $item)
                 @php $rank = $loop->iteration + 1; @endphp
-                <a href="{{ route('content.show', $item->slug) }}"
+                <a href="{{ lroute('content.show', [$item->slug]) }}"
                    class="popular-item group flex items-center gap-4 rounded-2xl p-3.5
                           bg-[var(--bg-card)]
                           border border-[var(--border)]

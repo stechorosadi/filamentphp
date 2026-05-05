@@ -54,7 +54,10 @@ class TeamMembersTable
                     ),
 
                 TextColumn::make('position')
-                    ->searchable()
+                    ->getStateUsing(fn ($record): string => $record->getTranslation('position', 'id', false) ?? '')
+                    ->searchable(query: fn ($query, string $search) => $query->whereRaw(
+                        "JSON_UNQUOTE(JSON_EXTRACT(position, '$.id')) LIKE ?", ["%{$search}%"]
+                    ))
                     ->sortable(),
 
                 TextColumn::make('employee_number')

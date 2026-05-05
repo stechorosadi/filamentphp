@@ -110,7 +110,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/>
             </svg>
             <div class="flex flex-col leading-tight">
-                <span class="text-xs font-semibold uppercase tracking-wide opacity-75">Contact Us</span>
+                <span class="text-xs font-semibold uppercase tracking-wide opacity-75">{{ __('ui.contact_us') }}</span>
                 <span class="text-sm">{{ $siteSetting->contact_email }}</span>
             </div>
         </a>
@@ -144,7 +144,7 @@
         <div class="flex h-16 items-center justify-between">
 
             {{-- Logo --}}
-            <a href="{{ route('home') }}" class="flex items-center gap-2 text-xl font-bold text-[var(--accent)] dark:text-[var(--accent)] tracking-tight">
+            <a href="{{ lroute('home') }}" class="flex items-center gap-2 text-xl font-bold text-[var(--accent)] dark:text-[var(--accent)] tracking-tight">
                 @if($siteSetting->logo_path)
                     <img src="{{ Storage::disk('public')->url($siteSetting->logo_path) }}" alt="{{ $siteSetting->site_title }}" class="h-8 w-auto object-contain">
                 @endif
@@ -169,8 +169,17 @@
                 {{-- Divider --}}
                 <div class="w-px h-5 bg-[var(--accent-dim)] dark:bg-[var(--accent)] mx-2"></div>
 
+                {{-- Language switcher --}}
+                @php $currentLocale = app()->getLocale(); @endphp
+                <div class="flex items-center gap-0 rounded-lg border border-[var(--accent-dim)] overflow-hidden">
+                    <a href="{{ preg_replace('#^/(en|id)/#', '/id/', url()->current()) }}"
+                       class="px-2.5 py-1 text-xs font-semibold transition-colors {{ $currentLocale === 'id' ? 'bg-[var(--accent)] text-white' : 'text-[var(--text-muted)] hover:bg-[var(--accent-dim)]' }}">ID</a>
+                    <a href="{{ preg_replace('#^/(en|id)/#', '/en/', url()->current()) }}"
+                       class="px-2.5 py-1 text-xs font-semibold transition-colors {{ $currentLocale === 'en' ? 'bg-[var(--accent)] text-white' : 'text-[var(--text-muted)] hover:bg-[var(--accent-dim)]' }}">EN</a>
+                </div>
+
                 {{-- Dark toggle --}}
-                <button @click="toggleDark()" class="rounded-lg p-2 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors" aria-label="Toggle dark mode">
+                <button @click="toggleDark()" class="rounded-lg p-2 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors" aria-label="{{ __('ui.dark_mode') }}">
                     <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-(--text-primary)">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
                     </svg>
@@ -180,9 +189,16 @@
                 </button>
             </nav>
 
-            {{-- Mobile: dark toggle + burger --}}
+            {{-- Mobile: lang switcher + dark toggle + burger --}}
             <div class="flex md:hidden items-center gap-2">
-                <button @click="toggleDark()" class="rounded-lg p-2 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors" aria-label="Toggle dark mode">
+                {{-- Language switcher (mobile) --}}
+                <div class="flex items-center gap-0 rounded-lg border border-[var(--accent-dim)] overflow-hidden">
+                    <a href="{{ preg_replace('#^/(en|id)/#', '/id/', url()->current()) }}"
+                       class="px-2 py-1 text-xs font-semibold transition-colors {{ ($currentLocale ?? app()->getLocale()) === 'id' ? 'bg-[var(--accent)] text-white' : 'text-[var(--text-muted)] hover:bg-[var(--accent-dim)]' }}">ID</a>
+                    <a href="{{ preg_replace('#^/(en|id)/#', '/en/', url()->current()) }}"
+                       class="px-2 py-1 text-xs font-semibold transition-colors {{ ($currentLocale ?? app()->getLocale()) === 'en' ? 'bg-[var(--accent)] text-white' : 'text-[var(--text-muted)] hover:bg-[var(--accent-dim)]' }}">EN</a>
+                </div>
+                <button @click="toggleDark()" class="rounded-lg p-2 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors" aria-label="{{ __('ui.dark_mode') }}">
                     <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-(--text-primary)">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
                     </svg>
@@ -332,7 +348,7 @@
 
         {{-- Bottom bar --}}
         <p class="text-center text-xs text-[var(--accent)]">
-            &copy; {{ date('Y') }} <span class="text-[#90A955] font-medium">{{ $siteSetting->site_title }}</span>. All rights reserved.
+            &copy; {{ date('Y') }} <span class="text-[#90A955] font-medium">{{ $siteSetting->site_title }}</span>. {{ __('ui.all_rights') }}
         </p>
 
     </div>

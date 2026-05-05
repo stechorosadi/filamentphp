@@ -8,6 +8,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
@@ -35,26 +37,57 @@ class TeamMemberForm
                             ->visible(fn (Get $get): bool => blank($get('user_id')))
                             ->helperText('Required when no user account is linked.'),
 
-                        TextInput::make('front_title')
-                            ->label('Front Title')
-                            ->placeholder('Dr., Prof., Ir.')
-                            ->maxLength(50),
-
-                        TextInput::make('back_title')
-                            ->label('Back Title')
-                            ->placeholder('M.Sc., S.H., Ph.D.')
-                            ->maxLength(100),
-
-                        TextInput::make('position')
-                            ->label('Position')
-                            ->required()
-                            ->maxLength(150),
-
                         TextInput::make('employee_number')
                             ->label('Employee Number')
                             ->maxLength(50),
                     ])
                     ->columns(2),
+
+                Section::make('Titles & Position')
+                    ->schema([
+                        Tabs::make('Translations')
+                            ->tabs([
+                                Tab::make('Indonesian (ID)')
+                                    ->schema([
+                                        TextInput::make('front_title.id')
+                                            ->label('Front Title (ID)')
+                                            ->placeholder('Dr., Prof., Ir.')
+                                            ->maxLength(50),
+
+                                        TextInput::make('back_title.id')
+                                            ->label('Back Title (ID)')
+                                            ->placeholder('M.Sc., S.H., Ph.D.')
+                                            ->maxLength(100),
+
+                                        TextInput::make('position.id')
+                                            ->label('Position (ID)')
+                                            ->required()
+                                            ->maxLength(150)
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(2),
+
+                                Tab::make('English (EN)')
+                                    ->schema([
+                                        TextInput::make('front_title.en')
+                                            ->label('Front Title (EN)')
+                                            ->placeholder('Dr., Prof., Ir.')
+                                            ->maxLength(50),
+
+                                        TextInput::make('back_title.en')
+                                            ->label('Back Title (EN)')
+                                            ->placeholder('M.Sc., S.H., Ph.D.')
+                                            ->maxLength(100),
+
+                                        TextInput::make('position.en')
+                                            ->label('Position (EN)')
+                                            ->maxLength(150)
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(2),
+                            ])
+                            ->columnSpanFull(),
+                    ]),
 
                 Section::make('Photo')
                     ->schema([

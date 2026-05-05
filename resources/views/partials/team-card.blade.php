@@ -1,7 +1,7 @@
 <div class="group relative flex flex-col rounded-2xl overflow-hidden border border-(--border) bg-(--bg-card) hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
 
     {{-- Full-card link (behind social icons) --}}
-    <a href="{{ route('team.member', $member) }}" class="absolute inset-0 z-10" aria-label="{{ $member->fullName() }}"></a>
+    <a href="{{ lroute('team.member', [$member->getKey()]) }}" class="absolute inset-0 z-10" aria-label="{{ $member->fullName() }}"></a>
 
     {{-- Photo --}}
     <div class="aspect-4/3 w-full overflow-hidden bg-(--bg-alt)">

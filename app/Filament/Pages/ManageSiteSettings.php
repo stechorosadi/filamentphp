@@ -11,6 +11,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Cache;
 
@@ -47,20 +49,44 @@ class ManageSiteSettings extends Page
             ->schema([
                 Section::make('Identity')
                     ->schema([
-                        TextInput::make('site_title')
-                            ->label('Site Title')
-                            ->required()
-                            ->maxLength(100),
+                        Tabs::make('Translations')
+                            ->tabs([
+                                Tab::make('Indonesian (ID)')
+                                    ->schema([
+                                        TextInput::make('site_title.id')
+                                            ->label('Site Title (ID)')
+                                            ->required()
+                                            ->maxLength(100),
 
-                        TextInput::make('site_tagline')
-                            ->label('Tagline')
-                            ->maxLength(160),
+                                        TextInput::make('site_tagline.id')
+                                            ->label('Tagline (ID)')
+                                            ->maxLength(160),
 
-                        Textarea::make('site_description')
-                            ->label('Meta Description')
-                            ->rows(3)
-                            ->maxLength(300)
-                            ->helperText('Used in <meta name="description"> and Open Graph tags.'),
+                                        Textarea::make('site_description.id')
+                                            ->label('Meta Description (ID)')
+                                            ->rows(3)
+                                            ->maxLength(300)
+                                            ->helperText('Used in <meta name="description"> and Open Graph tags.'),
+                                    ]),
+
+                                Tab::make('English (EN)')
+                                    ->schema([
+                                        TextInput::make('site_title.en')
+                                            ->label('Site Title (EN)')
+                                            ->maxLength(100),
+
+                                        TextInput::make('site_tagline.en')
+                                            ->label('Tagline (EN)')
+                                            ->maxLength(160),
+
+                                        Textarea::make('site_description.en')
+                                            ->label('Meta Description (EN)')
+                                            ->rows(3)
+                                            ->maxLength(300)
+                                            ->helperText('Used in <meta name="description"> and Open Graph tags.'),
+                                    ]),
+                            ])
+                            ->columnSpanFull(),
                     ])
                     ->columns(1),
 
@@ -180,7 +206,8 @@ class ManageSiteSettings extends Page
 
         SiteSetting::instance()->update($data);
 
-        Cache::forget('site_setting');
+        Cache::forget('site_setting_en');
+        Cache::forget('site_setting_id');
 
         Notification::make()
             ->title('Settings saved.')

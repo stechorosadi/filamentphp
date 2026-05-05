@@ -39,7 +39,7 @@
         @endif
 
         {{-- Search bar --}}
-        <form method="GET" action="{{ route('search') }}">
+        <form method="GET" action="{{ lroute('search') }}">
             <div class="flex rounded-2xl border-2 border-[#4F772D]/30 bg-white/8 backdrop-blur-sm focus-within:border-[#4F772D]/60 transition-all duration-200 shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-2 gap-2">
                 <div class="flex flex-1 items-center min-w-0">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -51,7 +51,7 @@
                            autofocus
                            class="min-w-0 flex-1 bg-transparent px-3 py-2 text-base text-[#ECF39E] placeholder-[#4F772D] focus:outline-none">
                     @if($query)
-                    <a href="{{ route('search') }}"
+                    <a href="{{ lroute('search') }}"
                        class="shrink-0 rounded-lg p-2 text-(--accent) hover:text-[#90A955] transition-colors"
                        title="Clear search">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
@@ -94,7 +94,7 @@
                 <p class="mb-4 text-sm font-medium text-[var(--accent)] uppercase tracking-wider">Browse Categories</p>
                 <div class="flex flex-wrap justify-center gap-2">
                     @foreach($suggestions as $cat)
-                    <a href="{{ route('category.show', $cat->slug) }}"
+                    <a href="{{ lroute('category.show', [$cat->slug]) }}"
                        class="rounded-full border border-[var(--accent-dim)] dark:border-[var(--accent)] bg-[var(--bg-card)] px-4 py-2 text-sm font-medium text-[var(--text-muted)] hover:bg-[var(--accent)] hover:border-[#4F772D] hover:text-white transition-all duration-200">
                         {{ $cat->name }}
                     </a>
@@ -103,7 +103,7 @@
             </div>
             @endif
 
-            <a href="{{ route('home') }}"
+            <a href="{{ lroute('home') }}"
                class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white hover:bg-[var(--accent)] dark:hover:bg-[#6B9A38] transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
@@ -119,8 +119,8 @@
                 Showing <span class="font-semibold text-[var(--text-primary)]">{{ $results->firstItem() }}–{{ $results->lastItem() }}</span>
                 of <span class="font-semibold text-[var(--text-primary)]">{{ $results->total() }}</span> results
             </p>
-            <a href="{{ route('home') }}" class="text-sm text-[var(--accent)] hover:text-[var(--text-muted)] dark:hover:text-[#90A955] transition-colors">
-                ← Back to Home
+            <a href="{{ lroute('home') }}" class="text-sm text-[var(--accent)] hover:text-[var(--text-muted)] dark:hover:text-[#90A955] transition-colors">
+                ← {{ __('ui.home') }}
             </a>
         </div>
 
@@ -183,9 +183,9 @@
                         {{ $content->excerpt }}
                     </p>
                     @endif
-                    <a href="{{ route('content.show', $content->slug) }}"
+                    <a href="{{ lroute('content.show', [$content->slug]) }}"
                        class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-muted)] dark:text-[var(--accent)] hover:text-[var(--accent)] dark:hover:text-[#b8d864] transition-colors">
-                        Read more
+                        {{ __('ui.read_more') }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                         </svg>

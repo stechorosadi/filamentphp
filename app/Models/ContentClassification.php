@@ -8,17 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Spatie\Translatable\HasTranslations;
 
 #[Fillable(['name', 'slug', 'icon', 'image'])]
 class ContentClassification extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
+
+    public array $translatable = ['name'];
 
     protected static function booted(): void
     {
         static::creating(function (ContentClassification $model): void {
             if (empty($model->slug)) {
-                $model->slug = Str::slug($model->name);
+                $model->slug = Str::slug($model->getTranslation('name', 'id', false) ?: $model->name);
             }
         });
 

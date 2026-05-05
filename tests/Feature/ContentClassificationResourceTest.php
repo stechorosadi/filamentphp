@@ -43,11 +43,11 @@ class ContentClassificationResourceTest extends TestCase
         $this->actingAs($this->admin());
 
         Livewire::test(CreateContentClassification::class)
-            ->fillForm(['name' => 'Article'])
+            ->fillForm(['name.id' => 'Article'])
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $this->assertDatabaseHas(ContentClassification::class, ['name' => 'Article', 'slug' => 'article']);
+        $this->assertDatabaseHas(ContentClassification::class, ['slug' => 'article']);
     }
 
     public function test_can_create_classification_with_icon(): void
@@ -56,14 +56,14 @@ class ContentClassificationResourceTest extends TestCase
 
         Livewire::test(CreateContentClassification::class)
             ->fillForm([
-                'name' => 'Blog',
+                'name.id' => 'Blog',
                 'icon' => 'heroicon-o-pencil-square',
             ])
             ->call('create')
             ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas(ContentClassification::class, [
-            'name' => 'Blog',
+            'slug' => 'blog',
             'icon' => 'heroicon-o-pencil-square',
         ]);
     }
@@ -75,13 +75,13 @@ class ContentClassificationResourceTest extends TestCase
 
         Livewire::test(CreateContentClassification::class)
             ->fillForm([
-                'name' => 'Announcement',
+                'name.id' => 'Announcement',
                 'image' => UploadedFile::fake()->image('announcement.png', 100, 100),
             ])
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $this->assertDatabaseHas(ContentClassification::class, ['name' => 'Announcement']);
+        $this->assertDatabaseHas(ContentClassification::class, ['slug' => 'announcement']);
     }
 
     public function test_image_rejects_non_png(): void
@@ -91,7 +91,7 @@ class ContentClassificationResourceTest extends TestCase
 
         Livewire::test(CreateContentClassification::class)
             ->fillForm([
-                'name' => 'Opinion',
+                'name.id' => 'Opinion',
                 'image' => UploadedFile::fake()->image('opinion.jpg', 100, 100),
             ])
             ->call('create')
@@ -105,8 +105,8 @@ class ContentClassificationResourceTest extends TestCase
 
         Livewire::test(CreateContentClassification::class)
             ->fillForm([
-                'name' => 'Opinion',
-                'image' => UploadedFile::fake()->image('opinion.png')->size(1025),
+                'name.id' => 'Opinion',
+                'image' => UploadedFile::fake()->image('opinion.png')->size(2049),
             ])
             ->call('create')
             ->assertHasFormErrors(['image']);
@@ -137,8 +137,8 @@ class ContentClassificationResourceTest extends TestCase
         $this->actingAs($this->admin());
 
         Livewire::test(CreateContentClassification::class)
-            ->fillForm(['name' => null])
+            ->fillForm(['name.id' => null])
             ->call('create')
-            ->assertHasFormErrors(['name' => 'required']);
+            ->assertHasFormErrors(['name.id' => 'required']);
     }
 }

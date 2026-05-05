@@ -15,6 +15,7 @@ class HomeController extends Controller
 {
     public function index(): View
     {
+        $locale = app()->getLocale();
         $search = mb_substr(request()->string('search')->trim()->value(), 0, 100);
         $categoryId = request()->integer('category') ?: null;
         $classificationId = request()->integer('classification') ?: null;
@@ -36,8 +37,8 @@ class HomeController extends Controller
             ->whereNotNull('header_image')
             ->whereNotIn('id', $featuredIds)
             ->when($search, fn ($q) => $q->where(fn ($q) => $q
-                ->where('title', 'like', "%{$search}%")
-                ->orWhere('excerpt', 'like', "%{$search}%")
+                ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(title, '$.\"$locale\"')) LIKE ?", ["%{$search}%"])
+                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(excerpt, '$.\"$locale\"')) LIKE ?", ["%{$search}%"])
             ))
             ->when($categoryId, fn ($q) => $q->where('content_category_id', $categoryId))
             ->when($classificationId, fn ($q) => $q->where('content_classification_id', $classificationId))
@@ -46,12 +47,12 @@ class HomeController extends Controller
 
         $categories = ContentCategory::withCount(['contents' => fn ($q) => $q->where('published', true)])
             ->having('contents_count', '>', 0)
-            ->orderBy('name')
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.\"$locale\"'))")
             ->get();
 
         $classifications = ContentClassification::withCount(['contents' => fn ($q) => $q->where('published', true)])
             ->having('contents_count', '>', 0)
-            ->orderBy('name')
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.\"$locale\"'))")
             ->get();
 
         $totalArticles = Content::where('published', true)->count();
@@ -77,17 +78,24 @@ class HomeController extends Controller
 
     public function search(): View
     {
+        $locale = app()->getLocale();
         $query = mb_substr(request()->string('q')->trim()->value(), 0, 100);
 
         $results = Content::with(['user', 'category', 'classification'])
             ->where('published', true)
             ->whereNotNull('header_image')
             ->when($query, fn ($q) => $q->where(fn ($q) => $q
-                ->where('title', 'like', "%{$query}%")
-                ->orWhere('excerpt', 'like', "%{$query}%")
-                ->orWhereHas('category', fn ($c) => $c->where('name', 'like', "%{$query}%"))
-                ->orWhereHas('classification', fn ($c) => $c->where('name', 'like', "%{$query}%"))
-                ->orWhereHas('tags', fn ($t) => $t->where('name', 'like', "%{$query}%"))
+                ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(title, '$.\"$locale\"')) LIKE ?", ["%{$query}%"])
+                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(excerpt, '$.\"$locale\"')) LIKE ?", ["%{$query}%"])
+                ->orWhereHas('category', fn ($c) => $c->whereRaw(
+                    "JSON_UNQUOTE(JSON_EXTRACT(name, '$.\"$locale\"')) LIKE ?", ["%{$query}%"]
+                ))
+                ->orWhereHas('classification', fn ($c) => $c->whereRaw(
+                    "JSON_UNQUOTE(JSON_EXTRACT(name, '$.\"$locale\"')) LIKE ?", ["%{$query}%"]
+                ))
+                ->orWhereHas('tags', fn ($t) => $t->whereRaw(
+                    "JSON_UNQUOTE(JSON_EXTRACT(name, '$.\"$locale\"')) LIKE ?", ["%{$query}%"]
+                ))
             ))
             ->latest('article_date')
             ->paginate(12);
@@ -103,6 +111,7 @@ class HomeController extends Controller
 
     public function category(string $slug): View
     {
+        $locale = app()->getLocale();
         $category = ContentCategory::where('slug', $slug)->firstOrFail();
 
         $contents = Content::with(['user', 'category', 'classification'])
@@ -115,7 +124,7 @@ class HomeController extends Controller
         $otherCategories = ContentCategory::withCount(['contents' => fn ($q) => $q->where('published', true)])
             ->having('contents_count', '>', 0)
             ->where('id', '!=', $category->id)
-            ->orderBy('name')
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.\"$locale\"'))")
             ->get();
 
         return view('category.show', compact('category', 'contents', 'otherCategories'));
@@ -123,6 +132,7 @@ class HomeController extends Controller
 
     public function classification(string $slug): View
     {
+        $locale = app()->getLocale();
         $classification = ContentClassification::where('slug', $slug)->firstOrFail();
 
         $contents = Content::with(['user', 'category', 'classification'])
@@ -135,7 +145,7 @@ class HomeController extends Controller
         $otherClassifications = ContentClassification::withCount(['contents' => fn ($q) => $q->where('published', true)])
             ->having('contents_count', '>', 0)
             ->where('id', '!=', $classification->id)
-            ->orderBy('name')
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.\"$locale\"'))")
             ->get();
 
         return view('classification.show', compact('classification', 'contents', 'otherClassifications'));
@@ -177,6 +187,7 @@ class HomeController extends Controller
 
     public function tag(string $slug): View
     {
+        $locale = app()->getLocale();
         $tag = Tag::where('slug', $slug)->firstOrFail();
 
         $contents = Content::with(['user', 'category', 'classification'])
@@ -188,7 +199,7 @@ class HomeController extends Controller
 
         $otherTags = Tag::whereHas('contents', fn ($q) => $q->where('published', true))
             ->where('id', '!=', $tag->id)
-            ->orderBy('name')
+            ->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(name, '$.\"$locale\"'))")
             ->limit(12)
             ->get();
 

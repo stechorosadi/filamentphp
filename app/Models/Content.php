@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Translatable\HasTranslations;
 
 // Imported for type-hinting in deleting hook closures
 // (DB cascade bypasses Eloquent hooks on child rows)
@@ -30,6 +31,10 @@ use Illuminate\Support\Facades\Storage;
 ])]
 class Content extends Model
 {
+    use HasTranslations;
+
+    public array $translatable = ['title', 'excerpt', 'content'];
+
     protected function casts(): array
     {
         return [

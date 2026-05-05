@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Translatable\HasTranslations;
 
 #[Fillable([
     'user_id',
@@ -25,6 +26,10 @@ use Illuminate\Support\Facades\Storage;
 ])]
 class TeamMember extends Model
 {
+    use HasTranslations;
+
+    public array $translatable = ['front_title', 'back_title', 'position'];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

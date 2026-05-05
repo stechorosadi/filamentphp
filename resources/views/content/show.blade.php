@@ -45,12 +45,12 @@
 
     {{-- Breadcrumb --}}
     <nav class="mb-8 flex items-center gap-2 text-sm text-[var(--accent)]">
-        <a href="{{ route('home') }}" class="hover:text-[var(--accent)] dark:hover:text-[#90A955] transition-colors">Home</a>
+        <a href="{{ lroute('home') }}" class="hover:text-[var(--accent)] dark:hover:text-[#90A955] transition-colors">{{ __('ui.home') }}</a>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3 w-3 shrink-0">
             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
         </svg>
         @if($content->category)
-        <a href="{{ route('category.show', $content->category->slug) }}"
+        <a href="{{ lroute('category.show', [$content->category->slug]) }}"
            class="hover:text-[var(--accent)] dark:hover:text-[#90A955] transition-colors">{{ $content->category->name }}</a>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3 w-3 shrink-0">
             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
@@ -92,7 +92,7 @@
         <div class="ml-auto flex flex-wrap items-center gap-2">
             <span class="text-xs font-semibold text-[var(--text-muted)]">Tags:</span>
             @foreach($content->tags as $tag)
-            <a href="{{ route('tag.show', $tag->slug) }}"
+            <a href="{{ lroute('tag.show', [$tag->slug]) }}"
                class="rounded-full border border-(--border) px-3 py-1 text-xs font-medium text-(--text-muted) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-colors duration-200">
                 #{{ $tag->name }}
             </a>
@@ -238,7 +238,7 @@
                 {{-- Export PDF --}}
                 <div>
                     <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-(--accent)">Export</p>
-                    <a href="{{ route('content.pdf', $content->slug) }}"
+                    <a href="{{ lroute('content.pdf', [$content->slug]) }}"
                        target="_blank"
                        class="inline-flex items-center gap-2 rounded-lg border border-(--border) px-3 py-2 text-xs font-semibold text-(--accent) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-all duration-200">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0">
@@ -450,7 +450,7 @@
         <h3 class="mb-6 text-xl font-bold text-[var(--text-primary)]">You Might Also Like</h3>
         <div class="grid gap-5 sm:grid-cols-3">
             @foreach($relatedContents as $related)
-            <a href="{{ route('content.show', $related->slug) }}"
+            <a href="{{ lroute('content.show', [$related->slug]) }}"
                class="group flex flex-col rounded-2xl overflow-hidden bg-[var(--bg-card)] border border-[var(--border)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                 <div class="relative aspect-video overflow-hidden bg-[var(--accent-dim)]">
                     <img src="{{ asset("storage/{$related->header_image}") }}"
@@ -486,12 +486,12 @@
 
     {{-- Back link --}}
     <div class="mt-10 pt-8 pb-16 border-t border-[var(--border)]">
-        <a href="{{ route('home') }}"
+        <a href="{{ lroute('home') }}"
            class="inline-flex items-center gap-2 text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-muted)] dark:hover:text-[#90A955] transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
             </svg>
-            Back to all articles
+            {{ __('ui.back') }}
         </a>
     </div>
 

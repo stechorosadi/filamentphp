@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Tags\Tables;
 
+use App\Models\Tag;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -16,7 +17,10 @@ class TagsTable
             ->modifyQueryUsing(fn ($query) => $query->withCount('contents'))
             ->columns([
                 TextColumn::make('name')
-                    ->searchable()
+                    ->getStateUsing(fn (Tag $record): string => $record->getTranslation('name', 'id', false))
+                    ->searchable(query: fn ($query, string $search) => $query->whereRaw(
+                        "JSON_UNQUOTE(JSON_EXTRACT(name, '$.id')) LIKE ?", ["%{$search}%"]
+                    ))
                     ->sortable(),
 
                 TextColumn::make('slug')

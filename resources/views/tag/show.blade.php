@@ -41,7 +41,7 @@
                 </svg>
                 {{ $contents->total() }} {{ Str::plural('article', $contents->total()) }}
             </span>
-            <a href="{{ route('search') }}"
+            <a href="{{ lroute('search') }}"
                class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-sm text-[#90A955] hover:border-[#4F772D]/40 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
@@ -66,7 +66,7 @@
             </div>
             <h2 class="mb-3 text-2xl font-bold text-[var(--text-primary)]">No articles yet</h2>
             <p class="mb-8 max-w-md text-[var(--accent)]">No published articles with the tag <span class="font-semibold text-[var(--text-primary)]">#{{ $tag->name }}</span> yet.</p>
-            <a href="{{ route('home') }}"
+            <a href="{{ lroute('home') }}"
                class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
@@ -147,9 +147,9 @@
                         {{ $content->excerpt }}
                     </p>
                     @endif
-                    <a href="{{ route('content.show', $content->slug) }}"
+                    <a href="{{ lroute('content.show', [$content->slug]) }}"
                        class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-muted)] dark:text-[var(--accent)] hover:text-[var(--accent)] dark:hover:text-[#b8d864] transition-colors">
-                        Read more
+                        {{ __('ui.read_more') }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                         </svg>
@@ -177,7 +177,7 @@
         <h2 class="mb-6 text-lg font-bold text-[var(--text-primary)]">Other Tags</h2>
         <div class="flex flex-wrap gap-3">
             @foreach($otherTags as $otherTag)
-            <a href="{{ route('tag.show', $otherTag->slug) }}"
+            <a href="{{ lroute('tag.show', [$otherTag->slug]) }}"
                class="rounded-full border border-(--border) bg-(--bg-card) px-4 py-2 text-sm font-medium text-(--text-muted) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-all duration-200">
                 #{{ $otherTag->name }}
             </a>

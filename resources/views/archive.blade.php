@@ -46,12 +46,12 @@
                 </svg>
                 {{ $contents->total() }} {{ Str::plural('article', $contents->total()) }}
             </span>
-            <a href="{{ route('home') }}"
+            <a href="{{ lroute('home') }}"
                class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-sm text-[#90A955] hover:border-[#4F772D]/40 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
                 </svg>
-                Back to Home
+                {{ __('ui.back') }}
             </a>
         </div>
 
@@ -72,12 +72,12 @@
             </div>
             <h2 class="mb-3 text-2xl font-bold text-[var(--text-primary)]">No archived articles yet</h2>
             <p class="mb-8 max-w-md text-[var(--accent)]">Articles that have been archived will appear here.</p>
-            <a href="{{ route('home') }}"
+            <a href="{{ lroute('home') }}"
                class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
                 </svg>
-                Back to Home
+                {{ __('ui.back') }}
             </a>
         </div>
 
@@ -155,9 +155,9 @@
                         {{ $content->excerpt }}
                     </p>
                     @endif
-                    <a href="{{ route('content.show', $content->slug) }}"
+                    <a href="{{ lroute('content.show', [$content->slug]) }}"
                        class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-muted)] dark:text-[var(--accent)] hover:text-[var(--accent)] dark:hover:text-[#b8d864] transition-colors">
-                        Read more
+                        {{ __('ui.read_more') }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                         </svg>

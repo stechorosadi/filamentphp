@@ -12,6 +12,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ImageColumn;
@@ -35,16 +37,34 @@ class ContentClassificationResource extends Resource
         return $schema->schema([
             Section::make('Classification Details')
                 ->schema([
-                    TextInput::make('name')
-                        ->required()
-                        ->maxLength(255)
-                        ->live(onBlur: true)
-                        ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug((string) $state))),
-
                     TextInput::make('slug')
                         ->required()
                         ->readOnly()
-                        ->unique(ContentClassification::class, 'slug', ignoreRecord: true),
+                        ->unique(ContentClassification::class, 'slug', ignoreRecord: true)
+                        ->columnSpanFull(),
+
+                    Tabs::make('Translations')
+                        ->tabs([
+                            Tab::make('Indonesian (ID)')
+                                ->schema([
+                                    TextInput::make('name.id')
+                                        ->label('Name (ID)')
+                                        ->required()
+                                        ->maxLength(255)
+                                        ->live(onBlur: true)
+                                        ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug((string) $state)))
+                                        ->columnSpanFull(),
+                                ]),
+
+                            Tab::make('English (EN)')
+                                ->schema([
+                                    TextInput::make('name.en')
+                                        ->label('Name (EN)')
+                                        ->maxLength(255)
+                                        ->columnSpanFull(),
+                                ]),
+                        ])
+                        ->columnSpanFull(),
                 ])
                 ->columns(2),
 
@@ -95,7 +115,12 @@ class ContentClassificationResource extends Resource
                             : '<span class="text-gray-400">—</span>'
                     ))
                     ->tooltip(fn ($record): string => $record->icon ?? ''),
-                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('name')
+                    ->getStateUsing(fn (ContentClassification $record): string => $record->getTranslation('name', 'id', false))
+                    ->searchable(query: fn ($query, string $search) => $query->whereRaw(
+                        "JSON_UNQUOTE(JSON_EXTRACT(name, '$.id')) LIKE ?", ["%{$search}%"]
+                    ))
+                    ->sortable(),
                 TextColumn::make('slug')->searchable(),
                 TextColumn::make('created_at')->dateTime('M j, Y')->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
