@@ -109,9 +109,8 @@ class HomeController extends Controller
         return view('search', compact('query', 'results', 'suggestions'));
     }
 
-    public function category(string $slug): View
+    public function category(string $locale, string $slug): View
     {
-        $locale = app()->getLocale();
         $category = ContentCategory::where('slug', $slug)->firstOrFail();
 
         $contents = Content::with(['user', 'category', 'classification'])
@@ -130,9 +129,8 @@ class HomeController extends Controller
         return view('category.show', compact('category', 'contents', 'otherCategories'));
     }
 
-    public function classification(string $slug): View
+    public function classification(string $locale, string $slug): View
     {
-        $locale = app()->getLocale();
         $classification = ContentClassification::where('slug', $slug)->firstOrFail();
 
         $contents = Content::with(['user', 'category', 'classification'])
@@ -151,7 +149,7 @@ class HomeController extends Controller
         return view('classification.show', compact('classification', 'contents', 'otherClassifications'));
     }
 
-    public function show(string $slug): View
+    public function show(string $locale, string $slug): View
     {
         $content = Content::with([
             'user', 'category', 'classification', 'tags',
@@ -185,9 +183,8 @@ class HomeController extends Controller
         return view('content.show', compact('content', 'relatedContents'));
     }
 
-    public function tag(string $slug): View
+    public function tag(string $locale, string $slug): View
     {
-        $locale = app()->getLocale();
         $tag = Tag::where('slug', $slug)->firstOrFail();
 
         $contents = Content::with(['user', 'category', 'classification'])
@@ -228,7 +225,7 @@ class HomeController extends Controller
         return view('team.index', compact('teamMembers'));
     }
 
-    public function pdf(string $slug): Response
+    public function pdf(string $locale, string $slug): Response
     {
         $content = Content::with([
             'user', 'category', 'classification', 'tags',
@@ -244,7 +241,7 @@ class HomeController extends Controller
         return $pdf->download(str($content->slug)->slug().'.pdf');
     }
 
-    public function memberPdf(TeamMember $member): Response
+    public function memberPdf(string $locale, TeamMember $member): Response
     {
         abort_if(! $member->is_visible, 404);
 
@@ -263,7 +260,7 @@ class HomeController extends Controller
         return $pdf->download($filename);
     }
 
-    public function memberShow(TeamMember $member): View
+    public function memberShow(string $locale, TeamMember $member): View
     {
         abort_if(! $member->is_visible, 404);
 

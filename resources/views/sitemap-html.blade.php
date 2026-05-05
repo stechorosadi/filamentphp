@@ -47,10 +47,10 @@
                 </h2>
                 <ul class="space-y-2">
                     @foreach([
-                        ['label' => 'Home', 'url' => route('home')],
-                        ['label' => 'Search', 'url' => route('search')],
-                        ['label' => 'Team', 'url' => route('team')],
-                        ['label' => 'Archive', 'url' => route('archive')],
+                        ['label' => 'Home', 'url' => lroute('home')],
+                        ['label' => 'Search', 'url' => lroute('search')],
+                        ['label' => 'Team', 'url' => lroute('team')],
+                        ['label' => 'Archive', 'url' => lroute('archive')],
                     ] as $page)
                     <li>
                         <a href="{{ $page['url'] }}"
@@ -79,7 +79,7 @@
                 <ul class="space-y-2">
                     @foreach($categories as $category)
                     <li>
-                        <a href="{{ route('category.show', $category->slug) }}"
+                        <a href="{{ lroute('category.show', ['slug' => $category->slug]) }}"
                            class="flex items-center gap-2 rounded-xl border border-(--border) bg-(--bg-card) px-4 py-3 text-sm font-medium text-(--text-primary) hover:border-(--accent)/40 hover:text-(--accent) transition-colors duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5 text-(--accent) shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
                             {{ $category->name }}
@@ -106,7 +106,7 @@
                 <ul class="space-y-2">
                     @foreach($classifications as $classification)
                     <li>
-                        <a href="{{ route('classification.show', $classification->slug) }}"
+                        <a href="{{ lroute('classification.show', ['slug' => $classification->slug]) }}"
                            class="flex items-center gap-2 rounded-xl border border-(--border) bg-(--bg-card) px-4 py-3 text-sm font-medium text-(--text-primary) hover:border-(--accent)/40 hover:text-(--accent) transition-colors duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5 text-(--accent) shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
                             {{ $classification->name }}
@@ -132,7 +132,7 @@
                 @else
                 <div class="flex flex-wrap gap-2">
                     @foreach($tags as $tag)
-                    <a href="{{ route('tag.show', $tag->slug) }}"
+                    <a href="{{ lroute('tag.show', ['slug' => $tag->slug]) }}"
                        class="rounded-full border border-(--border) bg-(--bg-card) px-3 py-1.5 text-sm font-medium text-(--text-muted) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-colors duration-200">
                         #{{ $tag->name }}
                     </a>
@@ -156,7 +156,7 @@
                 <ul class="space-y-2">
                     @foreach($teamMembers as $member)
                     <li>
-                        <a href="{{ route('team.member', $member->id) }}"
+                        <a href="{{ lroute('team.member', ['member' => $member->id]) }}"
                            class="flex items-center gap-2 rounded-xl border border-(--border) bg-(--bg-card) px-4 py-3 text-sm font-medium text-(--text-primary) hover:border-(--accent)/40 hover:text-(--accent) transition-colors duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5 text-(--accent) shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
                             {{ $member->fullName() }}
@@ -189,7 +189,7 @@
             @else
             <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($contents as $content)
-                <a href="{{ route('content.show', $content->slug) }}"
+                <a href="{{ lroute('content.show', ['slug' => $content->slug]) }}"
                    class="flex items-start gap-2 rounded-xl border border-(--border) bg-(--bg-card) px-4 py-3 hover:border-(--accent)/40 hover:text-(--accent) transition-colors duration-200 group">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5 text-(--accent) shrink-0 mt-0.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
                     <div class="min-w-0">

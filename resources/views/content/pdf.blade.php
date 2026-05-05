@@ -384,7 +384,7 @@
         @if($content->views)
         <span>{{ number_format($content->views) }} views</span>
         @endif
-        <span>Source: {{ url()->route('content.show', $content->slug) }}</span>
+        <span>Source: {{ lroute('content.show', ['slug' => $content->slug]) }}</span>
     </div>
 
     {{-- Header image --}}

@@ -8,17 +8,17 @@
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>{{ route('search') }}</loc>
+        <loc>{{ lroute('search') }}</loc>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>{{ route('team') }}</loc>
+        <loc>{{ lroute('team') }}</loc>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
     </url>
     <url>
-        <loc>{{ route('archive') }}</loc>
+        <loc>{{ lroute('archive') }}</loc>
         <changefreq>weekly</changefreq>
         <priority>0.4</priority>
     </url>
@@ -26,7 +26,7 @@
     {{-- ── Articles ── --}}
     @foreach($contents as $content)
     <url>
-        <loc>{{ route('content.show', $content->slug) }}</loc>
+        <loc>{{ lroute('content.show', ['slug' => $content->slug]) }}</loc>
         <lastmod>{{ $content->updated_at->toAtomString() }}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
@@ -36,7 +36,7 @@
     {{-- ── Categories ── --}}
     @foreach($categories as $category)
     <url>
-        <loc>{{ route('category.show', $category->slug) }}</loc>
+        <loc>{{ lroute('category.show', ['slug' => $category->slug]) }}</loc>
         <lastmod>{{ $category->updated_at->toAtomString() }}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
@@ -46,7 +46,7 @@
     {{-- ── Classifications ── --}}
     @foreach($classifications as $classification)
     <url>
-        <loc>{{ route('classification.show', $classification->slug) }}</loc>
+        <loc>{{ lroute('classification.show', ['slug' => $classification->slug]) }}</loc>
         <lastmod>{{ $classification->updated_at->toAtomString() }}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -56,7 +56,7 @@
     {{-- ── Tags ── --}}
     @foreach($tags as $tag)
     <url>
-        <loc>{{ route('tag.show', $tag->slug) }}</loc>
+        <loc>{{ lroute('tag.show', ['slug' => $tag->slug]) }}</loc>
         <lastmod>{{ $tag->updated_at->toAtomString() }}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
@@ -66,7 +66,7 @@
     {{-- ── Team member profiles ── --}}
     @foreach($teamMembers as $member)
     <url>
-        <loc>{{ route('team.member', $member->id) }}</loc>
+        <loc>{{ lroute('team.member', ['member' => $member->id]) }}</loc>
         <lastmod>{{ $member->updated_at->toAtomString() }}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
