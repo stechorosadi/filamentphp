@@ -1,5 +1,10 @@
+@php
+    $errorLocale    = app()->getLocale();
+    $errorHomeUrl   = route('home',   ['locale' => $errorLocale]);
+    $errorSearchUrl = route('search', ['locale' => $errorLocale]);
+@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', $errorLocale) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,7 +32,7 @@
                 this.progress = (this.countdown / 15) * 100;
                 if (this.countdown <= 0) {
                     clearInterval(tick);
-                    window.location.href = '/';
+                    window.location.href = '{{ $errorHomeUrl }}';
                 }
             }, 1000);
         },
@@ -93,12 +98,12 @@
 
         {{-- Action buttons --}}
         <div class="flex flex-wrap items-center justify-center gap-4 mb-12">
-            <a href="/"
+            <a href="{{ $errorHomeUrl }}"
                class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-lg hover:bg-[var(--accent)] dark:hover:bg-[#6B9A38] transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
                 </svg>
-                Go to Homepage
+                {{ __('ui.go_to_homepage') }}
             </a>
             @if(isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] !== url()->current())
             <button onclick="history.back()"
@@ -106,15 +111,15 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
                 </svg>
-                Go Back
+                {{ __('ui.go_back') }}
             </button>
             @endif
-            <a href="/search"
+            <a href="{{ $errorSearchUrl }}"
                class="inline-flex items-center gap-2 rounded-xl border-2 border-[var(--accent-dim)] dark:border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--text-muted)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                 </svg>
-                Search
+                {{ __('ui.search') }}
             </a>
         </div>
 
@@ -143,12 +148,12 @@
                       x-text="countdown"></span>
             </div>
             <p class="text-xs text-[var(--accent)]">
-                Redirecting to homepage in <span class="font-semibold" x-text="countdown"></span>s
+                {{ __('ui.redirecting_in') }} <span class="font-semibold" x-text="countdown"></span>{{ __('ui.seconds_abbr') }}
             </p>
         </div>
 
         {{-- Brand --}}
-        <a href="/" class="mt-12 text-sm font-bold text-[var(--accent)] dark:text-[var(--accent)] hover:text-[var(--text-muted)] dark:hover:text-[#90A955] transition-colors">
+        <a href="{{ $errorHomeUrl }}" class="mt-12 text-sm font-bold text-[var(--accent)] dark:text-[var(--accent)] hover:text-[var(--text-muted)] dark:hover:text-[#90A955] transition-colors">
             {{ $siteSetting->site_title }}
         </a>
     </div>

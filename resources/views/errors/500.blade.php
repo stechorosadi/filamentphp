@@ -1,8 +1,8 @@
 @extends('errors.layout')
 
 @section('error_code', '500')
-@section('error_title', 'Server Error')
-@section('error_description', 'Something went wrong on our end. Our team has been notified and is working to fix the issue. Please try again in a few moments — we apologise for the inconvenience.')
+@section('error_title'){{ __('ui.error_500_title') }}@endsection
+@section('error_description'){{ __('ui.error_500_desc') }}@endsection
 
 @section('error_icon')
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-10 w-10 text-[var(--accent)]">

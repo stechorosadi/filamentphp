@@ -1,8 +1,8 @@
 @extends('errors.layout')
 
 @section('error_code', '403')
-@section('error_title', 'Access Forbidden')
-@section('error_description', 'You don\'t have permission to access this page. If you believe this is a mistake, please contact the administrator or log in with an account that has the required permissions.')
+@section('error_title'){{ __('ui.error_403_title') }}@endsection
+@section('error_description'){{ __('ui.error_403_desc') }}@endsection
 
 @section('error_icon')
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-10 w-10 text-[var(--accent)]">

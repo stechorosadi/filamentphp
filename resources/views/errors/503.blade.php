@@ -1,8 +1,8 @@
 @extends('errors.layout')
 
 @section('error_code', '503')
-@section('error_title', 'Service Unavailable')
-@section('error_description', 'We\'re temporarily down for scheduled maintenance or experiencing unusually high traffic. We\'ll be back shortly — thank you for your patience.')
+@section('error_title'){{ __('ui.error_503_title') }}@endsection
+@section('error_description'){{ __('ui.error_503_desc') }}@endsection
 
 @section('error_icon')
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-10 w-10 text-[var(--accent)]">

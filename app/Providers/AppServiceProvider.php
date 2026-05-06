@@ -45,7 +45,13 @@ class AppServiceProvider extends ServiceProvider
             }
             request()->attributes->set('_view_data_shared', true);
 
-            $locale = app()->getLocale();
+            // Detect locale from the URL segment when setlocale middleware hasn't run
+            // (e.g. on error pages where no route was matched).
+            $urlSegment = request()->segment(1);
+            $locale = \in_array($urlSegment, ['en', 'id'])
+                ? $urlSegment
+                : app()->getLocale();
+            app()->setLocale($locale);
 
             // SiteSetting: cached per locale so translatable fields resolve correctly.
             try {

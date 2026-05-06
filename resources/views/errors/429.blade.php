@@ -1,8 +1,8 @@
 @extends('errors.layout')
 
 @section('error_code', '429')
-@section('error_title', 'Too Many Requests')
-@section('error_description', 'You\'ve made too many requests in a short period of time. Please slow down and wait a moment before trying again. This limit helps us keep the service running smoothly for everyone.')
+@section('error_title'){{ __('ui.error_429_title') }}@endsection
+@section('error_description'){{ __('ui.error_429_desc') }}@endsection
 
 @section('error_icon')
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-10 w-10 text-[var(--accent)]">

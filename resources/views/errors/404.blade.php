@@ -1,8 +1,8 @@
 @extends('errors.layout')
 
 @section('error_code', '404')
-@section('error_title', 'Page Not Found')
-@section('error_description', 'The page you\'re looking for seems to have wandered off. It may have been moved, renamed, or it never existed. Double-check the URL or use the search to find what you need.')
+@section('error_title'){{ __('ui.error_404_title') }}@endsection
+@section('error_description'){{ __('ui.error_404_desc') }}@endsection
 
 @section('error_icon')
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-10 w-10 text-[var(--accent)]">
