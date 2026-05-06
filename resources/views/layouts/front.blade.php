@@ -328,7 +328,7 @@
                 @if($list && $list->menuItems->isNotEmpty())
                 <div>
                     <h4 class="mb-4 font-semibold text-white">
-                        {{ str_replace('Footer Menu - ', '', $list->name) }}
+                        {{ preg_replace('/ - [A-Z]{2}$/', '', str_replace('Footer Menu - ', '', $list->name)) }}
                     </h4>
                     <ul class="space-y-2.5">
                         @foreach($list->menuItems as $item)
