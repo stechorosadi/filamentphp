@@ -82,8 +82,13 @@
     $currentLocale = app()->getLocale();
     $routeName = request()->route()->getName();
     $routeParams = request()->route()->parameters();
-    $urlId = route($routeName, array_merge($routeParams, ['locale' => 'id']));
-    $urlEn = route($routeName, array_merge($routeParams, ['locale' => 'en']));
+    $routeHasLocale = in_array('locale', request()->route()->parameterNames());
+    $urlId = $routeHasLocale
+        ? route($routeName, array_merge($routeParams, ['locale' => 'id']))
+        : route('home', ['locale' => 'id']);
+    $urlEn = $routeHasLocale
+        ? route($routeName, array_merge($routeParams, ['locale' => 'en']))
+        : route('home', ['locale' => 'en']);
 @endphp
 
 {{-- ── TOP BAR ── --}}

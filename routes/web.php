@@ -4,9 +4,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
-// Sitemap routes — no locale prefix needed
+// XML sitemap — no locale prefix needed (for search engines)
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
-Route::get('/sitemap', [SitemapController::class, 'html'])->name('sitemap.html');
 
 // Root redirect to default locale
 Route::get('/', fn () => redirect('/id/'))->name('root');
@@ -19,6 +18,7 @@ Route::prefix('{locale}')
         Route::middleware('throttle:60,1')->group(function (): void {
             Route::get('/', [HomeController::class, 'index'])->name('home');
             Route::get('/search', [HomeController::class, 'search'])->name('search');
+            Route::get('/sitemap', [SitemapController::class, 'html'])->name('sitemap.html');
             Route::get('/categories/{slug}', [HomeController::class, 'category'])->name('category.show');
             Route::get('/classifications/{slug}', [HomeController::class, 'classification'])->name('classification.show');
             Route::get('/tags/{slug}', [HomeController::class, 'tag'])->name('tag.show');

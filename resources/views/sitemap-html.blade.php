@@ -23,11 +23,11 @@
                 </svg>
             </div>
         </div>
-        <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">All Pages</p>
-        <h1 class="mb-3 text-3xl sm:text-4xl font-bold text-[#ECF39E] leading-tight">Sitemap</h1>
+        <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">{{ __('ui.all_pages') }}</p>
+        <h1 class="mb-3 text-3xl sm:text-4xl font-bold text-[#ECF39E] leading-tight">{{ __('ui.sitemap') }}</h1>
         <p class="text-base text-[#90A955]">
             {{ $contents->count() + $categories->count() + $classifications->count() + $tags->count() + $teamMembers->count() + 4 }}
-            pages indexed
+            {{ __('ui.pages_indexed') }}
         </p>
     </div>
 </section>
@@ -43,14 +43,14 @@
                     <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-(--accent)/15">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
                     </span>
-                    Static Pages
+                    {{ __('ui.static_pages') }}
                 </h2>
                 <ul class="space-y-2">
                     @foreach([
-                        ['label' => 'Home', 'url' => lroute('home')],
-                        ['label' => 'Search', 'url' => lroute('search')],
-                        ['label' => 'Team', 'url' => lroute('team')],
-                        ['label' => 'Archive', 'url' => lroute('archive')],
+                        ['label' => __('ui.home'), 'url' => lroute('home')],
+                        ['label' => __('ui.search'), 'url' => lroute('search')],
+                        ['label' => __('ui.team'), 'url' => lroute('team')],
+                        ['label' => __('ui.archive'), 'url' => lroute('archive')],
                     ] as $page)
                     <li>
                         <a href="{{ $page['url'] }}"
@@ -70,11 +70,11 @@
                     <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-(--accent)/15">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z"/></svg>
                     </span>
-                    Categories
+                    {{ __('ui.categories') }}
                     <span class="ml-auto text-xs font-normal text-(--text-muted)">{{ $categories->count() }}</span>
                 </h2>
                 @if($categories->isEmpty())
-                <p class="text-sm text-(--text-muted)">No categories yet.</p>
+                <p class="text-sm text-(--text-muted)">{{ __('ui.no_categories_yet') }}</p>
                 @else
                 <ul class="space-y-2">
                     @foreach($categories as $category)
@@ -97,11 +97,11 @@
                     <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-(--accent)/15">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
                     </span>
-                    Classifications
+                    {{ __('ui.classifications') }}
                     <span class="ml-auto text-xs font-normal text-(--text-muted)">{{ $classifications->count() }}</span>
                 </h2>
                 @if($classifications->isEmpty())
-                <p class="text-sm text-(--text-muted)">No classifications yet.</p>
+                <p class="text-sm text-(--text-muted)">{{ __('ui.no_classifications_yet') }}</p>
                 @else
                 <ul class="space-y-2">
                     @foreach($classifications as $classification)
@@ -124,11 +124,11 @@
                     <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-(--accent)/15">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5"/></svg>
                     </span>
-                    Tags
+                    {{ __('ui.tags') }}
                     <span class="ml-auto text-xs font-normal text-(--text-muted)">{{ $tags->count() }}</span>
                 </h2>
                 @if($tags->isEmpty())
-                <p class="text-sm text-(--text-muted)">No tags yet.</p>
+                <p class="text-sm text-(--text-muted)">{{ __('ui.no_tags_yet') }}</p>
                 @else
                 <div class="flex flex-wrap gap-2">
                     @foreach($tags as $tag)
@@ -147,11 +147,11 @@
                     <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-(--accent)/15">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/></svg>
                     </span>
-                    Team Members
+                    {{ __('ui.team_members_label') }}
                     <span class="ml-auto text-xs font-normal text-(--text-muted)">{{ $teamMembers->count() }}</span>
                 </h2>
                 @if($teamMembers->isEmpty())
-                <p class="text-sm text-(--text-muted)">No team members yet.</p>
+                <p class="text-sm text-(--text-muted)">{{ __('ui.no_team_members') }}</p>
                 @else
                 <ul class="space-y-2">
                     @foreach($teamMembers as $member)
@@ -176,16 +176,16 @@
                 <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-(--accent)/15">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-(--accent)"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
                 </span>
-                Articles
-                <span class="ml-2 text-xs font-normal text-(--text-muted)">{{ $contents->count() }} published</span>
+                {{ __('ui.articles_label') }}
+                <span class="ml-2 text-xs font-normal text-(--text-muted)">{{ $contents->count() }} {{ __('ui.published') }}</span>
                 <a href="{{ route('sitemap') }}" target="_blank"
                    class="ml-auto text-xs text-(--text-muted) hover:text-(--accent) transition-colors">
-                    View XML sitemap ↗
+                    {{ __('ui.view_xml_sitemap') }}
                 </a>
             </h2>
 
             @if($contents->isEmpty())
-            <p class="text-sm text-(--text-muted)">No published articles yet.</p>
+            <p class="text-sm text-(--text-muted)">{{ __('ui.no_articles_published_yet') }}</p>
             @else
             <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($contents as $content)
