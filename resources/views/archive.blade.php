@@ -30,12 +30,12 @@
             </div>
         </div>
 
-        <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">Historical Content</p>
+        <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">{{ __('ui.historical_content') }}</p>
         <h1 class="mb-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-[#ECF39E] leading-tight">
-            Archive
+            {{ __('ui.archive') }}
         </h1>
         <p class="mb-8 text-base leading-relaxed text-[#90A955] max-w-2xl mx-auto">
-            A collection of our archived articles — preserved for reference and historical record.
+            {{ __('ui.archive_subtitle') }}
         </p>
 
         {{-- Stats + back link --}}
@@ -44,7 +44,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
                 </svg>
-                {{ $contents->total() }} {{ Str::plural('article', $contents->total()) }}
+                {{ $contents->total() }} {{ trans_choice('ui.article_label', $contents->total()) }}
             </span>
             <a href="{{ lroute('home') }}"
                class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-sm text-[#90A955] hover:border-[#4F772D]/40 transition-colors">
@@ -70,8 +70,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"/>
                 </svg>
             </div>
-            <h2 class="mb-3 text-2xl font-bold text-[var(--text-primary)]">No archived articles yet</h2>
-            <p class="mb-8 max-w-md text-[var(--accent)]">Articles that have been archived will appear here.</p>
+            <h2 class="mb-3 text-2xl font-bold text-[var(--text-primary)]">{{ __('ui.no_archived_articles') }}</h2>
+            <p class="mb-8 max-w-md text-[var(--accent)]">{{ __('ui.no_archived_articles_desc') }}</p>
             <a href="{{ lroute('home') }}"
                class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
@@ -86,9 +86,9 @@
         {{-- Result count --}}
         <div class="mb-8">
             <p class="text-sm text-[var(--accent)]">
-                Showing <span class="font-semibold text-[var(--text-primary)]">{{ $contents->firstItem() }}–{{ $contents->lastItem() }}</span>
-                of <span class="font-semibold text-[var(--text-primary)]">{{ $contents->total() }}</span>
-                archived {{ Str::plural('article', $contents->total()) }}
+                {{ __('ui.showing') }} <span class="font-semibold text-(--text-primary)">{{ $contents->firstItem() }}–{{ $contents->lastItem() }}</span>
+                {{ __('ui.of') }} <span class="font-semibold text-(--text-primary)">{{ $contents->total() }}</span>
+                {{ trans_choice('ui.archived_article_label', $contents->total()) }}
             </p>
         </div>
 
@@ -115,7 +115,7 @@
                             {{ $content->category->name }}
                         </span>
                         @endif
-                        <span class="rounded-full bg-gray-500/85 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-white">Archived</span>
+                        <span class="rounded-full bg-gray-500/85 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-white">{{ __('ui.archived_badge') }}</span>
                     </div>
                 </div>
 
