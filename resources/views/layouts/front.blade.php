@@ -80,9 +80,10 @@
 {{-- Pre-compute locale toggle URLs once, used in both top bar and navbar --}}
 @php
     $currentLocale = app()->getLocale();
-    $routeName = request()->route()->getName();
-    $routeParams = request()->route()->parameters();
-    $routeHasLocale = in_array('locale', request()->route()->parameterNames());
+    $currentRoute  = request()->route();
+    $routeName     = $currentRoute?->getName();
+    $routeParams   = $currentRoute?->parameters() ?? [];
+    $routeHasLocale = $currentRoute && in_array('locale', $currentRoute->parameterNames());
     $urlId = $routeHasLocale
         ? route($routeName, array_merge($routeParams, ['locale' => 'id']))
         : route('home', ['locale' => 'id']);
