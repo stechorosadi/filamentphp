@@ -10,11 +10,12 @@ For technical internals (schema, models, resources) see [ARCHITECTURE.md](ARCHIT
 1. [Requirements](#requirements)
 2. [Installation](#installation)
 3. [Configuration](#configuration)
-4. [Roles & Permissions](#roles--permissions)
-5. [Admin Panel Features](#admin-panel-features)
-6. [Public Frontend](#public-frontend)
-7. [Extending the App](#extending-the-app)
-8. [Deployment](#deployment)
+4. [Dual-Language Support](#dual-language-support)
+5. [Roles & Permissions](#roles--permissions)
+6. [Admin Panel Features](#admin-panel-features)
+7. [Public Frontend](#public-frontend)
+8. [Extending the App](#extending-the-app)
+9. [Deployment](#deployment)
 
 ---
 
@@ -101,6 +102,8 @@ FILESYSTEM_DISK=public
 
 `app/Providers/Filament/AdminPanelProvider.php` → `->path('arsiparis')`
 
+> **Note:** User self-registration is disabled. New users must be created by a `super_admin` via **Admin panel → Users → New User**.
+
 ### Navigation Menu
 
 The public frontend navbar is managed via **Filament → Menu Builder → Header Menu - Top Right**. Add, remove, or reorder items there without touching code.
@@ -113,6 +116,36 @@ The public frontend navbar is managed via **Filament → Menu Builder → Header
 - **Social Media**: Facebook, Instagram, X, YouTube URLs
 - **Contact Info**: email, address (displayed in the top bar)
 - **Theme Colors**: accent, background, and text colors for light/dark modes
+
+---
+
+## Dual-Language Support
+
+The site serves content in **English (EN)** and **Indonesian (ID)**. All frontend URLs are prefixed with the locale:
+
+- `/id/` — Indonesian (default; root `/` redirects here)
+- `/en/` — English
+
+### How translations work
+
+- Models using `spatie/laravel-translatable` store text fields as JSON: `{"en": "...", "id": "..."}`.
+- Translatable models: `Content` (`title`, `excerpt`, `content`), `ContentCategory` (`name`, `description`), `ContentClassification` (`name`), `Tag` (`name`), `TeamMember` (name/position fields), `SiteSetting` (text/contact fields).
+- In Filament forms, each translatable field shows a tab for EN and ID.
+- In views, use `$model->getTranslation('field', app()->getLocale())` or rely on the `HasTranslations` magic getter (which uses the current app locale automatically).
+
+### Adding translated content
+
+When creating or editing any content, categories, classifications, or tags in the admin panel, fill in both the **EN** and **ID** tabs for each text field. Leaving a locale empty will display a blank value for visitors using that language.
+
+### Language toggle
+
+The frontend navbar has an **EN / ID** toggle button. It reconstructs the current URL with the opposite locale, keeping the user on the same page. All internal links use the `lroute()` helper to preserve the active locale automatically.
+
+### Translation files
+
+Static UI strings (labels, buttons, error messages) are in:
+- `lang/en/ui.php` — English
+- `lang/id/ui.php` — Indonesian
 
 ---
 
@@ -187,12 +220,13 @@ Certificate and file image uploads are auto-resized to 1000px width (PDFs are up
 **Location:** Admin panel → Content Management → Contents
 
 **Creating content:**
-1. **New Content** → title (slug auto-generated as `YYYY-MM-DD-your-title`)
+1. **New Content** → title (slug auto-generated as `YYYY-MM-DD-your-title`); fill both EN and ID tabs
 2. Write in the RichEditor, add excerpt, optional YouTube embed URL
-3. Select classification, category, tags (can create tags inline)
-4. Upload header image and/or featured image
-5. Set status toggles (see below)
-6. Save — then manage image, file, and link attachments from the relation manager tabs
+3. Set **Article Date** — used for display ordering across all frontend sections
+4. Select classification, category, tags (can create tags inline)
+5. Upload header image and/or featured image
+6. Set status toggles (see below)
+7. Save — then manage image, file, and link attachments from the relation manager tabs
 
 **Status toggles:**
 
@@ -258,57 +292,70 @@ To update the navbar:
 
 ## Public Frontend
 
-### Homepage (`/`)
+### Homepage (`/{locale}/`)
 
 | Section | Description |
 |---|---|
-| **Hero Slider** | Up to 5 featured+published+non-archived articles; auto-advances every 11s; **Watch Video** button appears only when the slide has a YouTube URL — opens a video modal |
-| **Search** | Search bar with article/category/classification counts; redirects to `/search` |
+| **Hero Slider** | Up to 5 featured+published+non-archived articles ordered by `article_date`; auto-advances every 11s; **Watch Video** button appears only when the slide has a YouTube URL — opens a video modal |
+| **Search** | Search bar with article/category/classification counts; redirects to `/{locale}/search` |
 | **Browse by Category** | 4-col grid; first category spans 2 cols |
-| **Latest Content** | Paginated grid (9/page); excludes archived content |
+| **Latest Content** | Paginated grid (9/page); excludes archived content; ordered by `article_date` |
 | **Classifications** | Dark section; horizontal cards |
 | **Most Popular** | Top 5 by views (non-archived); featured card + ranked list |
 
 ---
 
-### Search Page (`/search?q=`)
+### Search Page (`/{locale}/search?q=`)
 
-- Searches: title, excerpt, category name, classification name, tag names
+- Searches: title, excerpt, category name, classification name, tag names — **locale-aware** (searches the active language's text)
 - **Includes archived content** — shown with "Archived" badge
 - Paginated (12/page)
 
 ---
 
-### Archive Page (`/archive`)
+### Archive Page (`/{locale}/archive`)
 
 Dedicated page for all published+archived content:
 - Shows articles marked as **Archived** that are excluded from the homepage
 - Each card has the "Archived" badge permanently visible
 - Paginated (12/page)
-- Accessible via direct URL — link this from your navigation if needed
+- Accessible via direct URL — link from your navigation if needed
 
 ---
 
-### Category Page (`/categories/{slug}`)
+### Sitemap (`/{locale}/sitemap` and `/sitemap.xml`)
 
-- Includes archived content (shown with badge)
-- 3-col paginated content grid (9/page)
-
----
-
-### Classification Page (`/classifications/{slug}`)
-
-- Includes archived content (shown with badge)
-- 3-col paginated content grid (9/page)
+- **`/sitemap.xml`** — machine-readable XML sitemap for search engines; includes all published non-archived articles, categories, classifications, active tags, visible team members
+- **`/{locale}/sitemap`** — human-readable HTML sitemap with the same links, localised labels
 
 ---
 
-### Article Detail (`/articles/{slug}`)
+### Category Page (`/{locale}/categories/{slug}`)
+
+- 3-col paginated content grid (9/page); ordered by `article_date`
+
+---
+
+### Classification Page (`/{locale}/classifications/{slug}`)
+
+- 3-col paginated content grid (9/page); ordered by `article_date`
+
+---
+
+### Tag Page (`/{locale}/tags/{slug}`)
+
+- Paginated grid (12/page) of all published content with that tag; ordered by `article_date`
+- Sidebar shows up to 12 other tags
+- Tags are clickable pills on the article detail page
+
+---
+
+### Article Detail (`/{locale}/articles/{slug}`)
 
 - Breadcrumb → title → classification/category/archived badges → header image
 - **Left sidebar** (sticky on desktop): author, reading time, views, published date, **social share buttons** (Twitter/X, Facebook, WhatsApp, Copy Link), **Export to PDF** button
-- **Right**: excerpt, rich content, YouTube embed, image gallery (masonry 2-col), file downloads, related links
-- **Related articles** at the bottom — non-archived content from same category/classification
+- **Right**: excerpt, rich content, YouTube embed, **clickable tag pills** (link to `/{locale}/tags/{slug}`), image gallery (masonry 2-col), file downloads, related links
+- **Related articles** at the bottom — non-archived content from same category/classification; ordered by `article_date`
 
 **Export to PDF:** Downloads a formatted A4 PDF with logo, header image, content, YouTube thumbnail (if present), 3-col image gallery, file list, and link list.
 
@@ -343,6 +390,7 @@ Dedicated page for all published+archived content:
 
 Custom error pages for 404, 403, 500, 503, 419, 429:
 - Match site colour palette with dark/light mode support
+- **Dual-language** — error title and description shown in both English and Indonesian
 - **15-second SVG countdown ring** auto-redirects to homepage
 - Standalone — no database queries (safe for 500/503)
 
@@ -379,10 +427,11 @@ static::deleting(function (MyModel $record): void {
 
 ### Adding a New Frontend Route
 
-1. Add route to `routes/web.php`
-2. Add controller method to `HomeController`
-3. Create view in `resources/views/` extending `layouts.front`
-4. Wire navbar links via Menu Builder
+1. Add route inside the `/{locale}` prefix group in `routes/web.php`
+2. Accept `string $locale` as the first parameter in the controller method
+3. Use `lroute()` instead of `route()` for all internal links in the view
+4. Create view in `resources/views/` extending `layouts.front`
+5. Wire navbar links via Menu Builder
 
 ### Adding a New Error Page
 

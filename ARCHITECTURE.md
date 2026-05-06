@@ -15,6 +15,7 @@ Panel path: `/arsiparis` — accessible to any authenticated user; FilamentShiel
 | Shield (RBAC) | bezhansalleh/filament-shield | ^4.2 |
 | Menu Builder | datlechin/filament-menu-builder | ^1.0 |
 | PDF Export | barryvdh/laravel-dompdf | ^3.1 |
+| Translations | spatie/laravel-translatable | ^6.x |
 | CSS | tailwindcss | ^4.0 |
 | Build Tool | vite | ^8.0 |
 
@@ -100,15 +101,16 @@ Panel path: `/arsiparis` — accessible to any authenticated user; FilamentShiel
 |---|---|---|
 | id | bigint PK | |
 | user_id | FK → users | cascadeOnDelete |
-| title | varchar(100) | required |
+| title | json | translatable (EN/ID) |
 | slug | varchar | unique |
 | content_classification_id | FK → content_classifications | nullable, nullOnDelete |
 | content_category_id | FK → content_categories | nullable, nullOnDelete |
 | header_image | varchar | nullable, public disk `content-headers/` |
 | featured_image | varchar | nullable, public disk `content-featured/` |
-| excerpt | text | nullable |
-| content | longText | required |
+| excerpt | json | nullable, translatable (EN/ID) |
+| content | json (longText) | required, translatable (EN/ID) |
 | youtube_url | varchar | nullable |
+| article_date | date | nullable — used for ordering (falls back to `created_at`) |
 | published | boolean | default false — controls frontend visibility |
 | featured | boolean | default false — pins to hero slider |
 | archived | boolean | default false — hides from hero/latest/popular; shows on `/archive` page |
@@ -119,18 +121,18 @@ Panel path: `/arsiparis` — accessible to any authenticated user; FilamentShiel
 | Column | Type | Notes |
 |---|---|---|
 | id | bigint PK | |
-| name | varchar | required |
+| name | json | required, translatable (EN/ID) |
 | slug | varchar | unique, auto-generated on create |
 | icon | varchar | nullable — Heroicon string e.g. `heroicon-o-beaker` |
 | image | varchar | nullable, public disk `content-categories/` |
-| description | text | nullable — max 500 chars |
+| description | json | nullable, translatable (EN/ID) — max 500 chars |
 | timestamps | | |
 
 ### `content_classifications`
 | Column | Type | Notes |
 |---|---|---|
 | id | bigint PK | |
-| name | varchar | required |
+| name | json | required, translatable (EN/ID) |
 | slug | varchar | unique, auto-generated on create |
 | icon | varchar | nullable — Heroicon string |
 | image | varchar | nullable, public disk `content-classifications/` |
@@ -140,7 +142,7 @@ Panel path: `/arsiparis` — accessible to any authenticated user; FilamentShiel
 | Column | Type | Notes |
 |---|---|---|
 | id | bigint PK | |
-| name | varchar | required |
+| name | json | required, translatable (EN/ID) |
 | slug | varchar | unique, auto-generated on create |
 | timestamps | | |
 
@@ -197,7 +199,7 @@ Panel path: `/arsiparis` — accessible to any authenticated user; FilamentShiel
 | timestamps | | |
 
 ### `site_settings`
-Single-row settings table. Key columns: `site_title`, `site_tagline`, `site_description`, `logo_path` (public disk `site/`), `favicon_path` (public disk `site/`), social URL fields, contact fields, theme color fields.
+Single-row settings table. Key columns: `site_title`, `site_tagline`, `site_description`, `logo_path` (public disk `site/`), `favicon_path` (public disk `site/`), social URL fields, contact fields, theme color fields. Text fields (`site_title`, `site_tagline`, `site_description`, contact/address fields) are translatable JSON (EN/ID).
 
 ---
 
@@ -211,7 +213,8 @@ Single-row settings table. Key columns: `site_title`, `site_tagline`, `site_desc
 - **Relationships**: `educationHistory()` HasMany UserEducation, `workExperience()` HasMany UserExperience, `certifications()` HasMany UserCertification, `publications()` HasMany UserPublication
 
 ### `Content` — `app/Models/Content.php`
-- Casts: `published → boolean`, `featured → boolean`, `archived → boolean`, `views → integer`
+- Traits: `HasTranslations` — translatable fields: `title`, `excerpt`, `content`
+- Casts: `published → boolean`, `featured → boolean`, `archived → boolean`, `article_date → date`, `views → integer`
 - Auto-deletes `header_image` and `featured_image` from storage on update/delete
 - **deleting hook** also manually deletes `imageAttachments` files and `fileAttachments` files (DB cascade bypasses Eloquent hooks on child rows)
 - **Relationships**: `user()`, `classification()`, `category()`, `tags()`, `imageAttachments()`, `fileAttachments()`, `linkAttachments()`
@@ -222,10 +225,16 @@ Single-row settings table. Key columns: `site_title`, `site_tagline`, `site_desc
 - **Relationships**: `user()` BelongsTo
 
 ### `ContentCategory` / `ContentClassification`
+- Traits: `HasTranslations` — translatable: `name`, `description` (category); `name` (classification)
 - Auto-generate `slug` from `name` on creating
 - Auto-delete both `image` **and** `icon` from storage on field change and record delete
 
+### `Tag` — `app/Models/Tag.php`
+- Traits: `HasTranslations` — translatable: `name`
+- Auto-generate `slug` on creating
+
 ### `SiteSetting` — `app/Models/SiteSetting.php`
+- Traits: `HasTranslations` — translatable: text/contact fields
 - Singleton via `SiteSetting::instance()`
 - Auto-deletes `logo_path` and `favicon_path` on field change (updating) **and** on record delete
 
@@ -364,7 +373,8 @@ All policies in `app/Policies/`. Registered via auto-discovery + explicit `Gate:
 ## Panel Configuration
 `app/Providers/Filament/AdminPanelProvider.php`
 
-- Path: `/arsiparis`, default panel, login + registration enabled
+- Path: `/arsiparis`, default panel, **login only** (registration disabled)
+- **Dynamic brand logo** — `brandLogo()` closure reads `SiteSetting::instance()` at runtime; renders logo image + site title if a logo is set, falls back to `app.name` on error
 - Primary color: Amber
 - Plugins: `FilamentShieldPlugin`, `FilamentMenuBuilderPlugin`
 - Widgets auto-discovered from `app/Filament/Widgets/`
@@ -381,35 +391,53 @@ All policies in `app/Policies/`. Registered via auto-discovery + explicit `Gate:
 
 ### Routes — `routes/web.php`
 
+All frontend routes are prefixed with `/{locale}/` (where `locale` is `en` or `id`). The root `/` redirects to `/id/`. The `setlocale` middleware reads the route parameter, validates it, and calls `app()->setLocale()`.
+
 | Method | URI | Name | Controller method |
 |---|---|---|---|
-| GET | `/` | `home` | `HomeController@index` |
-| GET | `/search` | `search` | `HomeController@search` |
-| GET | `/archive` | `archive` | `HomeController@archive` |
-| GET | `/categories/{slug}` | `category.show` | `HomeController@category` |
-| GET | `/classifications/{slug}` | `classification.show` | `HomeController@classification` |
-| GET | `/articles/{slug}` | `content.show` | `HomeController@show` |
-| GET | `/articles/{slug}/pdf` | `content.pdf` | `HomeController@pdf` |
-| GET | `/team` | `team` | `HomeController@team` |
-| GET | `/team/{member}` | `team.member` | `HomeController@memberShow` |
-| GET | `/team/{member}/pdf` | `team.member.pdf` | `HomeController@memberPdf` |
+| GET | `/sitemap.xml` | `sitemap` | `SitemapController@index` |
+| GET | `/` | `root` | redirect → `/id/` |
+| GET | `/{locale}/` | `home` | `HomeController@index` |
+| GET | `/{locale}/search` | `search` | `HomeController@search` |
+| GET | `/{locale}/sitemap` | `sitemap.html` | `SitemapController@html` |
+| GET | `/{locale}/archive` | `archive` | `HomeController@archive` |
+| GET | `/{locale}/categories/{slug}` | `category.show` | `HomeController@category` |
+| GET | `/{locale}/classifications/{slug}` | `classification.show` | `HomeController@classification` |
+| GET | `/{locale}/tags/{slug}` | `tag.show` | `HomeController@tag` |
+| GET | `/{locale}/articles/{slug}` | `content.show` | `HomeController@show` |
+| GET | `/{locale}/articles/{slug}/pdf` | `content.pdf` | `HomeController@pdf` |
+| GET | `/{locale}/team` | `team` | `HomeController@team` |
+| GET | `/{locale}/team/{member}` | `team.member` | `HomeController@memberShow` |
+| GET | `/{locale}/team/{member}/pdf` | `team.member.pdf` | `HomeController@memberPdf` |
 
 Throttle: 60 req/min for most routes; 30/min for article show; 10/min for PDFs.
 
+**`lroute()` helper** (`app/helpers.php`) — wraps `route()` to automatically inject the current `app()->getLocale()` as the `locale` parameter. Use instead of `route()` in all frontend views and controllers.
+
 ### `HomeController` — `app/Http/Controllers/HomeController.php`
+
+All methods that serve locale-prefixed routes accept `string $locale` as first parameter (injected from route). Text searches use `JSON_UNQUOTE(JSON_EXTRACT(column, '$."{locale}"'))` MySQL queries against JSON-stored translatable columns.
 
 | Method | Purpose |
 |---|---|
-| `index()` | Homepage — featured (non-archived), latest (non-archived), categories, classifications, popular (non-archived); supports `?search=`, `?category=`, `?classification=` |
-| `search()` | Search page — includes archived content; paginate(12), full-text search |
-| `archive()` | Archive page — only `published=true, archived=true` content; paginate(12) |
-| `category()` | Category page — includes archived content (with badge); paginate(9) |
-| `classification()` | Classification page — includes archived; paginate(9) |
-| `show()` | Article detail — session-deduplicated view counter; 3 related articles (non-archived) |
+| `index()` | Homepage — featured (non-archived), latest (non-archived), categories, classifications, popular (non-archived); ordered by `article_date`; supports `?search=`, `?category=`, `?classification=` |
+| `search()` | Search page — includes archived content; paginate(12), locale-aware full-text search across title, excerpt, category, classification, tags |
+| `archive()` | Archive page — only `published=true, archived=true` content; ordered by `article_date`; paginate(12) |
+| `category()` | Category page — all published content for that category; paginate(9) |
+| `classification()` | Classification page — all published content for that classification; paginate(9) |
+| `tag()` | Tag page — all published content with that tag; paginate(12); shows up to 12 other tags |
+| `show()` | Article detail — session-deduplicated view counter; 3 related articles ordered by `article_date` |
 | `pdf()` | Stream content article as PDF download |
 | `team()` | Team listing — visible members only |
 | `memberShow()` | Team member detail — loads all user relations |
 | `memberPdf()` | Stream team member profile as PDF download |
+
+### `SitemapController` — `app/Http/Controllers/SitemapController.php`
+
+| Method | Purpose |
+|---|---|
+| `index()` | Renders `/sitemap.xml` — published non-archived articles, categories, classifications, active tags, visible team members |
+| `html()` | Renders `/{locale}/sitemap` — human-readable HTML sitemap with the same data |
 
 ### Archived Content Behaviour
 
@@ -428,24 +456,32 @@ Throttle: 60 req/min for most routes; 30/min for article show; 10/min for PDFs.
 
 | Path | Description |
 |---|---|
-| `layouts/front.blade.php` | Shared frontend layout — navbar, footer |
+| `layouts/front.blade.php` | Shared frontend layout — navbar (with language toggle EN/ID), footer |
 | `welcome.blade.php` | Homepage — hero slider (11s auto-advance), search, categories, latest, classifications, popular |
 | `search.blade.php` | Search results — mobile-responsive search bar |
 | `archive.blade.php` | Archive listing — dark hero with archive icon, 3-col content grid, pagination |
 | `category/show.blade.php` | Category detail — content grid |
 | `classification/show.blade.php` | Classification detail — content grid |
-| `content/show.blade.php` | Article detail — sidebar with social share buttons + Export PDF button; masonry image gallery |
+| `tag/show.blade.php` | Tag detail — content grid (12/page), sidebar with up to 12 other tags |
+| `content/show.blade.php` | Article detail — clickable tag pills linking to `/tags/{slug}`; sidebar with social share + Export PDF; masonry image gallery |
 | `content/pdf.blade.php` | PDF template — header with logo, badges, title, meta, header image, content, tags, YouTube thumbnail, 3-col image gallery, file/link attachments |
+| `sitemap.blade.php` | XML sitemap template (served as `application/xml`) |
+| `sitemap-html.blade.php` | Human-readable HTML sitemap — articles, categories, classifications, tags, team members |
 | `team/index.blade.php` | Team listing — clickable cards (overlay link) |
 | `team/show.blade.php` | Member detail — hero, education/experience timeline (2-col), certifications grid, publications list, back link + Export PDF |
 | `team/pdf.blade.php` | PDF template — site header, profile hero, education/experience timeline, certifications grid, publications list |
-| `errors/*.blade.php` | Custom error pages — 15s auto-redirect countdown |
+| `errors/layout.blade.php` | Shared error page layout — dual-language (EN/ID) title/message, 15s countdown ring |
+| `errors/*.blade.php` | Custom error pages (403, 404, 419, 429, 500, 503) — extend `errors.layout`; standalone (no DB queries) |
 
 ### Frontend Features
-- **Hero slider** — up to 5 featured+published+non-archived items; Alpine.js 11s auto-advance; Watch Video button (only shown when YouTube URL present, opens video in modal, stops on close via `x-if`)
+- **Dual-language (EN/ID)** — all routes prefixed with `/{locale}/`; language toggle button in navbar switches locale and stays on the same page (null-safe URL computation); translatable content rendered via `$model->getTranslation('field', app()->getLocale())`
+- **Hero slider** — up to 5 featured+published+non-archived items; Alpine.js 11s auto-advance; Watch Video button (only shown when YouTube URL present, opens video in modal, stops on close via `x-if`); ordered by `article_date`
+- **Tag pages** — tag pills on article detail page link to `/{locale}/tags/{slug}`; tag page shows paginated content (12/page) and a sidebar of up to 12 other tags
+- **Sitemaps** — XML sitemap at `/sitemap.xml`; human-readable HTML sitemap at `/{locale}/sitemap`
+- **Article date ordering** — all content lists ordered by `article_date` (explicit date field) rather than `created_at`
 - **Social share** — on article sidebar: Twitter/X, Facebook, WhatsApp, Copy Link (Alpine.js clipboard with 2s feedback)
-- **Archive page** — `/archive` lists all published+archived content with Archived badge always visible
-- **Archived badge** — gray pill shown on cards in search, category, classification pages and article detail badges row
+- **Archive page** — `/{locale}/archive` lists all published+archived content with Archived badge always visible
+- **Archived badge** — gray pill shown on cards in search, category, classification, tag pages and article detail badges row
 - **Team member cards** — full card clickable via invisible overlay `<a>` (z-10); social icons above (z-20)
 - **Team member detail** — education + experience side-by-side timeline with dot markers; certificates 2-col grid; publications with type + year badges; PDF export
 - **Article image gallery** — CSS `columns-1 sm:columns-2` masonry layout; natural image proportions; lightbox modal
