@@ -20,13 +20,13 @@
 
         {{-- Label + title --}}
         @if($query)
-        <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">Search results for</p>
+        <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">{{ __('ui.search_for') }}</p>
         <h1 class="mb-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-[#ECF39E] leading-tight">
             "{{ $query }}"
         </h1>
         <p class="mb-10 text-[#90A955]">
             <span class="font-semibold text-[#90A955]">{{ $results->total() }}</span>
-            {{ Str::plural('result', $results->total()) }} found
+            {{ trans_choice('ui.result_found', $results->total()) }}
         </p>
         @else
         <div class="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-[#4F772D]/30 bg-[var(--accent)]/15">
@@ -34,8 +34,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
             </svg>
         </div>
-        <h1 class="mb-3 text-3xl sm:text-4xl font-bold text-[#ECF39E]">Search Articles</h1>
-        <p class="mb-10 text-[#90A955]">Find articles, topics, categories, and more.</p>
+        <h1 class="mb-3 text-3xl sm:text-4xl font-bold text-[#ECF39E]">{{ __('ui.search_articles') }}</h1>
+        <p class="mb-10 text-[#90A955]">{{ __('ui.search_articles_subtitle') }}</p>
         @endif
 
         {{-- Search bar --}}
@@ -47,13 +47,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                     </svg>
                     <input type="text" name="q" value="{{ $query }}" maxlength="100"
-                           placeholder="Search articles, topics, or keywords…"
+                           placeholder="{{ __('ui.search_placeholder_detail') }}"
                            autofocus
                            class="min-w-0 flex-1 bg-transparent px-3 py-2 text-base text-[#ECF39E] placeholder-[#4F772D] focus:outline-none">
                     @if($query)
                     <a href="{{ lroute('search') }}"
                        class="shrink-0 rounded-lg p-2 text-(--accent) hover:text-[#90A955] transition-colors"
-                       title="Clear search">
+                       title="{{ __('ui.clear_search') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
                         </svg>
@@ -62,7 +62,7 @@
                 </div>
                 <button type="submit"
                         class="shrink-0 rounded-xl bg-(--accent) px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-(--accent) transition-colors duration-200">
-                    Search
+                    {{ __('ui.search_btn') }}
                 </button>
             </div>
         </form>

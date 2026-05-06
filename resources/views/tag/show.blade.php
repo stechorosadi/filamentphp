@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">Tag</p>
+        <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">{{ __('ui.tag_label') }}</p>
         <h1 class="mb-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-[#ECF39E] leading-tight">
             #{{ $tag->name }}
         </h1>
@@ -39,14 +39,14 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
                 </svg>
-                {{ $contents->total() }} {{ Str::plural('article', $contents->total()) }}
+                {{ $contents->total() }} {{ trans_choice('ui.article_label', $contents->total()) }}
             </span>
             <a href="{{ lroute('search') }}"
                class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-sm text-[#90A955] hover:border-[#4F772D]/40 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
                 </svg>
-                All tags
+                {{ __('ui.all_tags') }}
             </a>
         </div>
 
@@ -64,14 +64,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5"/>
                 </svg>
             </div>
-            <h2 class="mb-3 text-2xl font-bold text-[var(--text-primary)]">No articles yet</h2>
-            <p class="mb-8 max-w-md text-[var(--accent)]">No published articles with the tag <span class="font-semibold text-[var(--text-primary)]">#{{ $tag->name }}</span> yet.</p>
+            <h2 class="mb-3 text-2xl font-bold text-[var(--text-primary)]">{{ __('ui.no_articles_yet') }}</h2>
+            <p class="mb-8 max-w-md text-[var(--accent)]">{{ __('ui.no_articles_tag_prefix') }} <span class="font-semibold text-(--text-primary)">#{{ $tag->name }}</span> {{ __('ui.no_articles_tag_suffix') }}</p>
             <a href="{{ lroute('home') }}"
                class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
                 </svg>
-                Back to Home
+                {{ __('ui.back_to_home') }}
             </a>
         </div>
 
@@ -80,9 +80,9 @@
         {{-- Result count --}}
         <div class="mb-8">
             <p class="text-sm text-[var(--accent)]">
-                Showing <span class="font-semibold text-[var(--text-primary)]">{{ $contents->firstItem() }}–{{ $contents->lastItem() }}</span>
-                of <span class="font-semibold text-[var(--text-primary)]">{{ $contents->total() }}</span>
-                {{ Str::plural('article', $contents->total()) }}
+                {{ __('ui.showing') }} <span class="font-semibold text-(--text-primary)">{{ $contents->firstItem() }}–{{ $contents->lastItem() }}</span>
+                {{ __('ui.of') }} <span class="font-semibold text-(--text-primary)">{{ $contents->total() }}</span>
+                {{ trans_choice('ui.article_label', $contents->total()) }}
             </p>
         </div>
 
@@ -108,7 +108,7 @@
                         </span>
                         @endif
                         @if($content->archived)
-                        <span class="rounded-full bg-gray-500/85 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-white">Archived</span>
+                        <span class="rounded-full bg-gray-500/85 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-white">{{ __('ui.archived_badge') }}</span>
                         @endif
                     </div>
                 </div>
@@ -174,7 +174,7 @@
 @if($otherTags->isNotEmpty())
 <section class="bg-[var(--bg-alt)] dark:bg-[var(--dark-section)] py-12">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 class="mb-6 text-lg font-bold text-[var(--text-primary)]">Other Tags</h2>
+        <h2 class="mb-6 text-lg font-bold text-(--text-primary)">{{ __('ui.other_tags') }}</h2>
         <div class="flex flex-wrap gap-3">
             @foreach($otherTags as $otherTag)
             <a href="{{ lroute('tag.show', [$otherTag->slug]) }}"

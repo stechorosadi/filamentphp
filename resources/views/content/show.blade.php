@@ -83,14 +83,14 @@
                 <path d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v.75c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875v-.75C22.5 3.839 21.66 3 20.625 3H3.375Z"/>
                 <path fill-rule="evenodd" d="m3.087 9 .54 9.176A3 3 0 0 0 6.62 21h10.757a3 3 0 0 0 2.995-2.824L20.913 9H3.087Zm6.163 3.75A.75.75 0 0 1 10 12h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd"/>
             </svg>
-            Archived
+            {{ __('ui.archived_badge') }}
         </span>
         @endif
 
         {{-- Right: tags --}}
         @if($content->tags->isNotEmpty())
         <div class="ml-auto flex flex-wrap items-center gap-2">
-            <span class="text-xs font-semibold text-[var(--text-muted)]">Tags:</span>
+            <span class="text-xs font-semibold text-[var(--text-muted)]">{{ __('ui.tags') }}:</span>
             @foreach($content->tags as $tag)
             <a href="{{ lroute('tag.show', [$tag->slug]) }}"
                class="rounded-full border border-(--border) px-3 py-1 text-xs font-medium text-(--text-muted) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-colors duration-200">
@@ -130,7 +130,7 @@
                 {{-- Contributor --}}
                 <div>
                     <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-                        Contributor
+                        {{ __('ui.contributor') }}
                     </p>
                     <div class="flex items-center gap-3">
                         <div class="h-10 w-10 shrink-0 rounded-full bg-[var(--accent)] dark:bg-[var(--accent)] flex items-center justify-center text-sm font-bold text-white select-none">
@@ -150,20 +150,20 @@
                 {{-- Reading time --}}
                 <div>
                     <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-                        Reading Time
+                        {{ __('ui.reading_time') }}
                     </p>
                     <div class="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[var(--accent)] shrink-0">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                         </svg>
-                        <span>{{ $readTime }} {{ Str::plural('Minute', $readTime) }}</span>
+                        <span>{{ $readTime }} {{ trans_choice('ui.minute_label', $readTime) }}</span>
                     </div>
                 </div>
 
                 {{-- Views --}}
                 <div>
                     <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-                        Views
+                        {{ __('ui.views') }}
                     </p>
                     <div class="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[var(--accent)] shrink-0">
@@ -177,7 +177,7 @@
                 {{-- Published date --}}
                 <div>
                     <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-                        Published
+                        {{ __('ui.published') }}
                     </p>
                     <div class="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[var(--accent)] shrink-0">
@@ -189,7 +189,7 @@
 
                 {{-- Share --}}
                 <div x-data="{ copied: false }">
-                    <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-(--accent)">Share</p>
+                    <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-(--accent)">{{ __('ui.share') }}</p>
                     <div class="flex flex-wrap gap-2">
 
                         {{-- Twitter / X --}}
@@ -237,14 +237,14 @@
 
                 {{-- Export PDF --}}
                 <div>
-                    <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-(--accent)">Export</p>
+                    <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-(--accent)">{{ __('ui.export_label') }}</p>
                     <a href="{{ lroute('content.pdf', [$content->slug]) }}"
                        target="_blank"
                        class="inline-flex items-center gap-2 rounded-lg border border-(--border) px-3 py-2 text-xs font-semibold text-(--accent) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-all duration-200">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
                         </svg>
-                        Export to PDF
+                        {{ __('ui.export_pdf') }}
                     </a>
                 </div>
 
@@ -274,7 +274,7 @@
             @endphp
             @if($embedUrl)
             <div class="mt-10">
-                <h3 class="mb-4 text-lg font-bold text-[var(--text-primary)]">Video</h3>
+                <h3 class="mb-4 text-lg font-bold text-[var(--text-primary)]">{{ __('ui.video') }}</h3>
                 <div class="aspect-video overflow-hidden rounded-2xl shadow-lg">
                     <iframe src="{{ $embedUrl }}" class="h-full w-full" allowfullscreen loading="lazy"></iframe>
                 </div>
@@ -305,7 +305,7 @@
                  @keydown.arrow-left.window="open && prev()"
                  @keydown.arrow-right.window="open && next()">
 
-                <h3 class="mb-5 text-lg font-bold text-[var(--text-primary)]">Gallery</h3>
+                <h3 class="mb-5 text-lg font-bold text-[var(--text-primary)]">{{ __('ui.gallery') }}</h3>
                 <div class="columns-1 sm:columns-2 gap-4">
                     @foreach($content->imageAttachments as $index => $img)
                     <div class="break-inside-avoid mb-4 group relative cursor-zoom-in overflow-hidden rounded-xl border border-(--border)"
@@ -391,7 +391,7 @@
             {{-- File attachments --}}
             @if($content->fileAttachments->isNotEmpty())
             <div class="mt-12">
-                <h3 class="mb-5 text-lg font-bold text-[var(--text-primary)]">Downloads</h3>
+                <h3 class="mb-5 text-lg font-bold text-[var(--text-primary)]">{{ __('ui.downloads') }}</h3>
                 <div class="flex flex-col gap-3">
                     @foreach($content->fileAttachments as $file)
                     <a href="{{ asset('storage/' . $file->path) }}" target="_blank" download
@@ -414,7 +414,7 @@
             {{-- Link attachments --}}
             @if($content->linkAttachments->isNotEmpty())
             <div class="mt-12">
-                <h3 class="mb-5 text-lg font-bold text-[var(--text-primary)]">Related Links</h3>
+                <h3 class="mb-5 text-lg font-bold text-[var(--text-primary)]">{{ __('ui.related_links') }}</h3>
                 <div class="flex flex-col gap-3">
                     @foreach($content->linkAttachments as $link)
                     <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer"
@@ -447,7 +447,7 @@
     {{-- Related articles --}}
     @if($relatedContents->isNotEmpty())
     <div class="mt-16 pt-10 border-t border-[var(--border)]">
-        <h3 class="mb-6 text-xl font-bold text-[var(--text-primary)]">You Might Also Like</h3>
+        <h3 class="mb-6 text-xl font-bold text-[var(--text-primary)]">{{ __('ui.you_might_like') }}</h3>
         <div class="grid gap-5 sm:grid-cols-3">
             @foreach($relatedContents as $related)
             <a href="{{ lroute('content.show', [$related->slug]) }}"

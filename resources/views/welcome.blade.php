@@ -245,7 +245,7 @@
                     <p class="text-sm font-semibold text-(--text-primary) line-clamp-1" x-text="slideData[current]?.title"></p>
                     <a :href="slideData[current]?.url"
                        class="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-(--accent) px-4 py-2 text-xs font-semibold text-white hover:opacity-90 transition-opacity">
-                        Read Article
+                        {{ __('ui.read_article') }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                         </svg>
@@ -307,12 +307,12 @@
 
         {{-- Heading --}}
         <h2 class="mb-4 text-2xl sm:text-3xl lg:text-4xl font-bold text-[#ECF39E] leading-tight">
-            Discover Knowledge<br>Without Limits
+            {{ __('ui.search_heading_1') }}<br>{{ __('ui.search_heading_2') }}
         </h2>
 
         {{-- Subtitle --}}
         <p class="mb-10 text-base sm:text-lg leading-relaxed text-[#90A955] max-w-3xl mx-auto">
-            Search across our entire collection of articles, tutorial, and documentation — all curated and organised in one place, ready for you to explore.
+            {{ __('ui.search_subtitle') }}
         </p>
 
         {{-- Search bar --}}
@@ -324,12 +324,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                     </svg>
                     <input type="text" name="q" value="{{ $search }}" maxlength="100"
-                           placeholder="Search articles, topics, or keywords…"
+                           placeholder="{{ __('ui.search_placeholder_detail') }}"
                            class="min-w-0 flex-1 bg-transparent px-3 py-2 text-base text-[#ECF39E] placeholder-[#4F772D] focus:outline-none">
                 </div>
                 <button type="submit"
                         class="shrink-0 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-[var(--accent)] transition-colors duration-200">
-                    Search
+                    {{ __('ui.search_btn') }}
                 </button>
             </div>
         </form>
@@ -341,7 +341,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
                 </svg>
                 <span class="text-sm font-semibold text-[#ECF39E]">{{ $totalArticles }}</span>
-                <span class="text-sm text-[#90A955]">{{ Str::plural('Article', $totalArticles) }}</span>
+                <span class="text-sm text-[#90A955]">{{ trans_choice('ui.article_label', $totalArticles) }}</span>
             </div>
 
             <div class="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/8 px-5 py-2.5 backdrop-blur-sm">
@@ -350,7 +350,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z"/>
                 </svg>
                 <span class="text-sm font-semibold text-[#ECF39E]">{{ $categories->count() }}</span>
-                <span class="text-sm text-[#90A955]">{{ Str::plural('Category', $categories->count()) }}</span>
+                <span class="text-sm text-[#90A955]">{{ trans_choice('ui.category_label', $categories->count()) }}</span>
             </div>
 
             <div class="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/8 px-5 py-2.5 backdrop-blur-sm">
@@ -358,7 +358,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
                 </svg>
                 <span class="text-sm font-semibold text-[#ECF39E]">{{ $classifications->count() }}</span>
-                <span class="text-sm text-[#90A955]">{{ Str::plural('Classification', $classifications->count()) }}</span>
+                <span class="text-sm text-[#90A955]">{{ trans_choice('ui.classification_label', $classifications->count()) }}</span>
             </div>
         </div>
 
@@ -386,8 +386,8 @@
                 </svg>
             </div>
             <div>
-                <h2 class="text-2xl font-bold text-(--text-primary)">Browse by Category</h2>
-                <p class="text-md text-(--text-muted) mt-0.5">Explore our content organised by topic</p>
+                <h2 class="text-2xl font-bold text-(--text-primary)">{{ __('ui.browse_category') }}</h2>
+                <p class="text-md text-(--text-muted) mt-0.5">{{ __('ui.category_subtitle') }}</p>
             </div>
         </div>
 
@@ -568,9 +568,9 @@
                 </div>
                 <div>
                     <h2 class="text-2xl font-bold text-(--text-primary)">
-                        @if($search) Search Results @else Latest Content @endif
+                        @if($search) {{ __('ui.search_results') }} @else {{ __('ui.latest') }} @endif
                     </h2>
-                    <p class="text-md text-(--text-muted) mt-0.5">Discover our latest articles and resources</p>
+                    <p class="text-md text-(--text-muted) mt-0.5">{{ __('ui.latest_subtitle') }}</p>
                 </div>
             </div>
 
@@ -580,19 +580,19 @@
                          class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--accent)] pointer-events-none">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                     </svg>
-                    <input type="text" name="q" value="{{ $search }}" maxlength="100" placeholder="Search articles…"
+                    <input type="text" name="q" value="{{ $search }}" maxlength="100" placeholder="{{ __('ui.search_placeholder') }}"
                            class="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] pl-9 pr-4 py-2.5 text-sm text-[var(--text-primary)] placeholder-[#A87850] dark:placeholder-[#90A955] focus:outline-none focus:border-[var(--accent)] dark:focus:border-[var(--accent)] transition-colors">
                 </div>
-                <button type="submit" class="rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[var(--accent)] dark:hover:bg-[#6B9A38] transition-colors shrink-0">Search</button>
+                <button type="submit" class="rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[var(--accent)] dark:hover:bg-[#6B9A38] transition-colors shrink-0">{{ __('ui.search_btn') }}</button>
                 @if($search)
-                <a href="{{ lroute('search') }}" class="rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors shrink-0">Clear</a>
+                <a href="{{ lroute('search') }}" class="rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors shrink-0">{{ __('ui.clear') }}</a>
                 @endif
             </form>
         </div>
 
         @if($search)
         <p class="mb-6 text-sm text-[var(--accent)]">
-            {{ $latestContents->total() }} {{ Str::plural('result', $latestContents->total()) }} for
+            {{ $latestContents->total() }} {{ trans_choice('ui.result_for', $latestContents->total()) }}
             <span class="font-semibold text-[var(--text-primary)]">"{{ $search }}"</span>
         </p>
         @endif
@@ -602,7 +602,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-12 w-12 text-[#90A955] dark:text-[#2a5c2a] mb-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
                 </svg>
-                <p class="text-[#A87850] dark:text-[var(--accent)] text-lg">No content published yet.</p>
+                <p class="text-[#A87850] dark:text-[var(--accent)] text-lg">{{ __('ui.no_content_yet') }}</p>
             </div>
         @else
             <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -620,7 +620,7 @@
                             </span>
                             @endif
                             @if($content->archived)
-                            <span class="rounded-full bg-gray-500 px-3 py-1 text-xs font-semibold text-white">Archived</span>
+                            <span class="rounded-full bg-gray-500 px-3 py-1 text-xs font-semibold text-white">{{ __('ui.archived_badge') }}</span>
                             @endif
                         </div>
                     </div>
@@ -661,7 +661,7 @@
                         @endif
                         <a href="{{ lroute('content.show', [$content->slug]) }}"
                            class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-muted)] dark:text-[var(--accent)] hover:text-[var(--accent)] dark:hover:text-[#b8d864] transition-colors">
-                            Read more
+                            {{ __('ui.read_more') }}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                             </svg>
@@ -700,8 +700,8 @@
                 </svg>
             </div>
             <div>
-                <h2 class="text-2xl font-bold text-[#90A955]">Classifications</h2>
-                <p class="text-md text-(--text-muted) mt-0.5">Browse content by type and format</p>
+                <h2 class="text-2xl font-bold text-[#90A955]">{{ __('ui.classifications') }}</h2>
+                <p class="text-md text-(--text-muted) mt-0.5">{{ __('ui.classifications_subtitle') }}</p>
             </div>
         </div>
 
@@ -788,8 +788,8 @@
                 </svg>
             </div>
             <div>
-                <h2 class="text-2xl font-bold text-(--text-primary)">Our Team</h2>
-                <p class="text-md text-(--text-muted) mt-0.5">Meet the people behind our work</p>
+                <h2 class="text-2xl font-bold text-(--text-primary)">{{ __('ui.our_team') }}</h2>
+                <p class="text-md text-(--text-muted) mt-0.5">{{ __('ui.our_team_subtitle') }}</p>
             </div>
         </div>
 
@@ -924,8 +924,8 @@
                 </svg>
             </div>
             <div>
-                <h2 class="text-2xl font-bold text-(--text-primary)">Most Popular</h2>
-                <p class="text-md text-(--text-muted) mt-0.5">The most read articles right now</p>
+                <h2 class="text-2xl font-bold text-(--text-primary)">{{ __('ui.most_popular') }}</h2>
+                <p class="text-md text-(--text-muted) mt-0.5">{{ __('ui.most_popular_subtitle') }}</p>
             </div>
         </div>
 

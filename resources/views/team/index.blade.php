@@ -30,9 +30,9 @@
             </div>
         </div>
 
-        <h1 class="mb-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-[#ECF39E] leading-tight">Our Team</h1>
+        <h1 class="mb-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-[#ECF39E] leading-tight">{{ __('ui.our_team') }}</h1>
         <p class="text-base leading-relaxed text-[#90A955] max-w-xl mx-auto mb-6">
-            Meet the dedicated people behind {{ $siteSetting->site_title }}.
+            {{ __('ui.team_subtitle', ['site' => $siteSetting->site_title]) }}
         </p>
 
         <div class="flex items-center justify-center gap-3">
@@ -40,14 +40,14 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/>
                 </svg>
-                {{ $teamMembers->count() }} {{ Str::plural('Member', $teamMembers->count()) }}
+                {{ $teamMembers->count() }} {{ trans_choice('ui.member_label', $teamMembers->count()) }}
             </span>
             <a href="{{ lroute('home') }}"
                class="inline-flex items-center gap-1.5 rounded-full bg-(--accent)/10 border border-[#4F772D]/20 px-4 py-1.5 text-sm font-semibold text-[#90A955] hover:bg-(--accent)/20 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
                 </svg>
-                Back to Home
+                {{ __('ui.back_to_home') }}
             </a>
         </div>
     </div>
@@ -58,7 +58,7 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         @if($teamMembers->isEmpty())
-        <p class="text-center text-(--text-muted) py-20">No team members to display yet.</p>
+        <p class="text-center text-(--text-muted) py-20">{{ __('ui.no_team_members') }}</p>
         @else
         <div class="grid grid-cols-2 md:grid-cols-5 gap-5">
             @foreach($teamMembers as $member)

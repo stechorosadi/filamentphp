@@ -104,7 +104,7 @@
             @if($user->educationHistory->isNotEmpty())
             <div>
                 <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-(--text-primary)">Education</h2>
+                    <h2 class="text-2xl font-bold text-(--text-primary)">{{ __('ui.education') }}</h2>
                     <div class="mt-2 h-0.5 w-12 bg-(--accent)"></div>
                 </div>
 
@@ -123,7 +123,7 @@
                             {{-- Year + Institution --}}
                             <div class="flex flex-wrap items-center gap-2 mb-2">
                                 <span class="inline-flex items-center rounded-full border border-(--accent) px-2.5 py-0.5 text-xs font-semibold text-(--accent)">
-                                    {{ $edu->start_year }}{{ $edu->end_year ? ' – ' . $edu->end_year : ' – Present' }}
+                                    {{ $edu->start_year }}{{ $edu->end_year ? ' – ' . $edu->end_year : ' – ' . __('ui.present') }}
                                 </span>
                                 @if($edu->institution)
                                 <span class="text-xs text-(--text-muted)">{{ $edu->institution }}</span>
@@ -156,7 +156,7 @@
             @if($user->workExperience->isNotEmpty())
             <div>
                 <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-(--text-primary)">Experience</h2>
+                    <h2 class="text-2xl font-bold text-(--text-primary)">{{ __('ui.experience') }}</h2>
                     <div class="mt-2 h-0.5 w-12 bg-(--accent)"></div>
                 </div>
 
@@ -175,7 +175,7 @@
                             {{-- Year + Company --}}
                             <div class="flex flex-wrap items-center gap-2 mb-2">
                                 <span class="inline-flex items-center rounded-full border border-(--accent) px-2.5 py-0.5 text-xs font-semibold text-(--accent)">
-                                    {{ $exp->start_year }}{{ $exp->end_year ? ' – ' . $exp->end_year : ' – Current' }}
+                                    {{ $exp->start_year }}{{ $exp->end_year ? ' – ' . $exp->end_year : ' – ' . __('ui.current') }}
                                 </span>
                                 @if($exp->company)
                                 <span class="text-xs text-(--text-muted)">{{ $exp->company }}</span>
@@ -216,18 +216,18 @@
         'online_course'           => 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
     ];
     $certLabels = [
-        'training'                => 'Training',
-        'seminar'                 => 'Seminar',
-        'workshop'                => 'Workshop',
-        'professional_certification' => 'Professional',
-        'online_course'           => 'Online Course',
+        'training'                => __('ui.cert_training'),
+        'seminar'                 => __('ui.cert_seminar'),
+        'workshop'                => __('ui.cert_workshop'),
+        'professional_certification' => __('ui.cert_professional'),
+        'online_course'           => __('ui.cert_online_course'),
     ];
 @endphp
 <section class="bg-[#132A13] dark:bg-[#0d1f0d] py-16">
     <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
 
         <div class="mb-10">
-            <h2 class="text-2xl font-bold text-[#ECF39E]">Certificates</h2>
+            <h2 class="text-2xl font-bold text-[#ECF39E]">{{ __('ui.certifications') }}</h2>
             <div class="mt-2 h-0.5 w-12 bg-[#4F772D]"></div>
         </div>
 
@@ -276,18 +276,18 @@
         'other'            => 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
     ];
     $pubLabels = [
-        'book'             => 'Book',
-        'journal_article'  => 'Journal Article',
-        'research_paper'   => 'Research Paper',
-        'conference_paper' => 'Conference Paper',
-        'other'            => 'Other',
+        'book'             => __('ui.pub_book'),
+        'journal_article'  => __('ui.pub_journal_article'),
+        'research_paper'   => __('ui.pub_research_paper'),
+        'conference_paper' => __('ui.pub_conference_paper'),
+        'other'            => __('ui.pub_other'),
     ];
 @endphp
 <section class="bg-(--bg-alt) dark:bg-(--bg-primary) py-16">
     <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
 
         <div class="mb-10">
-            <h2 class="text-2xl font-bold text-(--text-primary)">Publications</h2>
+            <h2 class="text-2xl font-bold text-(--text-primary)">{{ __('ui.publications') }}</h2>
             <div class="mt-2 h-0.5 w-12 bg-(--accent)"></div>
         </div>
 
@@ -334,7 +334,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"/>
                             </svg>
-                            View
+                            {{ __('ui.view') }}
                         </a>
                     </div>
                     @endif
@@ -361,7 +361,7 @@
                  class="h-4 w-4 group-hover:-translate-x-0.5 transition-transform duration-200">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
             </svg>
-            Back to Team Members
+            {{ __('ui.back_to_team') }}
         </a>
 
         {{-- Right: export PDF --}}
@@ -371,7 +371,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
             </svg>
-            Export to PDF
+            {{ __('ui.export_pdf') }}
         </a>
 
     </div>
