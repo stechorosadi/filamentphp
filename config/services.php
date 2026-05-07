@@ -36,8 +36,12 @@ return [
     ],
 
     'turnstile' => [
-        'site_key'   => env('TURNSTILE_SITE_KEY'),
+        'site_key' => env('TURNSTILE_SITE_KEY'),
         'secret_key' => env('TURNSTILE_SECRET_KEY'),
+    ],
+
+    'deepl' => [
+        'api_key' => env('DEEPL_API_KEY'),
     ],
 
 ];

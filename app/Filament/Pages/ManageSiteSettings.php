@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Actions\TranslateAction;
 use App\Models\SiteSetting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
@@ -88,6 +89,8 @@ class ManageSiteSettings extends Page
                                     ]),
                             ])
                             ->columnSpanFull(),
+
+                        TranslateAction::make(['site_title', 'site_tagline', 'site_description']),
                     ])
                     ->columns(1),
 
@@ -122,6 +125,8 @@ class ManageSiteSettings extends Page
                                     ]),
                             ])
                             ->columnSpanFull(),
+
+                        TranslateAction::make([], ['mission', 'vision']),
                     ])
                     ->columns(1),
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Actions\TranslateAction;
 use App\Filament\Resources\ContentClassificationResource\Pages;
 use App\Models\ContentClassification;
 use Filament\Actions\DeleteAction;
@@ -65,6 +66,8 @@ class ContentClassificationResource extends Resource
                                 ]),
                         ])
                         ->columnSpanFull(),
+
+                    TranslateAction::make(['name']),
                 ])
                 ->columns(2),
 

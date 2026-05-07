@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Actions\TranslateAction;
 use App\Filament\Resources\ContentCategoryResource\Pages;
 use App\Models\ContentCategory;
 use Filament\Actions\DeleteAction;
@@ -80,6 +81,8 @@ class ContentCategoryResource extends Resource
                                 ]),
                         ])
                         ->columnSpanFull(),
+
+                    TranslateAction::make(['name', 'description']),
                 ])
                 ->columns(2),
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TeamMembers\Schemas;
 
+use App\Filament\Actions\TranslateAction;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -87,6 +88,8 @@ class TeamMemberForm
                                     ->columns(2),
                             ])
                             ->columnSpanFull(),
+
+                        TranslateAction::make(['front_title', 'back_title', 'position']),
                     ]),
 
                 Section::make('Photo')

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Tags\Schemas;
 
+use App\Filament\Actions\TranslateAction;
 use App\Models\Tag;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -46,6 +47,8 @@ class TagForm
                                 ]),
                         ])
                         ->columnSpanFull(),
+
+                    TranslateAction::make(['name']),
                 ])
                 ->columns(2),
         ]);
