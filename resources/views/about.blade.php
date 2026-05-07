@@ -26,16 +26,16 @@
 
     {{-- Floating assets --}}
     <img id="aset-1" src="{{ asset('storage/aset/aset-documents.png') }}" alt=""
-         class="absolute hidden lg:block w-24 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
+         class="absolute hidden lg:block w-24 opacity-20 pointer-events-none will-change-transform drop-shadow-lg"
          style="left:15%; top:24%; transform: rotate(-12deg)">
     <img id="aset-2" src="{{ asset('storage/aset/aset-laptop.png') }}" alt=""
-         class="absolute hidden lg:block w-28 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
+         class="absolute hidden lg:block w-28 opacity-20 pointer-events-none will-change-transform drop-shadow-lg"
          style="right:14%; top:20%; transform: rotate(8deg)">
     <img id="aset-3" src="{{ asset('storage/aset/aset-organized.png') }}" alt=""
-         class="absolute hidden lg:block w-20 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
+         class="absolute hidden lg:block w-20 opacity-20 pointer-events-none will-change-transform drop-shadow-lg"
          style="left:18%; bottom:24%; transform: rotate(10deg)">
     <img id="aset-4" src="{{ asset('storage/aset/aset-search.png') }}" alt=""
-         class="absolute hidden lg:block w-24 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
+         class="absolute hidden lg:block w-24 opacity-20 pointer-events-none will-change-transform drop-shadow-lg"
          style="right:16%; bottom:24%; transform: rotate(-8deg)">
 
     <div class="relative mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 pt-36 pb-20">
