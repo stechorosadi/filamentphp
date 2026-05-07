@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TeamMemberStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,7 @@ use Spatie\Translatable\HasTranslations;
 #[Fillable([
     'user_id',
     'name',
+    'word_of_wisdom',
     'front_title',
     'back_title',
     'position',
@@ -23,12 +25,20 @@ use Spatie\Translatable\HasTranslations;
     'youtube_url',
     'sort_order',
     'is_visible',
+    'status',
 ])]
 class TeamMember extends Model
 {
     use HasTranslations;
 
     public array $translatable = ['front_title', 'back_title', 'position'];
+
+    protected function casts(): array
+    {
+        return [
+            'status' => TeamMemberStatus::class,
+        ];
+    }
 
     public function user(): BelongsTo
     {

@@ -4,7 +4,7 @@
     <a href="{{ lroute('team.member', [$member->getKey()]) }}" class="absolute inset-0 z-10" aria-label="{{ $member->fullName() }}"></a>
 
     {{-- Photo --}}
-    <div class="aspect-4/3 w-full overflow-hidden bg-(--bg-alt)">
+    <div class="relative aspect-4/3 w-full overflow-hidden bg-(--bg-alt)">
         @if($member->photo)
         <img src="{{ asset("storage/{$member->photo}") }}"
              alt="{{ $member->fullName() }}"
@@ -14,6 +14,17 @@
         <div class="w-full h-full flex items-center justify-center bg-(--accent)/10">
             <span class="text-4xl font-black text-(--accent)">{{ strtoupper(substr($member->fullName() ?: '?', 0, 1)) }}</span>
         </div>
+        @endif
+
+        @if(!empty($showStatusBadge) && $member->status !== \App\Enums\TeamMemberStatus::Active)
+        @php
+            $badgeClass = $member->status === \App\Enums\TeamMemberStatus::Retired
+                ? 'bg-gray-500/80 text-white'
+                : 'bg-amber-500/80 text-white';
+        @endphp
+        <span class="absolute top-2 left-2 z-20 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold {{ $badgeClass }} backdrop-blur-sm">
+            {{ __('ui.status_' . $member->status->value) }}
+        </span>
         @endif
     </div>
 

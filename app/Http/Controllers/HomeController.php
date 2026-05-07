@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TeamMemberStatus;
 use App\Models\Content;
 use App\Models\ContentCategory;
 use App\Models\ContentClassification;
@@ -226,12 +227,15 @@ class HomeController extends Controller
 
     public function team(): View
     {
-        $teamMembers = TeamMember::with('user')
+        $all = TeamMember::with('user')
             ->where('is_visible', true)
             ->orderBy('sort_order')
             ->get();
 
-        return view('team.index', compact('teamMembers'));
+        $activeMembers = $all->filter(fn ($m) => $m->status === TeamMemberStatus::Active)->values();
+        $formerMembers = $all->filter(fn ($m) => $m->status !== TeamMemberStatus::Active)->values();
+
+        return view('team.index', compact('activeMembers', 'formerMembers'));
     }
 
     public function pdf(string $locale, string $slug): Response

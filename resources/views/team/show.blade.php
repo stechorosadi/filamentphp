@@ -35,16 +35,16 @@
             <span class="truncate text-[#ECF39E]/70">{{ $member->fullName() }}</span>
         </nav>
 
-        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-8">
+        <div class="flex flex-col sm:flex-row items-center sm:items-stretch gap-8">
 
             {{-- Photo --}}
-            <div class="shrink-0">
+            <div class="shrink-0 sm:self-stretch flex justify-center sm:justify-start">
                 @if($member->photo)
                 <img src="{{ asset('storage/' . $member->photo) }}"
                      alt="{{ $member->fullName() }}"
-                     class="h-48 w-48 rounded-2xl object-cover object-top shadow-xl ring-4 ring-[#4F772D]/40">
+                     class="h-48 w-auto sm:h-full max-w-48 min-w-32 rounded-2xl object-cover object-top shadow-xl ring-4 ring-[#4F772D]/40">
                 @else
-                <div class="h-48 w-48 rounded-2xl bg-(--accent)/20 flex items-center justify-center shadow-xl ring-4 ring-[#4F772D]/40">
+                <div class="h-48 w-32 sm:h-full sm:min-h-32 rounded-2xl bg-(--accent)/20 flex items-center justify-center shadow-xl ring-4 ring-[#4F772D]/40">
                     <span class="text-5xl font-black text-[#ECF39E]">{{ strtoupper(substr($member->fullName() ?: '?', 0, 1)) }}</span>
                 </div>
                 @endif
@@ -69,6 +69,12 @@
                 @endif
 
                 {{-- Social links --}}
+                @if($member->word_of_wisdom)
+                <blockquote class="mt-5 border-l-2 border-[#4F772D]/50 pl-4 text-sm italic text-[#90A955] max-w-sm">
+                    "{{ $member->word_of_wisdom }}"
+                </blockquote>
+                @endif
+
                 @if($socials)
                 <div class="mt-5 flex items-center justify-center sm:justify-start gap-3">
                     @foreach($socials as $platform => $url)

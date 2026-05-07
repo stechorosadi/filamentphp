@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\TeamMembers\Schemas;
 
+use App\Enums\TeamMemberStatus;
 use App\Filament\Actions\TranslateAction;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
@@ -37,6 +39,13 @@ class TeamMemberForm
                             ->required(fn (Get $get): bool => blank($get('user_id')))
                             ->visible(fn (Get $get): bool => blank($get('user_id')))
                             ->helperText('Required when no user account is linked.'),
+
+                        Textarea::make('word_of_wisdom')
+                            ->label('Word of Wisdom')
+                            ->placeholder('Share a wise word about being an archivist…')
+                            ->maxLength(500)
+                            ->rows(3)
+                            ->columnSpanFull(),
 
                         TextInput::make('employee_number')
                             ->label('Employee Number')
@@ -136,6 +145,17 @@ class TeamMemberForm
 
                 Section::make('Display')
                     ->schema([
+                        Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                TeamMemberStatus::Active->value => 'Active',
+                                TeamMemberStatus::Transferred->value => 'Transferred',
+                                TeamMemberStatus::Retired->value => 'Retired',
+                            ])
+                            ->default(TeamMemberStatus::Active->value)
+                            ->required()
+                            ->helperText('Former members (Transferred / Retired) are shown in a separate section on the team page.'),
+
                         TextInput::make('sort_order')
                             ->label('Sort Order')
                             ->numeric()
@@ -143,8 +163,9 @@ class TeamMemberForm
                             ->helperText('Lower numbers appear first.'),
 
                         Toggle::make('is_visible')
-                            ->label('Visible on Homepage')
-                            ->default(true),
+                            ->label('Visible on Team Page')
+                            ->default(true)
+                            ->columnSpanFull(),
                     ])
                     ->columns(2),
             ]);

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TeamMembers\Tables;
 
+use App\Enums\TeamMemberStatus;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -10,6 +11,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
@@ -64,6 +66,17 @@ class TeamMembersTable
                     ->label('Employee #')
                     ->searchable(),
 
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (TeamMemberStatus $state): string => match ($state) {
+                        TeamMemberStatus::Active => 'success',
+                        TeamMemberStatus::Transferred => 'warning',
+                        TeamMemberStatus::Retired => 'gray',
+                    })
+                    ->formatStateUsing(fn (TeamMemberStatus $state): string => $state->label())
+                    ->sortable(),
+
                 IconColumn::make('is_visible')
                     ->label('Visible')
                     ->boolean()
@@ -74,7 +87,14 @@ class TeamMembersTable
                     ->sortable(),
             ])
             ->defaultSort('sort_order')
-            ->filters([])
+            ->filters([
+                SelectFilter::make('status')
+                    ->options([
+                        TeamMemberStatus::Active->value => 'Active',
+                        TeamMemberStatus::Transferred->value => 'Transferred',
+                        TeamMemberStatus::Retired->value => 'Retired',
+                    ]),
+            ])
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
