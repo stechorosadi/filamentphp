@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,7 @@ Route::prefix('{locale}')
             Route::get('/team', [HomeController::class, 'team'])->name('team');
             Route::get('/team/{member}', [HomeController::class, 'memberShow'])->name('team.member');
             Route::get('/team/{member}/pdf', [HomeController::class, 'memberPdf'])->name('team.member.pdf');
+            Route::get('/contact', [ContactController::class, 'show'])->name('contact');
         });
 
         Route::get('/articles/{slug}', [HomeController::class, 'show'])
@@ -34,5 +36,9 @@ Route::prefix('{locale}')
 
         Route::get('/articles/{slug}/pdf', [HomeController::class, 'pdf'])
             ->name('content.pdf')
+            ->middleware('throttle:10,1');
+
+        Route::post('/contact', [ContactController::class, 'store'])
+            ->name('contact.store')
             ->middleware('throttle:10,1');
     });

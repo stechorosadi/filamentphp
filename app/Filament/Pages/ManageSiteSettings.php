@@ -166,6 +166,24 @@ class ManageSiteSettings extends Page
                             ->label('Address')
                             ->maxLength(255)
                             ->placeholder('123 Main St, City, Country'),
+
+                        TextInput::make('contact_phone')
+                            ->label('Phone')
+                            ->tel()
+                            ->maxLength(50)
+                            ->placeholder('+62 21 1234 5678'),
+
+                        TextInput::make('contact_working_hours')
+                            ->label('Working Hours')
+                            ->maxLength(100)
+                            ->placeholder('Mon–Fri, 09:00–17:00'),
+
+                        Textarea::make('maps_embed_url')
+                            ->label('Google Maps Embed URL')
+                            ->rows(3)
+                            ->columnSpanFull()
+                            ->placeholder('https://www.google.com/maps/embed?pb=...')
+                            ->helperText('Paste only the src URL from the Google Maps embed iframe: Share → Embed a map → copy the value inside src="…"'),
                     ])
                     ->columns(2),
 
