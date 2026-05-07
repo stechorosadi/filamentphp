@@ -6,6 +6,7 @@ use App\Models\SiteSetting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -96,28 +97,28 @@ class ManageSiteSettings extends Page
                             ->tabs([
                                 Tab::make('Indonesian (ID)')
                                     ->schema([
-                                        Textarea::make('mission.id')
+                                        RichEditor::make('mission.id')
                                             ->label('Mission (ID)')
-                                            ->rows(4)
-                                            ->maxLength(1000),
+                                            ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
+                                            ->columnSpanFull(),
 
-                                        Textarea::make('vision.id')
+                                        RichEditor::make('vision.id')
                                             ->label('Vision (ID)')
-                                            ->rows(4)
-                                            ->maxLength(1000),
+                                            ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
+                                            ->columnSpanFull(),
                                     ]),
 
                                 Tab::make('English (EN)')
                                     ->schema([
-                                        Textarea::make('mission.en')
+                                        RichEditor::make('mission.en')
                                             ->label('Mission (EN)')
-                                            ->rows(4)
-                                            ->maxLength(1000),
+                                            ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
+                                            ->columnSpanFull(),
 
-                                        Textarea::make('vision.en')
+                                        RichEditor::make('vision.en')
                                             ->label('Vision (EN)')
-                                            ->rows(4)
-                                            ->maxLength(1000),
+                                            ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
+                                            ->columnSpanFull(),
                                     ]),
                             ])
                             ->columnSpanFull(),

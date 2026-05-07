@@ -129,15 +129,24 @@
     <div class="absolute bottom-0 -left-16 h-48 w-48 rounded-full bg-[var(--accent)]/15 blur-3xl pointer-events-none"></div>
 
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/10">
+
+        {{-- Section heading --}}
+        <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-[var(--on-dark)] mb-3">
+                {{ __('ui.about_stats_title') }}
+            </h2>
+            <p class="text-sm text-[var(--on-dark)]/60">{{ __('ui.about_stats_desc') }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[var(--on-dark)]/10">
 
             {{-- Articles --}}
             <div class="flex flex-col items-center text-center px-8 py-6 sm:py-0"
                  x-data="{ count: 0, target: {{ $totalArticles }} }"
                  x-init="const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { obs.disconnect(); let t = setInterval(() => { count < target ? count = Math.min(count + Math.max(1, Math.ceil(target / 40)), target) : clearInterval(t); }, 30); } }, { threshold: 0.3 }); obs.observe($el);">
-                <p class="text-6xl lg:text-7xl font-bold text-white mb-2 tabular-nums" x-text="count.toLocaleString()">0</p>
+                <p class="text-6xl lg:text-7xl font-bold text-[var(--on-dark)] mb-2 tabular-nums" x-text="count.toLocaleString()">0</p>
                 <div class="h-0.5 w-10 bg-[var(--accent)] rounded-full mb-3"></div>
-                <p class="text-xs font-bold uppercase tracking-widest text-white/60">{{ __('ui.about_stat_articles') }}</p>
+                <p class="text-xs font-bold uppercase tracking-widest text-[var(--on-dark)]/60">{{ __('ui.about_stat_articles') }}</p>
             </div>
 
             {{-- Team Members --}}
@@ -146,16 +155,16 @@
                  x-init="const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { obs.disconnect(); let t = setInterval(() => { count < target ? count = Math.min(count + Math.max(1, Math.ceil(target / 40)), target) : clearInterval(t); }, 30); } }, { threshold: 0.3 }); obs.observe($el);">
                 <p class="text-6xl lg:text-7xl font-bold text-[var(--accent)] mb-2 tabular-nums" x-text="count.toLocaleString()">0</p>
                 <div class="h-0.5 w-10 bg-[var(--accent)] rounded-full mb-3"></div>
-                <p class="text-xs font-bold uppercase tracking-widest text-white/60">{{ __('ui.about_stat_members') }}</p>
+                <p class="text-xs font-bold uppercase tracking-widest text-[var(--on-dark)]/60">{{ __('ui.about_stat_members') }}</p>
             </div>
 
             {{-- Categories --}}
             <div class="flex flex-col items-center text-center px-8 py-6 sm:py-0"
                  x-data="{ count: 0, target: {{ $totalCategories }} }"
                  x-init="const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { obs.disconnect(); let t = setInterval(() => { count < target ? count = Math.min(count + Math.max(1, Math.ceil(target / 40)), target) : clearInterval(t); }, 30); } }, { threshold: 0.3 }); obs.observe($el);">
-                <p class="text-6xl lg:text-7xl font-bold text-white mb-2 tabular-nums" x-text="count.toLocaleString()">0</p>
+                <p class="text-6xl lg:text-7xl font-bold text-[var(--on-dark)] mb-2 tabular-nums" x-text="count.toLocaleString()">0</p>
                 <div class="h-0.5 w-10 bg-[var(--accent)] rounded-full mb-3"></div>
-                <p class="text-xs font-bold uppercase tracking-widest text-white/60">{{ __('ui.about_stat_categories') }}</p>
+                <p class="text-xs font-bold uppercase tracking-widest text-[var(--on-dark)]/60">{{ __('ui.about_stat_categories') }}</p>
             </div>
 
         </div>
@@ -200,9 +209,9 @@
                         {{ __('ui.about_mission_label') }}
                     </h3>
                     <div class="h-0.5 w-12 rounded-full bg-[var(--accent)] mb-6"></div>
-                    <p class="text-base leading-relaxed text-[var(--text-muted)]">
-                        {{ $siteSetting->mission ?: __('ui.about_mission_placeholder') }}
-                    </p>
+                    <div class="prose-themed">
+                        {!! $siteSetting->mission ?: '<p>'.__('ui.about_mission_placeholder').'</p>' !!}
+                    </div>
                 </div>
             </div>
 
@@ -229,9 +238,9 @@
                         {{ __('ui.about_vision_label') }}
                     </h3>
                     <div class="h-0.5 w-12 rounded-full bg-white/40 mb-6"></div>
-                    <p class="text-base leading-relaxed text-white/90">
-                        {{ $siteSetting->vision ?: __('ui.about_vision_placeholder') }}
-                    </p>
+                    <div class="prose-inverted">
+                        {!! $siteSetting->vision ?: '<p>'.__('ui.about_vision_placeholder').'</p>' !!}
+                    </div>
                 </div>
             </div>
 

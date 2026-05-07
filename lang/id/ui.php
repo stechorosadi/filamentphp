@@ -175,6 +175,8 @@ return [
     'about_vision_label' => 'Visi',
     'about_mission_placeholder' => 'Pernyataan misi kami akan muncul di sini setelah dikonfigurasi di Pengaturan Situs.',
     'about_vision_placeholder' => 'Pernyataan visi kami akan muncul di sini setelah dikonfigurasi di Pengaturan Situs.',
+    'about_stats_title' => 'Kearsipan dalam Angka',
+    'about_stats_desc' => 'Statistik singkat mengenai konten kami.',
     'about_stat_articles' => 'Artikel Diterbitkan',
     'about_stat_members' => 'Anggota Tim',
     'about_stat_categories' => 'Kategori Konten',

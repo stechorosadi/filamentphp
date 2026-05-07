@@ -175,6 +175,8 @@ return [
     'about_vision_label' => 'Vision',
     'about_mission_placeholder' => 'Our mission statement will appear here once configured in Site Settings.',
     'about_vision_placeholder' => 'Our vision statement will appear here once configured in Site Settings.',
+    'about_stats_title' => 'Archives in Numbers',
+    'about_stats_desc' => 'A quick overview of our content statistics.',
     'about_stat_articles' => 'Articles Published',
     'about_stat_members' => 'Team Members',
     'about_stat_categories' => 'Content Categories',

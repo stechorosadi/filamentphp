@@ -49,6 +49,7 @@
             --accent-dim:   {{ $thMix($acc, '#ffffff', 0.35) }};
             --border:       {{ $thMix($acc, '#ffffff', 0.45) }};
             --dark-section: {{ $thMix($ltxt, $dbg, 0.6) }};
+            --on-dark:      {{ $lbg }};
         }
         :where(.dark, .dark *) {
             --bg-primary:   {{ $dbg }};
