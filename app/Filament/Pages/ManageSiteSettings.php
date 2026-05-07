@@ -90,6 +90,40 @@ class ManageSiteSettings extends Page
                     ])
                     ->columns(1),
 
+                Section::make('Mission & Vision')
+                    ->schema([
+                        Tabs::make('Translations')
+                            ->tabs([
+                                Tab::make('Indonesian (ID)')
+                                    ->schema([
+                                        Textarea::make('mission.id')
+                                            ->label('Mission (ID)')
+                                            ->rows(4)
+                                            ->maxLength(1000),
+
+                                        Textarea::make('vision.id')
+                                            ->label('Vision (ID)')
+                                            ->rows(4)
+                                            ->maxLength(1000),
+                                    ]),
+
+                                Tab::make('English (EN)')
+                                    ->schema([
+                                        Textarea::make('mission.en')
+                                            ->label('Mission (EN)')
+                                            ->rows(4)
+                                            ->maxLength(1000),
+
+                                        Textarea::make('vision.en')
+                                            ->label('Vision (EN)')
+                                            ->rows(4)
+                                            ->maxLength(1000),
+                                    ]),
+                            ])
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(1),
+
                 Section::make('Branding')
                     ->schema([
                         FileUpload::make('logo_path')

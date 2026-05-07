@@ -215,6 +215,15 @@ class HomeController extends Controller
         return view('archive', compact('contents'));
     }
 
+    public function about(): View
+    {
+        return view('about', [
+            'totalArticles' => Content::where('published', true)->count(),
+            'totalMembers' => TeamMember::where('is_visible', true)->count(),
+            'totalCategories' => ContentCategory::count(),
+        ]);
+    }
+
     public function team(): View
     {
         $teamMembers = TeamMember::with('user')

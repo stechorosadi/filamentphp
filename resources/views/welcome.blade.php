@@ -19,11 +19,27 @@
 {{-- ─────────────────────────────────────────── --}}
 {{-- HERO --}}
 {{-- ─────────────────────────────────────────── --}}
-<section class="relative flex min-h-screen items-center bg-[var(--bg-primary)] overflow-hidden">
+<section id="home-hero" class="relative flex min-h-screen items-center bg-[var(--bg-primary)] overflow-hidden">
     {{-- Background grid --}}
-    <div class="absolute inset-0 bg-[linear-gradient(to_right,#00000010_1px,transparent_1px),linear-gradient(to_bottom,#00000010_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-size-[48px_48px]"></div>
-    {{-- Glow --}}
-    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-128 w-lg rounded-full bg-[var(--accent)]/20 dark:bg-[var(--accent)]/30 blur-3xl pointer-events-none"></div>
+    <div id="home-grid" class="absolute inset-0 bg-[linear-gradient(to_right,#00000010_1px,transparent_1px),linear-gradient(to_bottom,#00000010_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-size-[48px_48px]"></div>
+    {{-- Glow blobs --}}
+    <div id="home-blob-1" class="absolute left-1/4 top-1/3 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--accent)]/50 pointer-events-none will-change-transform" style="filter:blur(130px)"></div>
+    <div id="home-blob-2" class="absolute right-1/4 bottom-1/4 h-[450px] w-[450px] rounded-full bg-[var(--accent)]/40 pointer-events-none will-change-transform" style="filter:blur(110px)"></div>
+    <div id="home-blob-3" class="absolute left-1/2 top-1/2 h-[350px] w-[350px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--accent)]/30 pointer-events-none will-change-transform opacity-0" style="filter:blur(100px)"></div>
+
+    {{-- Floating assets --}}
+    <img id="home-aset-1" src="{{ asset('storage/aset/aset-documents.png') }}" alt=""
+         class="absolute hidden lg:block w-24 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
+         style="left:15%; top:24%; transform:rotate(-12deg)">
+    <img id="home-aset-2" src="{{ asset('storage/aset/aset-laptop.png') }}" alt=""
+         class="absolute hidden lg:block w-28 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
+         style="right:14%; top:20%; transform:rotate(8deg)">
+    <img id="home-aset-3" src="{{ asset('storage/aset/aset-organized.png') }}" alt=""
+         class="absolute hidden lg:block w-20 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
+         style="left:18%; bottom:24%; transform:rotate(10deg)">
+    <img id="home-aset-4" src="{{ asset('storage/aset/aset-search.png') }}" alt=""
+         class="absolute hidden lg:block w-24 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
+         style="right:16%; bottom:24%; transform:rotate(-8deg)">
 
     @if($featuredContents->isNotEmpty())
     {{-- ── FEATURED SLIDER ── --}}
@@ -1071,6 +1087,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
 <script>
     // ── Most Popular list items: staggered slide-in from right ──
     (function () {
@@ -1127,5 +1144,49 @@
             observer.observe(el);
         });
     });
+
+    // ── Homepage hero GSAP blobs + floating icons ──
+    (function () {
+        if (typeof gsap === 'undefined') return;
+        const hero = document.getElementById('home-hero');
+        if (!hero) return;
+
+        // Blob animations
+        gsap.to('#home-blob-1', { x: 220, y: 130, duration: 11, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        gsap.to('#home-blob-2', { x: -180, y: -200, duration: 14, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 3 });
+        gsap.to('#home-blob-3', {
+            opacity: 1, duration: 1.2, ease: 'power2.out',
+            onComplete() {
+                gsap.to('#home-blob-3', { x: 100, y: -80, scale: 1.8, opacity: 0.5, duration: 9, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+            }
+        });
+        gsap.to('#home-grid', { opacity: 0.4, duration: 6, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+
+        // Icon float animations
+        gsap.to('#home-aset-1', { y: -22, rotation: '-=5', duration: 3.5, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        gsap.to('#home-aset-2', { y:  18, rotation: '+=6', duration: 4.2, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 0.8 });
+        gsap.to('#home-aset-3', { y: -18, rotation: '+=4', duration: 3.8, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1.4 });
+        gsap.to('#home-aset-4', { y:  24, rotation: '-=6', duration: 4.6, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 0.4 });
+
+        // Mouse parallax
+        hero.addEventListener('mousemove', (e) => {
+            const rect   = hero.getBoundingClientRect();
+            const xRatio = (e.clientX - rect.left) / rect.width  - 0.5;
+            const yRatio = (e.clientY - rect.top)  / rect.height - 0.5;
+
+            gsap.to('#home-blob-1', { x: xRatio * 380, y: yRatio * 280, duration: 1.2, ease: 'power3.out', overwrite: 'auto' });
+            gsap.to('#home-blob-2', { x: -xRatio * 320, y: -yRatio * 260, duration: 1.5, ease: 'power3.out', overwrite: 'auto' });
+            gsap.to('#home-blob-3', { x: xRatio * 200, y: yRatio * 200, duration: 1, ease: 'power3.out', overwrite: 'auto' });
+            gsap.to('#home-aset-1', { x: xRatio * -60, y: yRatio * -50, duration: 1.2, ease: 'power2.out', overwrite: 'auto' });
+            gsap.to('#home-aset-2', { x: xRatio *  70, y: yRatio *  55, duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
+            gsap.to('#home-aset-3', { x: xRatio * -50, y: yRatio *  60, duration: 1.3, ease: 'power2.out', overwrite: 'auto' });
+            gsap.to('#home-aset-4', { x: xRatio *  65, y: yRatio * -55, duration: 1.5, ease: 'power2.out', overwrite: 'auto' });
+        });
+
+        hero.addEventListener('mouseleave', () => {
+            gsap.to('#home-blob-1, #home-blob-2, #home-blob-3', { x: 0, y: 0, duration: 2, ease: 'power2.out' });
+            gsap.to('#home-aset-1, #home-aset-2, #home-aset-3, #home-aset-4', { x: 0, y: 0, duration: 1.5, ease: 'power2.out' });
+        });
+    })();
 </script>
 @endpush

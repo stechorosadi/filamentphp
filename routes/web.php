@@ -27,6 +27,7 @@ Route::prefix('{locale}')
             Route::get('/team', [HomeController::class, 'team'])->name('team');
             Route::get('/team/{member}', [HomeController::class, 'memberShow'])->name('team.member');
             Route::get('/team/{member}/pdf', [HomeController::class, 'memberPdf'])->name('team.member.pdf');
+            Route::get('/about', [HomeController::class, 'about'])->name('about');
             Route::get('/contact', [ContactController::class, 'show'])->name('contact');
         });
 

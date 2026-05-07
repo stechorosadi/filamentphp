@@ -22,6 +22,8 @@ use Spatie\Translatable\HasTranslations;
     'contact_phone',
     'contact_working_hours',
     'maps_embed_url',
+    'mission',
+    'vision',
     'color_light_bg',
     'color_dark_bg',
     'color_light_text',
@@ -33,7 +35,7 @@ class SiteSetting extends Model
 {
     use HasTranslations;
 
-    public array $translatable = ['site_title', 'site_tagline', 'site_description'];
+    public array $translatable = ['site_title', 'site_tagline', 'site_description', 'mission', 'vision'];
 
     public static function instance(): self
     {
