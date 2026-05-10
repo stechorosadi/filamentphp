@@ -33,10 +33,10 @@
          style="left:15%; top:24%; transform:rotate(-12deg)">
     <img id="home-aset-2" src="{{ asset('storage/aset-color/home-book.png') }}" alt=""
          class="absolute hidden lg:block w-28 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
-         style="right:14%; top:20%; transform:rotate(8deg)">
+         style="right:12%; top:20%; transform:rotate(8deg)">
     <img id="home-aset-3" src="{{ asset('storage/aset-color/home-cap.png') }}" alt=""
          class="absolute hidden lg:block w-32 opacity-30 pointer-events-none will-change-transform drop-shadow-lg"
-         style="left:18%; bottom:24%; transform:rotate(10deg)">
+         style="left:15%; bottom:22%; transform:rotate(10deg)">
     <img id="home-aset-4" src="{{ asset('storage/aset-color/home-time.png') }}" alt=""
          class="absolute hidden lg:block w-24 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
          style="right:16%; bottom:24%; transform:rotate(-8deg)">
