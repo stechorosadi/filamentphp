@@ -28,17 +28,17 @@
     <div id="home-blob-3" class="absolute left-1/2 top-1/2 h-[350px] w-[350px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--accent)]/30 pointer-events-none will-change-transform opacity-0" style="filter:blur(100px)"></div>
 
     {{-- Floating assets --}}
-    <img id="home-aset-1" src="{{ asset('storage/aset/aset-documents.png') }}" alt=""
-         class="absolute hidden lg:block w-24 opacity-20 pointer-events-none will-change-transform drop-shadow-lg"
+    <img id="home-aset-1" src="{{ asset('storage/aset-color/home-achievement.png') }}" alt=""
+         class="absolute hidden lg:block w-24 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
          style="left:15%; top:24%; transform:rotate(-12deg)">
-    <img id="home-aset-2" src="{{ asset('storage/aset/aset-laptop.png') }}" alt=""
-         class="absolute hidden lg:block w-28 opacity-20 pointer-events-none will-change-transform drop-shadow-lg"
+    <img id="home-aset-2" src="{{ asset('storage/aset-color/home-book.png') }}" alt=""
+         class="absolute hidden lg:block w-28 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
          style="right:14%; top:20%; transform:rotate(8deg)">
-    <img id="home-aset-3" src="{{ asset('storage/aset/aset-organized.png') }}" alt=""
-         class="absolute hidden lg:block w-20 opacity-20 pointer-events-none will-change-transform drop-shadow-lg"
+    <img id="home-aset-3" src="{{ asset('storage/aset-color/home-cap.png') }}" alt=""
+         class="absolute hidden lg:block w-32 opacity-30 pointer-events-none will-change-transform drop-shadow-lg"
          style="left:18%; bottom:24%; transform:rotate(10deg)">
-    <img id="home-aset-4" src="{{ asset('storage/aset/aset-search.png') }}" alt=""
-         class="absolute hidden lg:block w-24 opacity-20 pointer-events-none will-change-transform drop-shadow-lg"
+    <img id="home-aset-4" src="{{ asset('storage/aset-color/home-time.png') }}" alt=""
+         class="absolute hidden lg:block w-24 opacity-40 pointer-events-none will-change-transform drop-shadow-lg"
          style="right:16%; bottom:24%; transform:rotate(-8deg)">
 
     @if($featuredContents->isNotEmpty())
@@ -155,7 +155,7 @@
                             @endif
 
                             {{-- Browser card --}}
-                            <div class="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)]">
+                            <div class="home-featured-card relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)]">
                                 {{-- Browser chrome --}}
                                 <div class="flex items-center gap-1.5 border-b border-[var(--border)] bg-[var(--bg-alt)] dark:bg-[var(--dark-section)] px-4 py-3">
                                     <span class="h-3 w-3 rounded-full bg-red-400"></span>
@@ -1181,11 +1181,16 @@
             gsap.to('#home-aset-2', { x: xRatio *  70, y: yRatio *  55, duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
             gsap.to('#home-aset-3', { x: xRatio * -50, y: yRatio *  60, duration: 1.3, ease: 'power2.out', overwrite: 'auto' });
             gsap.to('#home-aset-4', { x: xRatio *  65, y: yRatio * -55, duration: 1.5, ease: 'power2.out', overwrite: 'auto' });
+            gsap.to('.home-featured-card', {
+                rotateY: xRatio * 6, rotateX: -yRatio * 4,
+                duration: 0.8, ease: 'power2.out', overwrite: 'auto', transformPerspective: 900
+            });
         });
 
         hero.addEventListener('mouseleave', () => {
             gsap.to('#home-blob-1, #home-blob-2, #home-blob-3', { x: 0, y: 0, duration: 2, ease: 'power2.out' });
             gsap.to('#home-aset-1, #home-aset-2, #home-aset-3, #home-aset-4', { x: 0, y: 0, duration: 1.5, ease: 'power2.out' });
+            gsap.to('.home-featured-card', { rotateY: 0, rotateX: 0, duration: 1, ease: 'power2.out' });
         });
     })();
 </script>
