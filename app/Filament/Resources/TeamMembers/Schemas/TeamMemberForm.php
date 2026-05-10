@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rule;
 
 class TeamMemberForm
 {
@@ -31,6 +32,16 @@ class TeamMemberForm
                             ->nullable()
                             ->live()
                             ->helperText('Leave blank to enter a name manually.'),
+
+                        TextInput::make('nickname')
+                            ->label('Nickname / URL Slug')
+                            ->required()
+                            ->maxLength(80)
+                            ->rules(fn ($record) => [
+                                'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
+                                Rule::unique('team_members', 'nickname')->ignore($record?->id),
+                            ])
+                            ->helperText('Lowercase letters, numbers, and hyphens only. Used in the public URL, e.g. "john-doe".'),
 
                         TextInput::make('name')
                             ->label('Full Name')

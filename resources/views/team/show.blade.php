@@ -3,6 +3,15 @@
 @section('seo')
 <title>{{ $member->fullName() }} — {{ $siteSetting->site_title }}</title>
 <meta name="description" content="{{ $member->position }}{{ $member->front_title || $member->back_title ? ' · ' . $member->fullName() : '' }}">
+<meta property="og:title" content="{{ $member->fullName() }} — {{ $siteSetting->site_title }}">
+<meta property="og:description" content="{{ $member->position }}">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="{{ url()->current() }}">
+@if($member->photo)
+<meta property="og:image" content="{{ asset('storage/' . $member->photo) }}">
+@endif
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="{{ url()->current() }}">
 @endsection
 
 @section('content')
@@ -16,6 +25,40 @@
         'threads'   => $member->threads_url,
         'youtube'   => $member->youtube_url,
     ]);
+    $hasUser = (bool) $user;
+    $eduCount   = $hasUser ? $user->educationHistory->count() : 0;
+    $expCount   = $hasUser ? $user->workExperience->count() : 0;
+    $certCount  = $hasUser ? $user->certifications->count() : 0;
+    $pubCount   = $hasUser ? $user->publications->count() : 0;
+    $blogCount  = $blogs->count();
+    $certBadgeColors = [
+        'training'                   => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+        'seminar'                    => 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+        'workshop'                   => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+        'professional_certification' => 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+        'online_course'              => 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
+    ];
+    $certLabels = [
+        'training'                   => __('ui.cert_training'),
+        'seminar'                    => __('ui.cert_seminar'),
+        'workshop'                   => __('ui.cert_workshop'),
+        'professional_certification' => __('ui.cert_professional'),
+        'online_course'              => __('ui.cert_online_course'),
+    ];
+    $pubBadgeColors = [
+        'book'             => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+        'journal_article'  => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+        'research_paper'   => 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
+        'conference_paper' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+        'other'            => 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    ];
+    $pubLabels = [
+        'book'             => __('ui.pub_book'),
+        'journal_article'  => __('ui.pub_journal_article'),
+        'research_paper'   => __('ui.pub_research_paper'),
+        'conference_paper' => __('ui.pub_conference_paper'),
+        'other'            => __('ui.pub_other'),
+    ];
 @endphp
 
 {{-- ── HERO ── --}}
@@ -38,37 +81,40 @@
         <div class="flex flex-col sm:flex-row items-center sm:items-stretch gap-8">
 
             {{-- Photo --}}
-            <div class="shrink-0 sm:self-stretch flex justify-center sm:justify-start">
+            <div class="shrink-0 w-48 sm:w-56">
                 @if($member->photo)
                 <img src="{{ asset('storage/' . $member->photo) }}"
                      alt="{{ $member->fullName() }}"
-                     class="h-48 w-auto sm:h-full max-w-48 min-w-32 rounded-2xl object-cover object-top shadow-xl ring-4 ring-[#4F772D]/40">
+                     class="h-56 sm:h-full w-full rounded-2xl object-cover object-top shadow-xl ring-4 ring-[#4F772D]/40">
                 @else
-                <div class="h-48 w-32 sm:h-full sm:min-h-32 rounded-2xl bg-(--accent)/20 flex items-center justify-center shadow-xl ring-4 ring-[#4F772D]/40">
+                <div class="h-56 sm:h-full w-full rounded-2xl bg-(--accent)/20 flex items-center justify-center shadow-xl ring-4 ring-[#4F772D]/40">
                     <span class="text-5xl font-black text-[#ECF39E]">{{ strtoupper(substr($member->fullName() ?: '?', 0, 1)) }}</span>
                 </div>
                 @endif
             </div>
 
             {{-- Details --}}
-            <div class="text-center sm:text-left">
+            <div class="text-center sm:text-left flex-1">
                 @if($member->front_title)
                 <p class="mb-1 text-sm font-medium text-[#90A955] uppercase tracking-widest">{{ $member->front_title }}</p>
                 @endif
+
                 <h1 class="text-3xl sm:text-4xl font-bold text-[#ECF39E] leading-tight">
                     {{ $user?->name ?? $member->name }}
                 </h1>
+
                 @if($member->back_title)
                 <p class="mt-1 text-base text-[#90A955] font-medium">{{ $member->back_title }}</p>
                 @endif
+
                 @if($member->position)
                 <p class="mt-3 text-base text-[#90A955]">{{ $member->position }}</p>
                 @endif
+
                 @if($member->employee_number)
                 <p class="mt-1 text-xs text-[#4F772D]">ID: {{ $member->employee_number }}</p>
                 @endif
 
-                {{-- Social links --}}
                 @if($member->word_of_wisdom)
                 <blockquote class="mt-5 border-l-2 border-[#4F772D]/50 pl-4 text-sm italic text-[#90A955] max-w-sm">
                     "{{ $member->word_of_wisdom }}"
@@ -95,38 +141,190 @@
                     @endforeach
                 </div>
                 @endif
+
+                {{-- Action buttons --}}
+                <div class="mt-6 flex items-center justify-center sm:justify-start gap-3 flex-wrap">
+                    <a href="{{ lroute('team') }}"
+                       class="inline-flex items-center gap-2 rounded-lg border border-[#4F772D]/40 px-4 py-2 text-sm font-medium text-[#90A955] hover:bg-[#4F772D]/20 hover:text-[#ECF39E] transition-all duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
+                        </svg>
+                        {{ __('ui.back_to_team') }}
+                    </a>
+                    <a href="{{ lroute('team.member.pdf', [$member->nickname]) }}"
+                       target="_blank"
+                       class="inline-flex items-center gap-2 rounded-lg border border-[#4F772D]/40 px-4 py-2 text-sm font-medium text-[#90A955] hover:bg-[#4F772D]/20 hover:text-[#ECF39E] transition-all duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
+                        </svg>
+                        {{ __('ui.export_pdf') }}
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-{{-- ── EDUCATION & EXPERIENCE TIMELINE ── --}}
-@if($user && ($user->educationHistory->isNotEmpty() || $user->workExperience->isNotEmpty()))
-<section class="bg-(--bg-primary) py-16">
+{{-- ── CARD-TAB MENU + CONTENT PANELS ── --}}
+@if($hasUser)
+<section class="bg-(--bg-primary) py-12"
+         x-data="{ activeTab: 'blog' }"
+         x-cloak>
+
     <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
 
-            {{-- Education --}}
-            @if($user->educationHistory->isNotEmpty())
-            <div>
-                <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-(--text-primary)">{{ __('ui.education') }}</h2>
-                    <div class="mt-2 h-0.5 w-12 bg-(--accent)"></div>
+        {{-- Card grid --}}
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+
+            {{-- Blog --}}
+            <button type="button"
+                    @click="activeTab = activeTab === 'blog' ? null : 'blog'"
+                    :class="activeTab === 'blog' ? 'border-(--accent) bg-(--accent)/10 text-(--accent)' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
+                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"/>
+                </svg>
+                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.blog') }}</span>
+                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
+                      :class="activeTab === 'blog' ? 'bg-(--accent) text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
+                    {{ $blogCount }}
+                </span>
+            </button>
+
+            {{-- Education History --}}
+            <button type="button"
+                    @click="activeTab = activeTab === 'edu' ? null : 'edu'"
+                    :class="activeTab === 'edu' ? 'border-(--accent) bg-(--accent)/10 text-(--accent)' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
+                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 3.741-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"/>
+                </svg>
+                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.education') }}</span>
+                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
+                      :class="activeTab === 'edu' ? 'bg-(--accent) text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
+                    {{ $eduCount }}
+                </span>
+            </button>
+
+            {{-- Working Experience --}}
+            <button type="button"
+                    @click="activeTab = activeTab === 'exp' ? null : 'exp'"
+                    :class="activeTab === 'exp' ? 'border-(--accent) bg-(--accent)/10 text-(--accent)' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
+                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"/>
+                </svg>
+                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.experience') }}</span>
+                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
+                      :class="activeTab === 'exp' ? 'bg-(--accent) text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
+                    {{ $expCount }}
+                </span>
+            </button>
+
+            {{-- Certification --}}
+            <button type="button"
+                    @click="activeTab = activeTab === 'cert' ? null : 'cert'"
+                    :class="activeTab === 'cert' ? 'border-(--accent) bg-(--accent)/10 text-(--accent)' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
+                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
+                </svg>
+                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.certifications') }}</span>
+                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
+                      :class="activeTab === 'cert' ? 'bg-(--accent) text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
+                    {{ $certCount }}
+                </span>
+            </button>
+
+            {{-- Publication --}}
+            <button type="button"
+                    @click="activeTab = activeTab === 'pub' ? null : 'pub'"
+                    :class="activeTab === 'pub' ? 'border-(--accent) bg-(--accent)/10 text-(--accent)' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
+                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/>
+                </svg>
+                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.publications') }}</span>
+                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
+                      :class="activeTab === 'pub' ? 'bg-(--accent) text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
+                    {{ $pubCount }}
+                </span>
+            </button>
+
+        </div>
+
+        {{-- ─── BLOG PANEL ─── --}}
+        <div x-show="activeTab === 'blog'"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-2">
+            <div class="rounded-2xl border border-(--border) bg-(--bg-card) p-6">
+                <h2 class="text-xl font-bold text-(--text-primary) mb-6">{{ __('ui.blog') }}</h2>
+                @if($blogs->isEmpty())
+                <p class="text-center text-(--text-muted) py-10">{{ __('ui.no_blog_posts') }}</p>
+                @else
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    @foreach($blogs as $post)
+                    <a href="{{ lroute('content.show', [$post->slug]) }}"
+                       class="group flex flex-col rounded-xl border border-(--border) bg-(--bg-primary) overflow-hidden hover:border-(--accent)/40 hover:-translate-y-1 hover:shadow-md transition-all duration-200">
+                        @if($post->featured_image)
+                        <div class="aspect-video w-full overflow-hidden">
+                            <img src="{{ asset('storage/' . $post->featured_image) }}"
+                                 alt="{{ $post->title }}"
+                                 loading="lazy"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        @endif
+                        <div class="flex flex-col flex-1 p-4 gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                                @if($post->article_date)
+                                <span class="text-xs text-(--text-muted)">{{ \Carbon\Carbon::parse($post->article_date)->format('d M Y') }}</span>
+                                @endif
+                                @if($post->category)
+                                <span class="inline-flex items-center rounded-full bg-(--accent)/10 px-2 py-0.5 text-xs font-semibold text-(--accent)">
+                                    {{ $post->category->name }}
+                                </span>
+                                @endif
+                            </div>
+                            <h3 class="text-sm font-bold text-(--text-primary) leading-snug group-hover:text-(--accent) transition-colors line-clamp-2">
+                                {{ $post->title }}
+                            </h3>
+                            @if($post->excerpt)
+                            <p class="text-xs text-(--text-muted) leading-relaxed line-clamp-2 flex-1">{{ $post->excerpt }}</p>
+                            @endif
+                            <span class="mt-auto text-xs font-semibold text-(--accent) group-hover:underline">{{ __('ui.read_more') }} →</span>
+                        </div>
+                    </a>
+                    @endforeach
                 </div>
+                @endif
+            </div>
+        </div>
 
+        {{-- ─── EDUCATION PANEL ─── --}}
+        <div x-show="activeTab === 'edu'"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-2">
+            <div class="rounded-2xl border border-(--border) bg-(--bg-card) p-6">
+                <h2 class="text-xl font-bold text-(--text-primary) mb-6">{{ __('ui.education') }}</h2>
+                @if($user->educationHistory->isEmpty())
+                <p class="text-center text-(--text-muted) py-10">{{ __('ui.no_education') }}</p>
+                @else
                 <div class="relative">
-                    {{-- Vertical line --}}
                     <div class="absolute left-3 top-2 bottom-2 w-px bg-(--border)"></div>
-
                     <div class="space-y-8">
                         @foreach($user->educationHistory as $edu)
                         <div class="relative pl-10">
-                            {{-- Dot --}}
-                            <div class="absolute left-0 top-1.5 h-6 w-6 rounded-full border-2 border-(--accent) bg-(--bg-primary) flex items-center justify-center">
+                            <div class="absolute left-0 top-1.5 h-6 w-6 rounded-full border-2 border-(--accent) bg-(--bg-card) flex items-center justify-center">
                                 <div class="h-2 w-2 rounded-full bg-(--accent)"></div>
                             </div>
-
-                            {{-- Year + Institution --}}
                             <div class="flex flex-wrap items-center gap-2 mb-2">
                                 <span class="inline-flex items-center rounded-full border border-(--accent) px-2.5 py-0.5 text-xs font-semibold text-(--accent)">
                                     {{ $edu->start_year }}{{ $edu->end_year ? ' – ' . $edu->end_year : ' – ' . __('ui.present') }}
@@ -135,19 +333,15 @@
                                 <span class="text-xs text-(--text-muted)">{{ $edu->institution }}</span>
                                 @endif
                             </div>
-
-                            {{-- Degree / Title --}}
                             <h3 class="text-base font-bold text-(--text-primary) leading-snug">
                                 {{ $edu->degree }}
                                 @if($edu->field_of_study)
                                 <span class="font-normal text-(--text-muted)">· {{ $edu->field_of_study }}</span>
                                 @endif
                             </h3>
-
                             @if($edu->gpa)
                             <p class="mt-1 text-xs text-(--accent)">GPA: {{ $edu->gpa }}</p>
                             @endif
-
                             @if($edu->description)
                             <p class="mt-2 text-sm text-(--text-muted) leading-relaxed">{{ $edu->description }}</p>
                             @endif
@@ -155,30 +349,31 @@
                         @endforeach
                     </div>
                 </div>
+                @endif
             </div>
-            @endif
+        </div>
 
-            {{-- Experience --}}
-            @if($user->workExperience->isNotEmpty())
-            <div>
-                <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-(--text-primary)">{{ __('ui.experience') }}</h2>
-                    <div class="mt-2 h-0.5 w-12 bg-(--accent)"></div>
-                </div>
-
+        {{-- ─── EXPERIENCE PANEL ─── --}}
+        <div x-show="activeTab === 'exp'"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-2">
+            <div class="rounded-2xl border border-(--border) bg-(--bg-card) p-6">
+                <h2 class="text-xl font-bold text-(--text-primary) mb-6">{{ __('ui.experience') }}</h2>
+                @if($user->workExperience->isEmpty())
+                <p class="text-center text-(--text-muted) py-10">{{ __('ui.no_experience') }}</p>
+                @else
                 <div class="relative">
-                    {{-- Vertical line --}}
                     <div class="absolute left-3 top-2 bottom-2 w-px bg-(--border)"></div>
-
                     <div class="space-y-8">
                         @foreach($user->workExperience as $exp)
                         <div class="relative pl-10">
-                            {{-- Dot --}}
-                            <div class="absolute left-0 top-1.5 h-6 w-6 rounded-full border-2 border-(--accent) bg-(--bg-primary) flex items-center justify-center">
+                            <div class="absolute left-0 top-1.5 h-6 w-6 rounded-full border-2 border-(--accent) bg-(--bg-card) flex items-center justify-center">
                                 <div class="h-2 w-2 rounded-full bg-(--accent)"></div>
                             </div>
-
-                            {{-- Year + Company --}}
                             <div class="flex flex-wrap items-center gap-2 mb-2">
                                 <span class="inline-flex items-center rounded-full border border-(--accent) px-2.5 py-0.5 text-xs font-semibold text-(--accent)">
                                     {{ $exp->start_year }}{{ $exp->end_year ? ' – ' . $exp->end_year : ' – ' . __('ui.current') }}
@@ -187,15 +382,12 @@
                                 <span class="text-xs text-(--text-muted)">{{ $exp->company }}</span>
                                 @endif
                             </div>
-
-                            {{-- Job title --}}
                             <h3 class="text-base font-bold text-(--text-primary) leading-snug">
                                 {{ $exp->job_title }}
                                 @if($exp->department)
                                 <span class="font-normal text-(--text-muted)">· {{ $exp->department }}</span>
                                 @endif
                             </h3>
-
                             @if($exp->description)
                             <p class="mt-2 text-sm text-(--text-muted) leading-relaxed">{{ $exp->description }}</p>
                             @endif
@@ -203,184 +395,114 @@
                         @endforeach
                     </div>
                 </div>
+                @endif
             </div>
-            @endif
-
-        </div>
-    </div>
-</section>
-@endif
-
-{{-- ── CERTIFICATES ── --}}
-@if($user && $user->certifications->isNotEmpty())
-@php
-    $certBadgeColors = [
-        'training'                => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-        'seminar'                 => 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
-        'workshop'                => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-        'professional_certification' => 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
-        'online_course'           => 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
-    ];
-    $certLabels = [
-        'training'                => __('ui.cert_training'),
-        'seminar'                 => __('ui.cert_seminar'),
-        'workshop'                => __('ui.cert_workshop'),
-        'professional_certification' => __('ui.cert_professional'),
-        'online_course'           => __('ui.cert_online_course'),
-    ];
-@endphp
-<section class="bg-[#132A13] dark:bg-[#0d1f0d] py-16">
-    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-
-        <div class="mb-10">
-            <h2 class="text-2xl font-bold text-[#ECF39E]">{{ __('ui.certifications') }}</h2>
-            <div class="mt-2 h-0.5 w-12 bg-[#4F772D]"></div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            @foreach($user->certifications as $cert)
-            <div class="flex gap-4 rounded-2xl border border-[#4F772D]/30 bg-[#1a3a1a] p-4 hover:border-[#4F772D]/60 transition-colors duration-200">
-
-                {{-- Icon --}}
-                <div class="shrink-0 flex h-12 w-12 items-center justify-center rounded-xl bg-[#4F772D]/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-[#90A955]">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 3.741-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"/>
-                    </svg>
-                </div>
-
-                {{-- Content --}}
-                <div class="min-w-0 flex-1">
-                    @if($cert->category)
-                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold mb-1.5 {{ $certBadgeColors[$cert->category] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' }}">
-                        {{ $certLabels[$cert->category] ?? ucfirst($cert->category) }}
-                    </span>
-                    @endif
-                    <h3 class="text-sm font-bold text-[#ECF39E] leading-snug">{{ $cert->title }}</h3>
-                    @if($cert->issuing_organization)
-                    <p class="mt-0.5 text-xs text-[#90A955]">{{ $cert->issuing_organization }}</p>
-                    @endif
-                    @if($cert->issue_year)
-                    <p class="mt-1 text-xs text-[#4F772D]">{{ $cert->issue_year }}</p>
-                    @endif
-                </div>
-            </div>
-            @endforeach
-        </div>
-
-    </div>
-</section>
-@endif
-
-{{-- ── PUBLICATIONS ── --}}
-@if($user && $user->publications->isNotEmpty())
-@php
-    $pubBadgeColors = [
-        'book'             => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
-        'journal_article'  => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-        'research_paper'   => 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
-        'conference_paper' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-        'other'            => 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
-    ];
-    $pubLabels = [
-        'book'             => __('ui.pub_book'),
-        'journal_article'  => __('ui.pub_journal_article'),
-        'research_paper'   => __('ui.pub_research_paper'),
-        'conference_paper' => __('ui.pub_conference_paper'),
-        'other'            => __('ui.pub_other'),
-    ];
-@endphp
-<section class="bg-(--bg-alt) dark:bg-(--bg-primary) py-16">
-    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-
-        <div class="mb-10">
-            <h2 class="text-2xl font-bold text-(--text-primary)">{{ __('ui.publications') }}</h2>
-            <div class="mt-2 h-0.5 w-12 bg-(--accent)"></div>
-        </div>
-
-        <div class="space-y-4">
-            @foreach($user->publications as $pub)
-            <div class="rounded-2xl border border-(--border) bg-(--bg-card) p-5 hover:border-(--accent)/40 transition-colors duration-200">
-                <div class="flex flex-col sm:flex-row sm:items-start gap-4">
-
-                    {{-- Left --}}
-                    <div class="flex-1 min-w-0">
-                        <div class="flex flex-wrap items-center gap-2 mb-2">
-                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $pubBadgeColors[$pub->type] ?? $pubBadgeColors['other'] }}">
-                                {{ $pubLabels[$pub->type] ?? ucfirst(str_replace('_', ' ', $pub->type)) }}
+        {{-- ─── CERTIFICATION PANEL ─── --}}
+        <div x-show="activeTab === 'cert'"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-2">
+            <div class="rounded-2xl border border-(--border) bg-(--bg-card) p-6">
+                <h2 class="text-xl font-bold text-(--text-primary) mb-6">{{ __('ui.certifications') }}</h2>
+                @if($user->certifications->isEmpty())
+                <p class="text-center text-(--text-muted) py-10">{{ __('ui.no_certifications') }}</p>
+                @else
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    @foreach($user->certifications as $cert)
+                    <div class="flex gap-4 rounded-xl border border-(--border) bg-(--bg-primary) p-4 hover:border-(--accent)/40 transition-colors duration-200">
+                        <div class="shrink-0 flex h-11 w-11 items-center justify-center rounded-xl bg-(--accent)/10">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-(--accent)">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            @if($cert->category)
+                            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold mb-1.5 {{ $certBadgeColors[$cert->category] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' }}">
+                                {{ $certLabels[$cert->category] ?? ucfirst($cert->category) }}
                             </span>
-                            @if($pub->year)
-                            <span class="text-xs text-(--text-muted)">{{ $pub->year }}</span>
+                            @endif
+                            <h3 class="text-sm font-bold text-(--text-primary) leading-snug">{{ $cert->title }}</h3>
+                            @if($cert->issuing_organization)
+                            <p class="mt-0.5 text-xs text-(--text-muted)">{{ $cert->issuing_organization }}</p>
+                            @endif
+                            @if($cert->issue_year)
+                            <p class="mt-1 text-xs text-(--accent)">{{ $cert->issue_year }}</p>
                             @endif
                         </div>
-
-                        <h3 class="text-base font-bold text-(--text-primary) leading-snug">{{ $pub->title }}</h3>
-
-                        @if($pub->publisher)
-                        <p class="mt-1 text-sm text-(--accent)">{{ $pub->publisher }}</p>
-                        @endif
-
-                        @if($pub->description)
-                        <p class="mt-2 text-sm text-(--text-muted) leading-relaxed line-clamp-3">{{ $pub->description }}</p>
-                        @endif
-
-                        @if($pub->doi || $pub->isbn)
-                        <p class="mt-2 text-xs text-(--text-muted)">
-                            @if($pub->doi)<span class="font-medium">DOI:</span> {{ $pub->doi }}@endif
-                            @if($pub->doi && $pub->isbn) &nbsp;·&nbsp; @endif
-                            @if($pub->isbn)<span class="font-medium">ISBN:</span> {{ $pub->isbn }}@endif
-                        </p>
-                        @endif
                     </div>
-
-                    {{-- Link button --}}
-                    @if($pub->url)
-                    <div class="shrink-0">
-                        <a href="{{ $pub->url }}" target="_blank" rel="noopener noreferrer"
-                           class="inline-flex items-center gap-1.5 rounded-xl border border-(--border) px-3 py-2 text-xs font-semibold text-(--accent) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-all duration-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"/>
-                            </svg>
-                            {{ __('ui.view') }}
-                        </a>
-                    </div>
-                    @endif
-
+                    @endforeach
                 </div>
+                @endif
             </div>
-            @endforeach
+        </div>
+
+        {{-- ─── PUBLICATION PANEL ─── --}}
+        <div x-show="activeTab === 'pub'"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-2">
+            <div class="rounded-2xl border border-(--border) bg-(--bg-card) p-6">
+                <h2 class="text-xl font-bold text-(--text-primary) mb-6">{{ __('ui.publications') }}</h2>
+                @if($user->publications->isEmpty())
+                <p class="text-center text-(--text-muted) py-10">{{ __('ui.no_publications') }}</p>
+                @else
+                <div class="space-y-4">
+                    @foreach($user->publications as $pub)
+                    <div class="rounded-xl border border-(--border) bg-(--bg-primary) p-5 hover:border-(--accent)/40 transition-colors duration-200">
+                        <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex flex-wrap items-center gap-2 mb-2">
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $pubBadgeColors[$pub->type] ?? $pubBadgeColors['other'] }}">
+                                        {{ $pubLabels[$pub->type] ?? ucfirst(str_replace('_', ' ', $pub->type)) }}
+                                    </span>
+                                    @if($pub->year)
+                                    <span class="text-xs text-(--text-muted)">{{ $pub->year }}</span>
+                                    @endif
+                                </div>
+                                <h3 class="text-base font-bold text-(--text-primary) leading-snug">{{ $pub->title }}</h3>
+                                @if($pub->publisher)
+                                <p class="mt-1 text-sm text-(--accent)">{{ $pub->publisher }}</p>
+                                @endif
+                                @if($pub->description)
+                                <p class="mt-2 text-sm text-(--text-muted) leading-relaxed line-clamp-3">{{ $pub->description }}</p>
+                                @endif
+                                @if($pub->doi || $pub->isbn)
+                                <p class="mt-2 text-xs text-(--text-muted)">
+                                    @if($pub->doi)<span class="font-medium">DOI:</span> {{ $pub->doi }}@endif
+                                    @if($pub->doi && $pub->isbn) &nbsp;·&nbsp; @endif
+                                    @if($pub->isbn)<span class="font-medium">ISBN:</span> {{ $pub->isbn }}@endif
+                                </p>
+                                @endif
+                            </div>
+                            @if($pub->url)
+                            <div class="shrink-0">
+                                <a href="{{ $pub->url }}" target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1.5 rounded-xl border border-(--border) px-3 py-2 text-xs font-semibold text-(--accent) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-all duration-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"/>
+                                    </svg>
+                                    {{ __('ui.view') }}
+                                </a>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @endif
+            </div>
         </div>
 
     </div>
 </section>
 @endif
-
-{{-- ── BACK LINK ── --}}
-<div class="h-px bg-linear-to-r from-transparent via-(--accent) to-transparent opacity-30"></div>
-
-<div class="bg-(--bg-primary) py-8">
-    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-
-        {{-- Left: back link --}}
-        <a href="{{ lroute('team') }}"
-           class="inline-flex items-center gap-2 text-sm font-medium text-(--accent) hover:text-(--text-primary) transition-colors group">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                 class="h-4 w-4 group-hover:-translate-x-0.5 transition-transform duration-200">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
-            </svg>
-            {{ __('ui.back_to_team') }}
-        </a>
-
-        {{-- Right: export PDF --}}
-        <a href="{{ lroute('team.member.pdf', [$member->getKey()]) }}"
-           target="_blank"
-           class="inline-flex items-center gap-2 rounded-lg border border-(--border) px-4 py-2 text-sm font-semibold text-(--accent) hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-all duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
-            </svg>
-            {{ __('ui.export_pdf') }}
-        </a>
-
-    </div>
-</div>
 
 @endsection

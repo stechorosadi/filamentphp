@@ -33,8 +33,9 @@ class SitemapController extends Controller
             ->orderBy('name')
             ->get();
 
-        $teamMembers = TeamMember::select('id', 'updated_at')
+        $teamMembers = TeamMember::select('id', 'nickname', 'updated_at')
             ->where('is_visible', true)
+            ->whereNotNull('nickname')
             ->get();
 
         $xml = view('sitemap', compact(
@@ -70,9 +71,10 @@ class SitemapController extends Controller
             ->orderBy('name')
             ->get();
 
-        $teamMembers = TeamMember::select('id', 'user_id', 'name', 'front_title', 'back_title', 'updated_at')
+        $teamMembers = TeamMember::select('id', 'nickname', 'user_id', 'name', 'front_title', 'back_title', 'updated_at')
             ->with('user:id,name')
             ->where('is_visible', true)
+            ->whereNotNull('nickname')
             ->get();
 
         return view('sitemap-html', compact(

@@ -66,7 +66,7 @@
     {{-- ── Team member profiles ── --}}
     @foreach($teamMembers as $member)
     <url>
-        <loc>{{ lroute('team.member', ['member' => $member->id]) }}</loc>
+        <loc>{{ lroute('team.member', ['member' => $member->nickname]) }}</loc>
         <lastmod>{{ $member->updated_at->toAtomString() }}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>

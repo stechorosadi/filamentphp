@@ -4,12 +4,14 @@ namespace App\Providers;
 
 use App\Models\SiteSetting;
 use App\Models\Tag;
+use App\Models\TeamMember;
 use App\Policies\MenuPolicy;
 use App\Policies\TagPolicy;
 use Datlechin\FilamentMenuBuilder\Models\Menu;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
         // TagPolicy: Tag model exists in App\Models but policy was missing.
         // MenuPolicy: Menu model is from a third-party package, so auto-discovery
         //             cannot match it to App\Policies\MenuPolicy.
+        Route::bind('member', fn ($value) => TeamMember::where('nickname', $value)->firstOrFail());
+
         Gate::policy(Tag::class, TagPolicy::class);
         Gate::policy(Menu::class, MenuPolicy::class);
 

@@ -284,6 +284,18 @@ class HomeController extends Controller
             'user.publications',
         ]);
 
-        return view('team.show', compact('member'));
+        $blogs = collect();
+
+        if ($member->user_id) {
+            $blogs = Content::where('user_id', $member->user_id)
+                ->where('published', true)
+                ->where('archived', false)
+                ->whereHas('classification', fn ($q) => $q->where('slug', 'blog'))
+                ->with(['category', 'classification'])
+                ->latest('article_date')
+                ->get();
+        }
+
+        return view('team.show', compact('member', 'blogs'));
     }
 }
