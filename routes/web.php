@@ -12,16 +12,25 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 
 // PWA manifest — dynamic so it reflects site settings (name, colors)
 Route::get('/manifest.webmanifest', function () {
-    $setting = Cache::remember('site_setting', 300, fn () => SiteSetting::instance());
+    $setting = Cache::remember('site_setting_manifest', 300, function () {
+        $s = SiteSetting::instance();
+
+        return [
+            'title'      => $s->getTranslation('site_title', 'id') ?: config('app.name'),
+            'desc'       => $s->getTranslation('site_description', 'id') ?? '',
+            'bg'         => $s->color_light_bg ?? '#ECF39E',
+            'theme'      => $s->color_accent ?? '#4F772D',
+        ];
+    });
 
     return response()->json([
-        'name' => $setting->getTranslation('site_title', 'id') ?: config('app.name'),
-        'short_name' => $setting->getTranslation('site_title', 'id') ?: config('app.name'),
-        'description' => $setting->getTranslation('site_description', 'id') ?? '',
-        'start_url' => '/id/',
-        'display' => 'standalone',
-        'background_color' => $setting->color_light_bg ?? '#ECF39E',
-        'theme_color' => $setting->color_accent ?? '#4F772D',
+        'name'             => $setting['title'],
+        'short_name'       => $setting['title'],
+        'description'      => $setting['desc'],
+        'start_url'        => '/id/',
+        'display'          => 'standalone',
+        'background_color' => $setting['bg'],
+        'theme_color'      => $setting['theme'],
         'icons' => [
             ['src' => '/icons/icon-192.png', 'sizes' => '192x192', 'type' => 'image/png', 'purpose' => 'any'],
             ['src' => '/icons/icon-512.png', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any'],
@@ -32,14 +41,14 @@ Route::get('/manifest.webmanifest', function () {
                 'sizes'       => '1498x903',
                 'type'        => 'image/png',
                 'form_factor' => 'wide',
-                'label'       => $setting->getTranslation('site_title', 'id') ?: config('app.name'),
+                'label'       => $setting['title'],
             ],
             [
                 'src'         => '/storage/screenshots/mobile-screenshot.png',
                 'sizes'       => '375x798',
                 'type'        => 'image/png',
                 'form_factor' => 'narrow',
-                'label'       => $setting->getTranslation('site_title', 'id') ?: config('app.name'),
+                'label'       => $setting['title'],
             ],
         ],
     ])->header('Content-Type', 'application/manifest+json');
