@@ -42,6 +42,11 @@ class TeamMember extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'nickname';
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

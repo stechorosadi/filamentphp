@@ -6,12 +6,12 @@
 <meta property="og:title" content="{{ $siteSetting->site_title }}">
 <meta property="og:description" content="{{ $siteSetting->site_description ?? 'Discover articles, research, and resources curated by our team.' }}">
 <meta property="og:type" content="website">
-<meta property="og:url" content="{{ url('/') }}">
+<meta property="og:url" content="{{ route('home', ['locale' => app()->getLocale()]) }}">
 @if($featuredContents->isNotEmpty() && $featuredContents->first()->featured_image)
 <meta property="og:image" content="{{ asset('storage/' . $featuredContents->first()->featured_image) }}">
 @endif
 <meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="{{ url('/') }}">
+<link rel="canonical" href="{{ route('home', ['locale' => app()->getLocale()]) }}">
 @endsection
 
 @section('content')
