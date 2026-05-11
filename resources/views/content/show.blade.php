@@ -221,7 +221,7 @@
 
                         {{-- Copy link --}}
                         <button @click="navigator.clipboard.writeText('{{ url()->current() }}').then(() => { copied = true; setTimeout(() => copied = false, 2000) })"
-                                :title="copied ? 'Copied!' : 'Copy link'"
+                                :aria-label="copied ? 'Copied!' : 'Copy link'"
                                 :class="copied ? 'bg-(--accent) text-white border-(--accent)' : 'text-(--accent) border-(--border)'"
                                 class="flex h-8 w-8 items-center justify-center rounded-lg border hover:bg-(--accent) hover:text-white hover:border-(--accent) transition-all duration-200">
                             <svg x-show="!copied" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">

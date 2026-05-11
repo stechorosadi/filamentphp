@@ -142,13 +142,13 @@
 
                             {{-- Mobile-only prev/next arrows (positioned on sides of image) --}}
                             @if($featuredContents->count() > 1)
-                            <button @click="prev()" class="lg:hidden absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white transition-all duration-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
+                            <button @click="prev()" aria-label="Previous slide" class="lg:hidden absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
                                 </svg>
                             </button>
-                            <button @click="next()" class="lg:hidden absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white transition-all duration-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
+                            <button @click="next()" aria-label="Next slide" class="lg:hidden absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
                                 </svg>
                             </button>
@@ -198,20 +198,22 @@
         <div class="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
             @foreach($featuredContents as $i => $_)
             <button @click="go({{ $i }})"
+                    aria-label="Go to slide {{ $i + 1 }}"
+                    :aria-current="current === {{ $i }} ? 'true' : 'false'"
                     :class="current === {{ $i }} ? 'w-6 bg-[var(--accent)]' : 'w-2 bg-[var(--accent-dim)] dark:bg-[var(--accent)]'"
                     class="h-2 rounded-full transition-all duration-300"></button>
             @endforeach
         </div>
 
         {{-- Prev arrow (desktop only) --}}
-        <button @click="prev()" class="hidden lg:flex absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2.5 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white dark:hover:bg-[var(--accent)] transition-all duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
+        <button @click="prev()" aria-label="Previous slide" class="hidden lg:flex absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2.5 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white dark:hover:bg-[var(--accent)] transition-all duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
             </svg>
         </button>
 
         {{-- Next arrow (desktop only) --}}
-        <button @click="next()" class="hidden lg:flex absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2.5 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white dark:hover:bg-[var(--accent)] transition-all duration-200">
+        <button @click="next()" aria-label="Next slide" class="hidden lg:flex absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white/70 dark:bg-[var(--bg-card)]/70 p-2.5 text-[var(--text-muted)] shadow-md backdrop-blur hover:bg-[var(--accent)] hover:text-white dark:hover:bg-[var(--accent)] transition-all duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
             </svg>
@@ -241,8 +243,9 @@
 
                 {{-- Close --}}
                 <button @click="preview = false"
+                        aria-label="Close video preview"
                         class="absolute top-3 right-3 z-10 rounded-lg p-1.5 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
                     </svg>
                 </button>
@@ -853,10 +856,11 @@
 
             {{-- Prev arrow --}}
             <button @click="prev()"
+                    aria-label="Previous"
                     class="absolute left-0 top-1/3 -translate-y-1/2 -translate-x-3 z-10
                            flex h-9 w-9 items-center justify-center rounded-full
                            bg-(--accent) text-white shadow-lg hover:opacity-80 transition-opacity">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
                 </svg>
             </button>
@@ -887,10 +891,11 @@
 
             {{-- Next arrow --}}
             <button @click="next()"
+                    aria-label="Next"
                     class="absolute right-0 top-1/3 -translate-y-1/2 translate-x-3 z-10
                            flex h-9 w-9 items-center justify-center rounded-full
                            bg-(--accent) text-white shadow-lg hover:opacity-80 transition-opacity">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-4 w-4" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
                 </svg>
             </button>
