@@ -26,6 +26,22 @@ Route::get('/manifest.webmanifest', function () {
             ['src' => '/icons/icon-192.png', 'sizes' => '192x192', 'type' => 'image/png', 'purpose' => 'any'],
             ['src' => '/icons/icon-512.png', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any'],
         ],
+        'screenshots' => [
+            [
+                'src'         => '/storage/screenshots/desktop-screenshot.png',
+                'sizes'       => '1498x903',
+                'type'        => 'image/png',
+                'form_factor' => 'wide',
+                'label'       => $setting->getTranslation('site_title', 'id') ?: config('app.name'),
+            ],
+            [
+                'src'         => '/storage/screenshots/mobile-screenshot.png',
+                'sizes'       => '375x798',
+                'type'        => 'image/png',
+                'form_factor' => 'narrow',
+                'label'       => $setting->getTranslation('site_title', 'id') ?: config('app.name'),
+            ],
+        ],
     ])->header('Content-Type', 'application/manifest+json');
 })->name('manifest');
 
