@@ -6,6 +6,7 @@ use App\Filament\Actions\TranslateAction;
 use App\Filament\Resources\ContentResource\Pages;
 use App\Filament\Resources\ContentResource\RelationManagers;
 use App\Models\Content;
+use App\Services\ImageConverter;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -39,6 +40,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ContentResource extends Resource
 {
@@ -224,28 +226,30 @@ class ContentResource extends Resource
                                     ->image()
                                     ->disk('public')
                                     ->directory('content-headers')
-                                    ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                     ->maxSize(5120)
                                     ->imageEditor()
                                     ->imageEditorAspectRatioOptions(['16:9'])
                                     ->automaticallyResizeImagesToWidth(1280)
                                     ->automaticallyResizeImagesToHeight(720)
                                     ->automaticallyResizeImagesMode('cover')
-                                    ->automaticallyUpscaleImagesWhenResizing(),
+                                    ->automaticallyUpscaleImagesWhenResizing()
+                                    ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file) => ImageConverter::toWebp($file, 'content-headers')),
 
                                 FileUpload::make('featured_image')
                                     ->label('Featured Image (1280×720)')
                                     ->image()
                                     ->disk('public')
                                     ->directory('content-featured')
-                                    ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                     ->maxSize(5120)
                                     ->imageEditor()
                                     ->imageEditorAspectRatioOptions(['16:9'])
                                     ->automaticallyResizeImagesToWidth(1280)
                                     ->automaticallyResizeImagesToHeight(720)
                                     ->automaticallyResizeImagesMode('cover')
-                                    ->automaticallyUpscaleImagesWhenResizing(),
+                                    ->automaticallyUpscaleImagesWhenResizing()
+                                    ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file) => ImageConverter::toWebp($file, 'content-featured')),
                             ])
                             ->columns(2),
                     ])

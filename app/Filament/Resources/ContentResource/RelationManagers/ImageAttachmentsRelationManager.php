@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ContentResource\RelationManagers;
 
 use App\Models\ContentImage;
+use App\Services\ImageConverter;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -17,6 +18,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ImageAttachmentsRelationManager extends RelationManager
 {
@@ -32,12 +34,13 @@ class ImageAttachmentsRelationManager extends RelationManager
                 ->image()
                 ->disk('public')
                 ->directory('content-images')
-                ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                 ->maxSize(5120)
                 ->imageEditor()
                 ->automaticallyResizeImagesToWidth(1024)
                 ->automaticallyResizeImagesMode('contain')
                 ->automaticallyUpscaleImagesWhenResizing(false)
+                ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file) => ImageConverter::toWebp($file, 'content-images'))
                 ->required()
                 ->columnSpanFull(),
 

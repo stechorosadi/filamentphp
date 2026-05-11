@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Filament\Actions\TranslateAction;
 use App\Models\SiteSetting;
+use App\Services\ImageConverter;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
@@ -17,6 +18,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Cache;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ManageSiteSettings extends Page
 {
@@ -138,12 +140,13 @@ class ManageSiteSettings extends Page
                             ->disk('public')
                             ->directory('site')
                             ->visibility('public')
-                            ->acceptedFileTypes(['image/png', 'image/jpeg'])
+                            ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
                             ->maxSize(2048)
                             ->automaticallyResizeImagesToHeight(128)
                             ->automaticallyResizeImagesMode('contain')
                             ->automaticallyUpscaleImagesWhenResizing(false)
-                            ->helperText('PNG or JPG · max 2 MB · auto-resized to 128px height'),
+                            ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file) => ImageConverter::toWebp($file, 'site'))
+                            ->helperText('PNG, JPG or WebP · max 2 MB · auto-resized to 128px height · saved as WebP'),
 
                         FileUpload::make('favicon_path')
                             ->label('Favicon')

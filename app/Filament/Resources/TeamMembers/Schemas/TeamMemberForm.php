@@ -5,6 +5,7 @@ namespace App\Filament\Resources\TeamMembers\Schemas;
 use App\Enums\TeamMemberStatus;
 use App\Filament\Actions\TranslateAction;
 use App\Models\User;
+use App\Services\ImageConverter;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -16,6 +17,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class TeamMemberForm
 {
@@ -125,7 +127,8 @@ class TeamMemberForm
                             ->automaticallyResizeImagesMode('cover')
                             ->automaticallyResizeImagesToWidth('1000')
                             ->automaticallyResizeImagesToHeight('1000')
-                            ->helperText('PNG, JPG or WebP · max 1 MB · resized to 1000×1000px'),
+                            ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file) => ImageConverter::toWebp($file, 'team'))
+                            ->helperText('PNG, JPG or WebP · max 5 MB · resized to 1000×1000px · saved as WebP'),
                     ])
                     ->columns(1),
 

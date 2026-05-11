@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use App\Services\ImageConverter;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class UserResource extends Resource
 {
@@ -74,7 +76,7 @@ class UserResource extends Resource
                                     ->disk('public')
                                     ->directory('avatars')
                                     ->visibility('public')
-                                    ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                     ->maxSize(5120)
                                     ->imageEditor()
                                     ->imageEditorAspectRatioOptions(['1:1'])
@@ -82,6 +84,7 @@ class UserResource extends Resource
                                     ->automaticallyResizeImagesToHeight(240)
                                     ->automaticallyResizeImagesMode('cover')
                                     ->automaticallyUpscaleImagesWhenResizing()
+                                    ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file) => ImageConverter::toWebp($file, 'avatars'))
                                     ->imagePreviewHeight('240')
                                     ->columnSpanFull(),
                             ]),
