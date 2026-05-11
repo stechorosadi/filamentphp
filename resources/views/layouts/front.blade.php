@@ -91,7 +91,9 @@
     $currentLocale = app()->getLocale();
     $currentRoute  = request()->route();
     $routeName     = $currentRoute?->getName();
-    $routeParams   = $currentRoute?->parameters() ?? [];
+    $routeParams = collect($currentRoute?->parameters() ?? [])
+        ->map(fn ($value) => $value instanceof \App\Models\TeamMember ? $value->nickname : $value)
+        ->all();
     $routeHasLocale = $currentRoute && in_array('locale', $currentRoute->parameterNames());
     $urlId = $routeHasLocale
         ? route($routeName, array_merge($routeParams, ['locale' => 'id']))
