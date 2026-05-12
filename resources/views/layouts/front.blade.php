@@ -57,7 +57,9 @@
             --accent-dim:   {{ $thMix($acc, '#ffffff', 0.35) }};
             --border:       {{ $thMix($acc, '#ffffff', 0.45) }};
             --dark-section: {{ $thMix($ltxt, $dbg, 0.6) }};
+            --dark-bg:      {{ $dbg }};
             --on-dark:      {{ $lbg }};
+            --accent-on-dark: {{ $dacc }};
         }
         :where(.dark, .dark *) {
             --bg-primary:   {{ $dbg }};
@@ -69,6 +71,7 @@
             --accent-dim:   {{ $thMix($dacc, '#000000', 0.20) }};
             --border:       {{ $thMix($dbg, $dacc, 0.40) }};
             --dark-section: {{ $thMix($dbg, '#000000', 0.25) }};
+            --dark-bg:      {{ $thMix($dbg, '#000000', 0.12) }};
         }
     </style>
 </head>
@@ -192,7 +195,7 @@
                 <a href="{{ $href }}"
                    target="{{ $item->target === '_blank' ? '_blank' : '_self' }}"
                    class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors
-                          {{ $active ? 'text-[var(--text-primary)] dark:text-[var(--accent)] bg-[var(--accent-dim)]' : 'text-[var(--text-primary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[var(--bg-alt)]' }}">
+                          {{ $active ? 'text-[var(--text-primary)] dark:text-[var(--accent)] bg-[var(--accent-dim)]' : 'text-[var(--text-primary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-(--bg-alt)' }}">
                     {{ $item->title }}
                 </a>
                 @endforeach
@@ -209,7 +212,7 @@
                 </div>
 
                 {{-- Dark toggle --}}
-                <button @click="toggleDark()" class="rounded-lg p-2 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors" aria-label="{{ __('ui.dark_mode') }}">
+                <button @click="toggleDark()" class="rounded-lg p-2 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-(--bg-alt) transition-colors" aria-label="{{ __('ui.dark_mode') }}">
                     <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-(--text-primary)">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
                     </svg>
@@ -221,7 +224,7 @@
 
             {{-- Mobile: dark toggle + burger --}}
             <div class="flex md:hidden items-center gap-2">
-                <button @click="toggleDark()" class="rounded-lg p-2 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors" aria-label="{{ __('ui.dark_mode') }}">
+                <button @click="toggleDark()" class="rounded-lg p-2 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-(--bg-alt) transition-colors" aria-label="{{ __('ui.dark_mode') }}">
                     <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-(--text-primary)">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
                     </svg>
@@ -231,7 +234,7 @@
                 </button>
 
                 {{-- Burger / X --}}
-                <button @click="mobileMenu = !mobileMenu" class="rounded-lg p-2 text-[var(--text-muted)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors" aria-label="Toggle menu">
+                <button @click="mobileMenu = !mobileMenu" class="rounded-lg p-2 text-[var(--text-muted)] hover:bg-[var(--accent-dim)] dark:hover:bg-(--bg-alt) transition-colors" aria-label="Toggle menu">
                     <svg x-show="!mobileMenu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
                     </svg>
@@ -258,7 +261,7 @@
                    href="{{ $href }}"
                    target="{{ $item->target === '_blank' ? '_blank' : '_self' }}"
                    class="px-4 py-3 rounded-lg text-sm font-medium transition-colors
-                          {{ $active ? 'text-[var(--text-primary)] dark:text-[var(--accent)] bg-[var(--accent-dim)]' : 'text-[var(--text-primary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[var(--bg-alt)]' }}">
+                          {{ $active ? 'text-[var(--text-primary)] dark:text-[var(--accent)] bg-[var(--accent-dim)]' : 'text-[var(--text-primary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-(--bg-alt)' }}">
                     {{ $item->title }}
                 </a>
                 @endforeach
@@ -271,14 +274,14 @@
 @yield('content')
 
 {{-- ── FOOTER ── --}}
-<footer class="relative bg-[#132A13] dark:bg-[var(--dark-section)] overflow-hidden">
-    {{-- Amber top border accent --}}
-    <div class="h-px bg-linear-to-r from-transparent via-[#4F772D]/60 to-transparent"></div>
+<footer class="relative bg-(--dark-bg) overflow-hidden">
+    {{-- Top accent line --}}
+    <div class="h-px bg-linear-to-r from-transparent via-(--accent-on-dark)/40 to-transparent"></div>
 
     {{-- Background decorations --}}
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff07_1px,transparent_1px),linear-gradient(to_bottom,#ffffff07_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
-    <div class="absolute -top-16 right-0 h-56 w-56 rounded-full bg-[var(--accent)]/10 blur-3xl pointer-events-none"></div>
-    <div class="absolute bottom-0 -left-16 h-48 w-48 rounded-full bg-[var(--accent)]/20 blur-3xl pointer-events-none"></div>
+    <div class="absolute -top-16 right-0 h-56 w-56 rounded-full bg-(--accent-on-dark)/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 -left-16 h-48 w-48 rounded-full bg-(--accent-on-dark)/15 blur-3xl pointer-events-none"></div>
 
     {{-- Main content --}}
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-6">
@@ -292,11 +295,11 @@
                     @if($siteSetting->logo_path)
                     <img src="{{ Storage::disk('public')->url($siteSetting->logo_path) }}"
                          alt="{{ $siteSetting->site_title }}"
-                         class="h-8 w-auto object-contain">
+                         class="h-8 w-auto object-contain opacity-90">
                     @endif
-                    <span class="text-2xl font-bold text-[#90A955] tracking-tight">{{ $siteSetting->site_title }}</span>
+                    <span class="text-2xl font-bold text-white tracking-tight">{{ $siteSetting->site_title }}</span>
                 </div>
-                <p class="mt-2 text-sm text-[#90A955] max-w-xs leading-relaxed">
+                <p class="mt-2 text-sm text-(--accent-on-dark)/80 max-w-xs leading-relaxed">
                     {{ $siteSetting->site_description ?: 'Discover articles, research, and resources curated by our team.' }}
                 </p>
 
@@ -313,7 +316,7 @@
                 <div class="mt-4 flex items-center justify-center md:justify-start gap-3">
                     @foreach($socials as $platform => $url)
                     <a href="{{ $url }}" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-white/8 text-[#90A955] hover:bg-[var(--accent)]/20 hover:text-[#90A955] transition-all duration-200"
+                       class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-white/8 text-(--accent-on-dark) hover:bg-(--accent-on-dark)/20 hover:text-white transition-all duration-200"
                        aria-label="{{ ucfirst($platform) }}">
                         @if($platform === 'facebook')
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
@@ -353,7 +356,7 @@
                         <li>
                             <a href="{{ $href }}"
                                target="{{ $item->target === '_blank' ? '_blank' : '_self' }}"
-                               class="text-[#90A955] hover:text-white transition-colors">
+                               class="text-(--accent-on-dark) hover:text-white transition-colors">
                                 {{ $item->title }}
                             </a>
                         </li>
@@ -367,11 +370,11 @@
         </div>
 
         {{-- Divider --}}
-        <div class="h-px bg-linear-to-r from-transparent via-[#4F772D] to-transparent mb-6"></div>
+        <div class="h-px bg-linear-to-r from-transparent via-white/15 to-transparent mb-6"></div>
 
         {{-- Bottom bar --}}
-        <p class="text-center text-xs text-[var(--accent)]">
-            &copy; {{ date('Y') }} <span class="text-[#90A955] font-medium">{{ $siteSetting->site_title }}</span>. {{ __('ui.all_rights') }}
+        <p class="text-center text-xs text-white/40">
+            &copy; {{ date('Y') }} <span class="text-(--accent-on-dark) font-medium">{{ $siteSetting->site_title }}</span>. {{ __('ui.all_rights') }}
         </p>
 
     </div>

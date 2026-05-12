@@ -9,7 +9,7 @@
 @section('content')
 
 {{-- ── SEARCH HEADER ── --}}
-<section class="relative overflow-hidden bg-[#132A13] dark:bg-[#0a1a0a] pt-40 pb-16">
+<section class="relative overflow-hidden bg-(--dark-section) pt-40 pb-16">
     {{-- Decorative blobs --}}
     <div class="absolute -top-20 left-1/4 h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-10 right-1/4 h-64 w-64 rounded-full bg-[var(--accent)]/20 blur-3xl pointer-events-none"></div>
@@ -20,36 +20,36 @@
 
         {{-- Label + title --}}
         @if($query)
-        <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">{{ __('ui.search_for') }}</p>
-        <h1 class="mb-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-[#ECF39E] leading-tight">
+        <p class="mb-2 text-sm font-medium uppercase tracking-widest text-(--accent-on-dark)">{{ __('ui.search_for') }}</p>
+        <h1 class="mb-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-(--on-dark) leading-tight">
             "{{ $query }}"
         </h1>
-        <p class="mb-10 text-[#90A955]">
-            <span class="font-semibold text-[#90A955]">{{ $results->total() }}</span>
+        <p class="mb-10 text-(--accent-on-dark)">
+            <span class="font-semibold text-(--on-dark)">{{ $results->total() }}</span>
             {{ trans_choice('ui.result_found', $results->total()) }}
         </p>
         @else
-        <div class="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-[#4F772D]/30 bg-[var(--accent)]/15">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-[#90A955]">
+        <div class="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-(--accent)/30 bg-(--accent)/15">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-(--accent-on-dark)">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
             </svg>
         </div>
-        <h1 class="mb-3 text-3xl sm:text-4xl font-bold text-[#ECF39E]">{{ __('ui.search_articles') }}</h1>
-        <p class="mb-10 text-[#90A955]">{{ __('ui.search_articles_subtitle') }}</p>
+        <h1 class="mb-3 text-3xl sm:text-4xl font-bold text-(--on-dark)">{{ __('ui.search_articles') }}</h1>
+        <p class="mb-10 text-(--accent-on-dark)">{{ __('ui.search_articles_subtitle') }}</p>
         @endif
 
         {{-- Search bar --}}
         <form method="GET" action="{{ lroute('search') }}">
-            <div class="flex rounded-2xl border-2 border-[#4F772D]/30 bg-white/8 backdrop-blur-sm focus-within:border-[#4F772D]/60 transition-all duration-200 shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-2 gap-2">
+            <div class="flex rounded-2xl border-2 border-(--accent)/30 bg-white/8 backdrop-blur-sm focus-within:border-(--accent)/60 transition-all duration-200 shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-2 gap-2">
                 <div class="flex flex-1 items-center min-w-0">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                         class="ml-3 h-5 w-5 shrink-0 text-[#90A955]">
+                         class="ml-3 h-5 w-5 shrink-0 text-(--accent-on-dark)">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                     </svg>
                     <input type="text" name="q" value="{{ $query }}" maxlength="100"
                            placeholder="{{ __('ui.search_placeholder_detail') }}"
                            autofocus
-                           class="min-w-0 flex-1 bg-transparent px-3 py-2 text-base text-[#ECF39E] placeholder-[#4F772D] focus:outline-none">
+                           class="min-w-0 flex-1 bg-transparent px-3 py-2 text-base text-(--on-dark) placeholder-(--accent-on-dark)/50 focus:outline-none">
                     @if($query)
                     <a href="{{ lroute('search') }}"
                        class="shrink-0 rounded-lg p-2 text-(--accent) hover:text-[#90A955] transition-colors"
@@ -77,8 +77,8 @@
         @if($results->isEmpty())
         {{-- ── EMPTY STATE ── --}}
         <div class="flex flex-col items-center justify-center py-16 text-center">
-            <div class="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-[var(--accent-dim)] dark:bg-[var(--bg-card)]">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-10 w-10 text-[#90A955] dark:text-[#2a5c2a]">
+            <div class="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-(--accent-dim) dark:bg-(--bg-card)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-10 w-10 text-(--accent)">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                 </svg>
             </div>
@@ -95,7 +95,7 @@
                 <div class="flex flex-wrap justify-center gap-2">
                     @foreach($suggestions as $cat)
                     <a href="{{ lroute('category.show', [$cat->slug]) }}"
-                       class="rounded-full border border-[var(--accent-dim)] dark:border-[var(--accent)] bg-[var(--bg-card)] px-4 py-2 text-sm font-medium text-[var(--text-muted)] hover:bg-[var(--accent)] hover:border-[#4F772D] hover:text-white transition-all duration-200">
+                       class="rounded-full border border-(--accent-dim) dark:border-(--accent) bg-(--bg-card) px-4 py-2 text-sm font-medium text-(--text-muted) hover:bg-(--accent) hover:border-(--accent) hover:text-white transition-all duration-200">
                         {{ $cat->name }}
                     </a>
                     @endforeach
@@ -104,7 +104,7 @@
             @endif
 
             <a href="{{ lroute('home') }}"
-               class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white hover:bg-[var(--accent)] dark:hover:bg-[#6B9A38] transition-colors">
+               class="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
                 </svg>
@@ -119,7 +119,7 @@
                 Showing <span class="font-semibold text-[var(--text-primary)]">{{ $results->firstItem() }}–{{ $results->lastItem() }}</span>
                 of <span class="font-semibold text-[var(--text-primary)]">{{ $results->total() }}</span> results
             </p>
-            <a href="{{ lroute('home') }}" class="text-sm text-[var(--accent)] hover:text-[var(--text-muted)] dark:hover:text-[#90A955] transition-colors">
+            <a href="{{ lroute('home') }}" class="text-sm text-(--accent) hover:text-(--text-muted) dark:hover:text-(--accent) transition-colors">
                 ← {{ __('ui.home') }}
             </a>
         </div>
@@ -146,14 +146,14 @@
                 </div>
 
                 {{-- Meta strip --}}
-                <div class="flex items-center gap-3 px-5 py-2.5 text-xs text-[var(--accent)] border-b border-[var(--border)] bg-[#f0f9d0] dark:bg-[#142814]">
+                <div class="flex items-center gap-3 px-5 py-2.5 text-xs text-(--accent) border-b border-(--border) bg-(--bg-alt)">
                     <span class="inline-flex items-center gap-1.5 shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-[var(--accent)]">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5"/>
                         </svg>
                         {{ ($content->article_date ?? $content->created_at)->format('M d, Y') }}
                     </span>
-                    <span class="w-px h-3 bg-[#a0c84a] dark:bg-[var(--bg-alt)] shrink-0"></span>
+                    <span class="w-px h-3 bg-(--accent)/50 shrink-0"></span>
                     <span class="inline-flex items-center gap-1.5 min-w-0">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-[var(--accent)] shrink-0">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
@@ -171,7 +171,7 @@
 
                 {{-- Body --}}
                 <div class="flex flex-1 flex-col p-6">
-                    <h3 class="mb-2 text-lg font-bold text-[var(--text-primary)] line-clamp-2 group-hover:text-[var(--text-muted)] dark:group-hover:text-[#90A955] transition-colors duration-200">
+                    <h3 class="mb-2 text-lg font-bold text-[var(--text-primary)] line-clamp-2 group-hover:text-[var(--text-muted)] dark:group-hover:text-(--accent) transition-colors duration-200">
                         @if($query)
                             {!! preg_replace('/(' . preg_quote(e($query), '/') . ')/i', '<mark class="bg-amber-200 dark:bg-amber-800/60 text-inherit rounded px-0.5">$1</mark>', e($content->title)) !!}
                         @else
@@ -184,7 +184,7 @@
                     </p>
                     @endif
                     <a href="{{ lroute('content.show', [$content->slug]) }}"
-                       class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-muted)] dark:text-[var(--accent)] hover:text-[var(--accent)] dark:hover:text-[#b8d864] transition-colors">
+                       class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-muted)] dark:text-[var(--accent)] hover:text-[var(--accent)] dark:hover:text-(--accent) transition-colors">
                         {{ __('ui.read_more') }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>

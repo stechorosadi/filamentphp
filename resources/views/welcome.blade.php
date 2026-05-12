@@ -86,7 +86,7 @@
                             {{-- Classification · Category · Date pills --}}
                             <div class="flex flex-wrap gap-2">
                                 @if($slide->classification?->name)
-                                <span class="inline-flex items-center rounded-full bg-[#31572C] dark:bg-[var(--bg-card)] px-3 py-1 text-xs font-semibold text-white dark:text-[var(--text-muted)]">
+                                <span class="inline-flex items-center rounded-full bg-(--dark-section) dark:bg-(--bg-card) px-3 py-1 text-xs font-semibold text-white dark:text-[var(--text-muted)]">
                                     {{ $slide->classification->name }}
                                 </span>
                                 @endif
@@ -161,7 +161,7 @@
                                     <span class="h-3 w-3 rounded-full bg-red-400"></span>
                                     <span class="h-3 w-3 rounded-full bg-[var(--accent-dim)]"></span>
                                     <span class="h-3 w-3 rounded-full bg-green-400"></span>
-                                    <div class="ml-3 h-4 max-w-48 flex-1 rounded-md bg-white/60 dark:bg-[#132A13]/60"></div>
+                                    <div class="ml-3 h-4 max-w-48 flex-1 rounded-md bg-white/60 dark:bg-(--bg-primary)/60"></div>
                                 </div>
                                 {{-- Featured image --}}
                                 <img src="{{ asset("storage/{$slide->featured_image}") }}"
@@ -230,7 +230,7 @@
              x-transition:leave-end="opacity-0"
              @keydown.escape.window="preview = false"
              @click.self="preview = false"
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#132A13]/60 backdrop-blur-sm">
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-(--dark-section)/70 backdrop-blur-sm">
 
             <div x-show="preview"
                  x-transition:enter="transition ease-out duration-200"
@@ -244,7 +244,7 @@
                 {{-- Close --}}
                 <button @click="preview = false"
                         aria-label="Close video preview"
-                        class="absolute top-3 right-3 z-10 rounded-lg p-1.5 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors">
+                        class="absolute top-3 right-3 z-10 rounded-lg p-1.5 text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-(--bg-alt) transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
                     </svg>
@@ -294,7 +294,7 @@
                 </svg>
                 Search
             </a>
-            <a href="#content-section" class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-7 py-3.5 text-sm font-semibold text-white dark:text-[var(--text-primary)] shadow-lg hover:bg-[var(--accent)] dark:hover:bg-[#6B9A38] transition-colors duration-200">
+            <a href="#content-section" class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-7 py-3.5 text-sm font-semibold text-white dark:text-[var(--text-primary)] shadow-lg hover:bg-[var(--accent)] dark:hover:opacity-90 transition-colors duration-200">
                 Browse Content
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"/>
@@ -308,7 +308,7 @@
 {{-- ─────────────────────────────────────────── --}}
 {{-- SEARCH --}}
 {{-- ─────────────────────────────────────────── --}}
-<section id="search" class="relative overflow-hidden bg-[#132A13] dark:bg-[#0a1a0a] py-20 sm:py-24">
+<section id="search" class="relative overflow-hidden bg-(--dark-section) py-20 sm:py-24">
     {{-- Decorative blobs --}}
     <div class="absolute -top-20 left-1/4 h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-20 right-1/4 h-72 w-72 rounded-full bg-[var(--accent)]/25 blur-3xl pointer-events-none"></div>
@@ -318,33 +318,33 @@
     <div class="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
 
         {{-- Icon --}}
-        <div class="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-[#4F772D]/30 bg-[var(--accent)]/15">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-[#90A955]">
+        <div class="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-(--accent)/30 bg-(--accent)/15">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-(--accent-on-dark)">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
             </svg>
         </div>
 
         {{-- Heading --}}
-        <h2 class="mb-4 text-2xl sm:text-3xl lg:text-4xl font-bold text-[#ECF39E] leading-tight">
+        <h2 class="mb-4 text-2xl sm:text-3xl lg:text-4xl font-bold text-(--on-dark) leading-tight">
             {{ __('ui.search_heading_1') }}<br>{{ __('ui.search_heading_2') }}
         </h2>
 
         {{-- Subtitle --}}
-        <p class="mb-10 text-base sm:text-lg leading-relaxed text-[#90A955] max-w-3xl mx-auto">
+        <p class="mb-10 text-base sm:text-lg leading-relaxed text-(--on-dark)/70 max-w-3xl mx-auto">
             {{ __('ui.search_subtitle') }}
         </p>
 
         {{-- Search bar --}}
         <form method="GET" action="{{ lroute('search') }}" class="mb-10">
-            <div class="flex rounded-2xl border-2 border-[#4F772D]/30 bg-white/8 backdrop-blur-sm focus-within:border-[#4F772D]/60 transition-all duration-200 shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-2 gap-2">
+            <div class="flex rounded-2xl border-2 border-(--accent)/30 bg-white/8 backdrop-blur-sm focus-within:border-(--accent)/60 transition-all duration-200 shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-2 gap-2">
                 <div class="flex flex-1 items-center min-w-0">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                         class="ml-3 h-5 w-5 shrink-0 text-[#90A955]">
+                         class="ml-3 h-5 w-5 shrink-0 text-(--accent-on-dark)">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                     </svg>
                     <input type="text" name="q" value="{{ $search }}" maxlength="100"
                            placeholder="{{ __('ui.search_placeholder_detail') }}"
-                           class="min-w-0 flex-1 bg-transparent px-3 py-2 text-base text-[#ECF39E] placeholder-[#4F772D] focus:outline-none">
+                           class="min-w-0 flex-1 bg-transparent px-3 py-2 text-base text-(--on-dark) placeholder-(--accent-on-dark)/50 focus:outline-none">
                 </div>
                 <button type="submit"
                         class="shrink-0 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-[var(--accent)] transition-colors duration-200">
@@ -356,35 +356,35 @@
         {{-- Stats pills --}}
         <div class="flex flex-wrap justify-center gap-3">
             <div class="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/8 px-5 py-2.5 backdrop-blur-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[#90A955] shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-(--accent-on-dark) shrink-0">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
                 </svg>
-                <span class="text-sm font-semibold text-[#ECF39E]">{{ $totalArticles }}</span>
-                <span class="text-sm text-[#90A955]">{{ trans_choice('ui.article_label', $totalArticles) }}</span>
+                <span class="text-sm font-semibold text-(--on-dark)">{{ $totalArticles }}</span>
+                <span class="text-sm text-(--on-dark)/70">{{ trans_choice('ui.article_label', $totalArticles) }}</span>
             </div>
 
             <div class="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/8 px-5 py-2.5 backdrop-blur-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[#90A955] shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-(--accent-on-dark) shrink-0">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z"/>
                 </svg>
-                <span class="text-sm font-semibold text-[#ECF39E]">{{ $categories->count() }}</span>
-                <span class="text-sm text-[#90A955]">{{ trans_choice('ui.category_label', $categories->count()) }}</span>
+                <span class="text-sm font-semibold text-(--on-dark)">{{ $categories->count() }}</span>
+                <span class="text-sm text-(--on-dark)/70">{{ trans_choice('ui.category_label', $categories->count()) }}</span>
             </div>
 
             <div class="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/8 px-5 py-2.5 backdrop-blur-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-[#90A955] shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-(--accent-on-dark) shrink-0">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
                 </svg>
-                <span class="text-sm font-semibold text-[#ECF39E]">{{ $classifications->count() }}</span>
-                <span class="text-sm text-[#90A955]">{{ trans_choice('ui.classification_label', $classifications->count()) }}</span>
+                <span class="text-sm font-semibold text-(--on-dark)">{{ $classifications->count() }}</span>
+                <span class="text-sm text-(--on-dark)/70">{{ trans_choice('ui.classification_label', $classifications->count()) }}</span>
             </div>
         </div>
 
     </div>
 </section>
 
-<div class="h-px bg-linear-to-r from-transparent via-[#90A955] dark:via-[#4F772D]/50 to-transparent"></div>
+<div class="h-px bg-linear-to-r from-transparent via-(--accent-on-dark)/60 to-transparent"></div>
 
 {{-- ─────────────────────────────────────────── --}}
 {{-- CATEGORIES --}}
@@ -444,19 +444,19 @@
                       shadow-sm transition-all duration-300
                       hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgba(202,138,4,0.25)]
                       dark:hover:shadow-[0_8px_30px_rgba(140,90,60,0.4)]
-                      hover:border-[var(--accent-dim)] dark:hover:border-[#4F772D]"
+                      hover:border-(--accent-dim) dark:hover:border-(--accent)"
                :style="darkMode ? {} : { backgroundColor: '{{ $bg }}' }">
 
                 {{-- Left: icon --}}
                 <div class="flex items-center justify-center p-6 sm:w-40 shrink-0">
                     <div class="relative">
                         <div class="absolute inset-0 rounded-full bg-[var(--accent)]/20 dark:bg-[var(--accent)]/15 scale-110 group-hover:scale-125 blur-md transition-transform duration-500"></div>
-                        <div class="relative h-20 w-20 rounded-full bg-white/70 dark:bg-[#132A13]/60 flex items-center justify-center
+                        <div class="relative h-20 w-20 rounded-full bg-white/70 dark:bg-(--bg-primary)/60 flex items-center justify-center
                                     group-hover:bg-white dark:group-hover:bg-[#132A13]/90 transition-colors duration-300 shadow-md">
                             @if($category->icon)
                                 {!! svg($category->icon, '', ['style' => 'width:2.5rem;height:2.5rem;color:#4F772D'])->toHtml() !!}
                             @else
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:2.5rem;height:2.5rem;color:#4F772D">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:2.5rem;height:2.5rem;color:var(--accent)">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/>
                                 </svg>
                             @endif
@@ -504,19 +504,19 @@
                       shadow-sm transition-all duration-300
                       hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgba(202,138,4,0.25)]
                       dark:hover:shadow-[0_8px_30px_rgba(140,90,60,0.4)]
-                      hover:border-[var(--accent-dim)] dark:hover:border-[#4F772D]"
+                      hover:border-(--accent-dim) dark:hover:border-(--accent)"
                :style="darkMode ? {} : { backgroundColor: '{{ $bg }}' }">
 
                 {{-- Icon with glow ring --}}
                 <div class="relative mb-3 mt-1">
                     <div class="absolute inset-0 rounded-xl bg-[var(--accent)]/20 dark:bg-[var(--accent)]/10 scale-110 group-hover:scale-125 blur-sm transition-transform duration-500"></div>
-                    <div class="relative h-12 w-12 rounded-xl bg-white/70 dark:bg-[#132A13]/60 flex items-center justify-center shadow-sm
+                    <div class="relative h-12 w-12 rounded-xl bg-white/70 dark:bg-(--bg-primary)/60 flex items-center justify-center shadow-sm
                                 group-hover:bg-white dark:group-hover:bg-[#132A13]/90
                                 group-hover:scale-110 transition-all duration-300">
                         @if($category->icon)
                             {!! svg($category->icon, '', ['style' => 'width:1.25rem;height:1.25rem;color:#4F772D'])->toHtml() !!}
                         @else
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1.25rem;height:1.25rem;color:#4F772D">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1.25rem;height:1.25rem;color:var(--accent)">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/>
                             </svg>
                         @endif
@@ -534,11 +534,11 @@
                 @endif
 
                 {{-- Count pill --}}
-                <span class="inline-flex items-center rounded-full border border-[#4F772D]/30 dark:border-[var(--accent)]
-                             bg-[var(--accent)]/10 dark:bg-[var(--accent)]/20 px-2.5 py-0.5 text-xs font-semibold
-                             text-[var(--text-muted)] dark:text-[var(--accent)]
-                             group-hover:bg-[var(--accent)] group-hover:text-white group-hover:border-[#4F772D]
-                             dark:group-hover:bg-[var(--accent)] dark:group-hover:text-[#ECF39E]
+                <span class="inline-flex items-center rounded-full border border-(--accent)/30 dark:border-(--accent)
+                             bg-(--accent)/10 dark:bg-(--accent)/20 px-2.5 py-0.5 text-xs font-semibold
+                             text-(--text-muted) dark:text-(--accent)
+                             group-hover:bg-(--accent) group-hover:text-white group-hover:border-(--accent)
+                             dark:group-hover:bg-(--accent) dark:group-hover:text-(--on-dark)
                              transition-all duration-300">
                     {{ $category->contents_count }} {{ $category->contents_count === 1 ? 'article' : 'articles' }}
                 </span>
@@ -559,7 +559,7 @@
 </section>
 @endif
 
-<div class="h-px bg-linear-to-r from-transparent via-[#90A955] dark:via-[#4F772D]/50 to-transparent"></div>
+<div class="h-px bg-linear-to-r from-transparent via-(--accent-on-dark)/60 to-transparent"></div>
 
 {{-- ─────────────────────────────────────────── --}}
 {{-- LATEST CONTENT --}}
@@ -574,7 +574,7 @@
              style="height:140%; top:-20%; filter:blur(3px);">
     </div>
     {{-- Warm colour overlay --}}
-    <div class="absolute inset-0 bg-[#ECF39E]/70 dark:bg-[#132A13]/82 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-(--bg-primary)/75 pointer-events-none"></div>
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {{-- Heading + search --}}
@@ -600,11 +600,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                     </svg>
                     <input type="text" name="q" value="{{ $search }}" maxlength="100" placeholder="{{ __('ui.search_placeholder') }}"
-                           class="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] pl-9 pr-4 py-2.5 text-sm text-[var(--text-primary)] placeholder-[#A87850] dark:placeholder-[#90A955] focus:outline-none focus:border-[var(--accent)] dark:focus:border-[var(--accent)] transition-colors">
+                           class="w-full rounded-xl border border-(--border) bg-(--bg-card) pl-9 pr-4 py-2.5 text-sm text-(--text-primary) placeholder-(--text-muted)/60 focus:outline-none focus:border-(--accent) transition-colors">
                 </div>
-                <button type="submit" class="rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[var(--accent)] dark:hover:bg-[#6B9A38] transition-colors shrink-0">{{ __('ui.search_btn') }}</button>
+                <button type="submit" class="rounded-xl bg-[var(--accent)] dark:bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[var(--accent)] dark:hover:opacity-90 transition-colors shrink-0">{{ __('ui.search_btn') }}</button>
                 @if($search)
-                <a href="{{ lroute('search') }}" class="rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-[#2a5c2a] transition-colors shrink-0">{{ __('ui.clear') }}</a>
+                <a href="{{ lroute('search') }}" class="rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--accent)] hover:bg-[var(--accent-dim)] dark:hover:bg-(--bg-alt) transition-colors shrink-0">{{ __('ui.clear') }}</a>
                 @endif
             </form>
         </div>
@@ -618,10 +618,10 @@
 
         @if($latestContents->isEmpty())
             <div class="flex flex-col items-center justify-center py-24 text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-12 w-12 text-[#90A955] dark:text-[#2a5c2a] mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-12 w-12 text-(--accent) mb-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
                 </svg>
-                <p class="text-[#A87850] dark:text-[var(--accent)] text-lg">{{ __('ui.no_content_yet') }}</p>
+                <p class="text-(--text-muted) text-lg">{{ __('ui.no_content_yet') }}</p>
             </div>
         @else
             <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -645,14 +645,14 @@
                     </div>
 
                     {{-- Meta strip --}}
-                    <div class="flex items-center gap-3 px-5 py-2.5 text-xs text-[var(--accent)] border-b border-[var(--border)] bg-[#f0f9d0] dark:bg-[#142814]">
+                    <div class="flex items-center gap-3 px-5 py-2.5 text-xs text-[var(--accent)] border-b border-[var(--border)] bg-(--bg-alt)">
                         <span class="inline-flex items-center gap-1.5 shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-[var(--accent)]">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5"/>
                             </svg>
                             {{ ($content->article_date ?? $content->created_at)->format('M d, Y') }}
                         </span>
-                        <span class="w-px h-3 bg-[#a0c84a] dark:bg-[var(--bg-alt)] shrink-0"></span>
+                        <span class="w-px h-3 bg-(--accent)/50 shrink-0"></span>
                         <span class="inline-flex items-center gap-1.5 min-w-0">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-[var(--accent)] shrink-0">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
@@ -670,7 +670,7 @@
 
                     {{-- Body --}}
                     <div class="flex flex-1 flex-col p-6">
-                        <h3 class="mb-2 text-lg font-bold text-[var(--text-primary)] line-clamp-2 group-hover:text-[var(--text-muted)] dark:group-hover:text-[#90A955] transition-colors duration-200">
+                        <h3 class="mb-2 text-lg font-bold text-[var(--text-primary)] line-clamp-2 group-hover:text-[var(--text-muted)] dark:group-hover:text-(--accent) transition-colors duration-200">
                             {{ $content->title }}
                         </h3>
                         @if($content->excerpt)
@@ -679,7 +679,7 @@
                         </p>
                         @endif
                         <a href="{{ lroute('content.show', [$content->slug]) }}"
-                           class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-muted)] dark:text-[var(--accent)] hover:text-[var(--accent)] dark:hover:text-[#b8d864] transition-colors">
+                           class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-muted)] dark:text-[var(--accent)] hover:text-[var(--accent)] dark:hover:text-(--accent) transition-colors">
                             {{ __('ui.read_more') }}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
@@ -702,7 +702,7 @@
 {{-- CLASSIFICATIONS --}}
 {{-- ─────────────────────────────────────────── --}}
 @if($classifications->isNotEmpty())
-<section class="relative py-16 overflow-hidden bg-[#132A13] dark:bg-[var(--dark-section)]">
+<section class="relative py-16 overflow-hidden bg-(--dark-section)">
     {{-- Subtle grid texture --}}
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff07_1px,transparent_1px),linear-gradient(to_bottom,#ffffff07_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
     {{-- Accent glows --}}
@@ -719,8 +719,8 @@
                 </svg>
             </div>
             <div>
-                <h2 class="text-2xl font-bold text-[#90A955]">{{ __('ui.classifications') }}</h2>
-                <p class="text-md text-(--text-muted) mt-0.5">{{ __('ui.classifications_subtitle') }}</p>
+                <h2 class="text-2xl font-bold text-(--on-dark)">{{ __('ui.classifications') }}</h2>
+                <p class="text-md text-(--on-dark)/60 mt-0.5">{{ __('ui.classifications_subtitle') }}</p>
             </div>
         </div>
 
@@ -729,21 +729,21 @@
             @foreach($classifications as $classification)
             <a href="{{ lroute('classification.show', [$classification->slug]) }}"
                class="card-animate group relative overflow-hidden flex items-center gap-3 rounded-2xl p-3
-                      bg-[#1e4a1e]/50 backdrop-blur-sm
-                      border border-[#2a5c2a]/60 border-l-2 border-l-amber-600/50
-                      hover:bg-[#1e4a1e] hover:border-l-amber-400
+                      bg-(--dark-section)/50 backdrop-blur-sm
+                      border border-(--accent)/30 border-l-2 border-l-(--accent-on-dark)/50
+                      hover:bg-(--dark-section)/80 hover:border-l-(--accent-on-dark)
                       hover:shadow-[0_8px_32px_rgba(0,0,0,0.35)]
                       hover:-translate-y-1 transition-all duration-300">
 
                 {{-- Icon --}}
                 <div class="relative shrink-0">
                     <div class="absolute inset-0 rounded-xl bg-[var(--accent)]/20 scale-110 group-hover:scale-125 blur-sm transition-transform duration-500 pointer-events-none"></div>
-                    <div class="relative h-10 w-10 rounded-xl bg-[#2a5c2a] flex items-center justify-center
-                                group-hover:bg-[var(--accent)] transition-colors duration-300">
+                    <div class="relative h-10 w-10 rounded-xl bg-(--accent)/40 flex items-center justify-center
+                                group-hover:bg-(--accent) transition-colors duration-300">
                         @if($classification->icon)
                             {!! svg($classification->icon, '', ['style' => 'width:1rem;height:1rem;color:#fbbf24'])->toHtml() !!}
                         @else
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem;color:#fbbf24">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem;color:var(--on-dark)">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
                             </svg>
                         @endif
@@ -752,15 +752,15 @@
 
                 {{-- Text --}}
                 <div class="flex-1 min-w-0">
-                    <h3 class="text-xs font-bold text-[#ECF39E] leading-tight truncate">{{ $classification->name }}</h3>
-                    <span class="mt-1 inline-flex items-center rounded-full bg-[var(--accent)]/20 border border-[#4F772D]/30 px-2 py-0.5 text-xs font-semibold text-[#90A955]">
+                    <h3 class="text-xs font-bold text-(--on-dark) leading-tight truncate">{{ $classification->name }}</h3>
+                    <span class="mt-1 inline-flex items-center rounded-full bg-(--accent)/20 border border-(--accent)/30 px-2 py-0.5 text-xs font-semibold text-(--accent-on-dark)">
                         {{ $classification->contents_count }}
                     </span>
                 </div>
 
                 {{-- Arrow --}}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                     class="h-4 w-4 shrink-0 text-[var(--accent)] group-hover:text-[#90A955] group-hover:translate-x-1 transition-all duration-200">
+                     class="h-4 w-4 shrink-0 text-(--accent-on-dark)/60 group-hover:text-(--accent-on-dark) group-hover:translate-x-1 transition-all duration-200">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                 </svg>
 
@@ -781,7 +781,7 @@
 </section>
 @endif
 
-<div class="h-px bg-linear-to-r from-transparent via-[#90A955] dark:via-[#4F772D]/50 to-transparent"></div>
+<div class="h-px bg-linear-to-r from-transparent via-(--accent-on-dark)/60 to-transparent"></div>
 
 {{-- ─────────────────────────────────────────── --}}
 {{-- TEAM SECTION --}}
@@ -915,7 +915,7 @@
     </div>
 </section>
 
-<div class="h-px bg-linear-to-r from-transparent via-[#90A955] dark:via-[#4F772D]/50 to-transparent"></div>
+<div class="h-px bg-linear-to-r from-transparent via-(--accent-on-dark)/60 to-transparent"></div>
 @endif
 
 {{-- ─────────────────────────────────────────── --}}
@@ -929,7 +929,7 @@
              class="absolute inset-x-0 w-full object-cover"
              style="height:140%; top:-20%; filter:blur(3px);">
     </div>
-    <div class="absolute inset-0 bg-[#ECF39E]/70 dark:bg-[#132A13]/82 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-(--bg-primary)/75 pointer-events-none"></div>
     {{-- Decorative blobs --}}
     <div class="absolute -top-20 right-0 h-72 w-72 rounded-full bg-[var(--accent-dim)]/10 dark:bg-[var(--accent)]/10 blur-3xl pointer-events-none"></div>
     <div class="absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-[#FFDAC4]/40 dark:bg-[var(--bg-card)]/30 blur-3xl pointer-events-none"></div>
@@ -1047,7 +1047,7 @@
                     {{-- Info --}}
                     <div class="flex-1 min-w-0">
                         <h3 class="text-sm font-bold text-[var(--text-primary)] line-clamp-2 leading-snug
-                                   group-hover:text-[var(--text-muted)] dark:group-hover:text-[#90A955]
+                                   group-hover:text-[var(--text-muted)] dark:group-hover:text-(--accent)
                                    transition-colors duration-200 mb-2">
                             {{ $item->title }}
                         </h3>
@@ -1059,7 +1059,7 @@
                                 </span>
                                 <span class="truncate max-w-20">{{ $item->user->name }}</span>
                             </span>
-                            <span class="w-px h-3 bg-[#a0c84a] dark:bg-[var(--bg-alt)] shrink-0"></span>
+                            <span class="w-px h-3 bg-(--accent)/50 shrink-0"></span>
                             @endif
                             <span class="flex items-center gap-1 shrink-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3 w-3 text-[var(--accent)]">
@@ -1068,7 +1068,7 @@
                                 </svg>
                                 {{ number_format($item->views) }}
                             </span>
-                            <span class="w-px h-3 bg-[#a0c84a] dark:bg-[var(--bg-alt)] shrink-0"></span>
+                            <span class="w-px h-3 bg-(--accent)/50 shrink-0"></span>
                             <span class="shrink-0">{{ ($item->article_date ?? $item->created_at)->format('M d, Y') }}</span>
                         </div>
                     </div>
@@ -1076,7 +1076,7 @@
                     {{-- Arrow --}}
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                          class="h-4 w-4 shrink-0 text-[#90A955] dark:text-[var(--accent)]
-                                group-hover:text-[var(--accent)] dark:group-hover:text-[#90A955]
+                                group-hover:text-[var(--accent)] dark:group-hover:text-(--accent)
                                 group-hover:translate-x-1 transition-all duration-200">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
                     </svg>

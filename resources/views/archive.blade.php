@@ -14,7 +14,7 @@
 @section('content')
 
 {{-- ── HEADER ── --}}
-<section class="relative overflow-hidden bg-[#132A13] dark:bg-[#0a1a0a] pt-40 pb-16">
+<section class="relative overflow-hidden bg-(--dark-section) pt-40 pb-16">
     <div class="absolute -top-20 left-1/4 h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-10 right-1/4 h-64 w-64 rounded-full bg-[var(--accent)]/20 blur-3xl pointer-events-none"></div>
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
@@ -23,31 +23,31 @@
 
         {{-- Icon --}}
         <div class="flex justify-center mb-6">
-            <div class="inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-[#4F772D]/30 bg-[var(--accent)]/15">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-[#90A955]">
+            <div class="inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-(--accent)/30 bg-(--accent)/15">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-(--accent-on-dark)">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"/>
                 </svg>
             </div>
         </div>
 
         <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">{{ __('ui.historical_content') }}</p>
-        <h1 class="mb-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-[#ECF39E] leading-tight">
+        <h1 class="mb-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-(--on-dark) leading-tight">
             {{ __('ui.archive') }}
         </h1>
-        <p class="mb-8 text-base leading-relaxed text-[#90A955] max-w-2xl mx-auto">
+        <p class="mb-8 text-base leading-relaxed text-(--on-dark)/70 max-w-2xl mx-auto">
             {{ __('ui.archive_subtitle') }}
         </p>
 
         {{-- Stats + back link --}}
         <div class="flex flex-wrap items-center justify-center gap-3">
-            <span class="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent)]/20 border border-[#4F772D]/30 px-4 py-1.5 text-sm font-semibold text-[#90A955]">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-(--accent)/20 border border-(--accent)/30 px-4 py-1.5 text-sm font-semibold text-(--accent-on-dark)">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
                 </svg>
                 {{ $contents->total() }} {{ trans_choice('ui.article_label', $contents->total()) }}
             </span>
             <a href="{{ lroute('home') }}"
-               class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-sm text-[#90A955] hover:border-[#4F772D]/40 transition-colors">
+               class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-sm text-(--accent-on-dark) hover:border-(--accent)/40 hover:bg-white/15 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
                 </svg>
@@ -66,7 +66,7 @@
         {{-- Empty state --}}
         <div class="flex flex-col items-center justify-center py-20 text-center">
             <div class="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-[var(--accent-dim)] dark:bg-[var(--bg-card)]">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-10 w-10 text-[#90A955] dark:text-[#2a5c2a]">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-10 w-10 text-(--accent)">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"/>
                 </svg>
             </div>
@@ -106,7 +106,7 @@
                     {{-- Pills overlay --}}
                     <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
                         @if($content->classification)
-                        <span class="rounded-full bg-[#31572C]/85 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-white">
+                        <span class="rounded-full bg-(--dark-section)/85 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-(--on-dark)">
                             {{ $content->classification->name }}
                         </span>
                         @endif
@@ -120,7 +120,7 @@
                 </div>
 
                 {{-- Meta strip --}}
-                <div class="flex items-center gap-3 px-5 py-2.5 text-xs text-[var(--accent)] border-b border-[var(--border)] bg-[#f0f9d0] dark:bg-[#142814]">
+                <div class="flex items-center gap-3 px-5 py-2.5 text-xs text-(--accent) border-b border-(--border) bg-(--bg-alt)">
                     <span class="inline-flex items-center gap-1.5 shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-[var(--accent)]">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5"/>
@@ -128,7 +128,7 @@
                         {{ ($content->article_date ?? $content->created_at)->format('M d, Y') }}
                     </span>
                     @if($content->user)
-                    <span class="w-px h-3 bg-[#a0c84a] dark:bg-[var(--bg-alt)] shrink-0"></span>
+                    <span class="w-px h-3 bg-(--accent)/50 shrink-0"></span>
                     <span class="inline-flex items-center gap-1.5 min-w-0">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 text-[var(--accent)] shrink-0">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
@@ -147,7 +147,7 @@
 
                 {{-- Body --}}
                 <div class="flex flex-1 flex-col p-6">
-                    <h3 class="mb-2 text-lg font-bold text-[var(--text-primary)] line-clamp-2 group-hover:text-[var(--text-muted)] dark:group-hover:text-[#90A955] transition-colors duration-200">
+                    <h3 class="mb-2 text-lg font-bold text-[var(--text-primary)] line-clamp-2 group-hover:text-[var(--text-muted)] dark:group-hover:text-(--accent) transition-colors duration-200">
                         {{ $content->title }}
                     </h3>
                     @if($content->excerpt)
@@ -156,7 +156,7 @@
                     </p>
                     @endif
                     <a href="{{ lroute('content.show', [$content->slug]) }}"
-                       class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-muted)] dark:text-[var(--accent)] hover:text-[var(--accent)] dark:hover:text-[#b8d864] transition-colors">
+                       class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[var(--text-muted)] dark:text-[var(--accent)] hover:text-[var(--accent)] dark:hover:text-(--accent) transition-colors">
                         {{ __('ui.read_more') }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>

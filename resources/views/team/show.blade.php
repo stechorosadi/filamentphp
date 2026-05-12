@@ -62,15 +62,15 @@
 @endphp
 
 {{-- ── HERO ── --}}
-<section id="member-hero" class="relative min-h-[90vh] flex flex-col justify-center bg-[#132A13] dark:bg-[#0a1a0a] overflow-hidden">
+<section id="member-hero" class="relative min-h-[90vh] flex flex-col justify-center bg-(--dark-section) overflow-hidden">
 
     {{-- Background grid --}}
     <div id="member-grid" class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
 
     {{-- Glow blobs --}}
-    <div id="member-blob-1" class="absolute left-1/4 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#4F772D]/50 pointer-events-none will-change-transform" style="filter:blur(120px)"></div>
-    <div id="member-blob-2" class="absolute right-1/4 bottom-1/3 h-[400px] w-[400px] rounded-full bg-[#90A955]/25 pointer-events-none will-change-transform" style="filter:blur(100px)"></div>
-    <div id="member-blob-3" class="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#ECF39E]/15 pointer-events-none will-change-transform opacity-0" style="filter:blur(90px)"></div>
+    <div id="member-blob-1" class="absolute left-1/4 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-(--accent)/50 pointer-events-none will-change-transform" style="filter:blur(120px)"></div>
+    <div id="member-blob-2" class="absolute right-1/4 bottom-1/3 h-[400px] w-[400px] rounded-full bg-(--accent-on-dark)/25 pointer-events-none will-change-transform" style="filter:blur(100px)"></div>
+    <div id="member-blob-3" class="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-(--on-dark)/15 pointer-events-none will-change-transform opacity-0" style="filter:blur(90px)"></div>
 
     {{-- Floating assets --}}
     <img id="masset-1" src="{{ asset('storage/aset-color/lightbulb.png') }}" alt=""
@@ -96,7 +96,7 @@
 
                 {{-- Eyebrow --}}
                 <div class="flex justify-center lg:justify-end">
-                    <span class="inline-flex items-center gap-2 rounded-full border border-[#4F772D]/50 bg-[#1a3a1a]/70 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#90A955] backdrop-blur-sm">
+                    <span class="inline-flex items-center gap-2 rounded-full border border-(--accent)/50 bg-(--dark-section)/70 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-(--accent-on-dark) backdrop-blur-sm">
                         <span class="h-1.5 w-1.5 rounded-full bg-[#90A955] animate-pulse"></span>
                         {{ __('ui.team') }}
                     </span>
@@ -104,45 +104,45 @@
 
                 {{-- Front title --}}
                 @if($member->front_title)
-                <p class="text-sm font-semibold text-[#90A955] uppercase tracking-[0.2em]">{{ $member->front_title }}</p>
+                <p class="text-sm font-semibold text-(--accent-on-dark) uppercase tracking-[0.2em]">{{ $member->front_title }}</p>
                 @endif
 
                 {{-- Name --}}
                 <div>
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-[#ECF39E] leading-[0.95] tracking-tight uppercase">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-(--on-dark) leading-[0.95] tracking-tight uppercase">
                         {{ $user?->name ?? $member->name }}
                     </h1>
                     @if($member->back_title)
-                    <p class="mt-2 text-sm font-semibold text-[#90A955]/80 tracking-wider">{{ $member->back_title }}</p>
+                    <p class="mt-2 text-sm font-semibold text-(--accent-on-dark)/80 tracking-wider">{{ $member->back_title }}</p>
                     @endif
                 </div>
 
                 {{-- Position card --}}
                 @if($member->position)
-                <div class="inline-flex w-fit self-center lg:self-end items-center gap-3 bg-[#1a3a1a]/60 border border-[#4F772D]/30 rounded-2xl px-4 py-3 backdrop-blur-sm hover:border-[#4F772D]/60 transition-colors duration-200">
-                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#4F772D]/30">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[#90A955]">
+                <div class="inline-flex w-fit self-center lg:self-end items-center gap-3 bg-(--dark-section)/50 border border-(--accent)/30 rounded-2xl px-4 py-3 backdrop-blur-sm hover:border-(--accent)/60 transition-colors duration-200">
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--accent)/30">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-(--accent-on-dark)">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"/>
                         </svg>
                     </div>
                     <div class="text-left">
-                        <p class="text-[10px] text-[#4F772D] uppercase tracking-widest font-bold">{{ __('ui.position') }}</p>
-                        <p class="text-sm font-bold text-[#ECF39E] leading-snug mt-0.5">{{ $member->position }}</p>
+                        <p class="text-[10px] text-(--accent-on-dark)/60 uppercase tracking-widest font-bold">{{ __('ui.position') }}</p>
+                        <p class="text-sm font-bold text-(--on-dark) leading-snug mt-0.5">{{ $member->position }}</p>
                     </div>
                 </div>
                 @endif
 
                 {{-- Employee number card --}}
                 @if($member->employee_number)
-                <div class="inline-flex w-fit self-center lg:self-end items-center gap-3 bg-[#1a3a1a]/60 border border-[#4F772D]/30 rounded-2xl px-4 py-3 backdrop-blur-sm hover:border-[#4F772D]/60 transition-colors duration-200">
-                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#4F772D]/30">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-[#90A955]">
+                <div class="inline-flex w-fit self-center lg:self-end items-center gap-3 bg-(--dark-section)/50 border border-(--accent)/30 rounded-2xl px-4 py-3 backdrop-blur-sm hover:border-(--accent)/60 transition-colors duration-200">
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--accent)/30">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-(--accent-on-dark)">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z"/>
                         </svg>
                     </div>
                     <div class="text-left">
-                        <p class="text-[10px] text-[#4F772D] uppercase tracking-widest font-bold">{{ __('ui.employee_number') }}</p>
-                        <p class="text-sm font-bold text-[#ECF39E] mt-0.5">{{ $member->employee_number }}</p>
+                        <p class="text-[10px] text-(--accent-on-dark)/60 uppercase tracking-widest font-bold">{{ __('ui.employee_number') }}</p>
+                        <p class="text-sm font-bold text-(--on-dark) mt-0.5">{{ $member->employee_number }}</p>
                     </div>
                 </div>
                 @endif
@@ -152,18 +152,18 @@
             {{-- ── CENTER COLUMN: Photo ── --}}
             <div id="member-photo" class="relative flex justify-center order-1 lg:order-2">
                 {{-- Outer glow ring --}}
-                <div class="absolute inset-0 rounded-[2rem] bg-[#4F772D]/25 blur-3xl scale-110 pointer-events-none"></div>
+                <div class="absolute inset-0 rounded-[2rem] bg-(--accent)/25 blur-3xl scale-110 pointer-events-none"></div>
                 {{-- Inner decorative ring --}}
-                <div class="absolute -inset-3 rounded-[2.5rem] border border-[#4F772D]/20 pointer-events-none"></div>
-                <div class="absolute -inset-6 rounded-[3rem] border border-[#4F772D]/10 pointer-events-none"></div>
+                <div class="absolute -inset-3 rounded-[2.5rem] border border-(--accent)/20 pointer-events-none"></div>
+                <div class="absolute -inset-6 rounded-[3rem] border border-(--accent)/10 pointer-events-none"></div>
 
                 @if($member->photo)
                 <img src="{{ asset('storage/' . $member->photo) }}"
                      alt="{{ $member->fullName() }}"
-                     class="relative w-full max-w-[280px] aspect-[3/4] rounded-[2rem] object-cover object-top shadow-2xl ring-2 ring-[#4F772D]/60 z-10">
+                     class="relative w-full max-w-[280px] aspect-[3/4] rounded-[2rem] object-cover object-top shadow-2xl ring-2 ring-(--accent)/60 z-10">
                 @else
-                <div class="relative w-full max-w-[280px] aspect-[3/4] rounded-[2rem] bg-[#1a3a1a] flex items-center justify-center shadow-2xl ring-2 ring-[#4F772D]/60 z-10">
-                    <span class="text-8xl font-black text-[#ECF39E]">{{ strtoupper(substr($member->fullName() ?: '?', 0, 1)) }}</span>
+                <div class="relative w-full max-w-[280px] aspect-[3/4] rounded-[2rem] bg-(--dark-section) flex items-center justify-center shadow-2xl ring-2 ring-(--accent)/60 z-10">
+                    <span class="text-8xl font-black text-(--on-dark)">{{ strtoupper(substr($member->fullName() ?: '?', 0, 1)) }}</span>
                 </div>
                 @endif
 
@@ -185,12 +185,12 @@
 
                 {{-- Word of wisdom --}}
                 @if($member->word_of_wisdom)
-                <div class="relative bg-[#1a3a1a]/60 border border-[#4F772D]/30 rounded-2xl px-5 py-4 backdrop-blur-sm hover:border-[#4F772D]/60 transition-colors duration-200">
+                <div class="relative bg-(--dark-section)/50 border border-(--accent)/30 rounded-2xl px-5 py-4 backdrop-blur-sm hover:border-(--accent)/60 transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"
-                         class="absolute top-3 left-4 h-6 w-6 text-[#4F772D]/40">
+                         class="absolute top-3 left-4 h-6 w-6 text-(--accent)/40">
                         <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
                     </svg>
-                    <blockquote class="text-sm italic text-[#90A955] leading-relaxed pl-7">
+                    <blockquote class="text-sm italic text-(--accent-on-dark) leading-relaxed pl-7">
                         {{ $member->word_of_wisdom }}
                     </blockquote>
                 </div>
@@ -199,11 +199,11 @@
                 {{-- Social links --}}
                 @if($socials)
                 <div>
-                    <p class="text-[10px] text-[#4F772D] uppercase tracking-widest font-bold mb-2">{{ __('ui.social_media') }}</p>
+                    <p class="text-[10px] text-(--accent-on-dark)/60 uppercase tracking-widest font-bold mb-2">{{ __('ui.social_media') }}</p>
                     <div class="flex items-center justify-center lg:justify-start gap-2 flex-wrap">
                         @foreach($socials as $platform => $url)
                         <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($platform) }}"
-                           class="flex h-9 w-9 items-center justify-center rounded-xl border border-[#4F772D]/40 bg-[#1a3a1a]/60 text-[#90A955] hover:bg-[#4F772D]/30 hover:text-[#ECF39E] hover:border-[#4F772D]/70 hover:-translate-y-0.5 transition-all duration-200 backdrop-blur-sm">
+                           class="flex h-9 w-9 items-center justify-center rounded-xl border border-(--accent)/40 bg-(--dark-section)/50 text-(--accent-on-dark) hover:bg-(--accent)/30 hover:text-(--on-dark) hover:border-(--accent)/70 hover:-translate-y-0.5 transition-all duration-200 backdrop-blur-sm">
                             @if($platform === 'instagram')
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162S8.597 18.163 12 18.163s6.162-2.759 6.162-6.162S15.403 5.838 12 5.838zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                             @elseif($platform === 'facebook')
@@ -224,7 +224,7 @@
                 {{-- Action buttons --}}
                 <div class="flex items-center justify-center lg:justify-start gap-3 flex-wrap">
                     <a href="{{ lroute('team') }}"
-                       class="inline-flex items-center gap-2 rounded-xl border border-[#4F772D]/40 bg-[#1a3a1a]/60 px-4 py-2.5 text-sm font-semibold text-[#90A955] hover:bg-[#4F772D]/25 hover:text-[#ECF39E] hover:border-[#4F772D]/70 hover:-translate-y-0.5 transition-all duration-200 backdrop-blur-sm">
+                       class="inline-flex items-center gap-2 rounded-xl border border-(--accent)/40 bg-(--dark-section)/50 px-4 py-2.5 text-sm font-semibold text-(--accent-on-dark) hover:bg-(--accent)/25 hover:text-(--on-dark) hover:border-(--accent)/70 hover:-translate-y-0.5 transition-all duration-200 backdrop-blur-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
                         </svg>
@@ -232,7 +232,7 @@
                     </a>
                     <a href="{{ lroute('team.member.pdf', [$member->nickname]) }}"
                        target="_blank"
-                       class="inline-flex items-center gap-2 rounded-xl border border-[#4F772D]/40 bg-[#1a3a1a]/60 px-4 py-2.5 text-sm font-semibold text-[#90A955] hover:bg-[#4F772D]/25 hover:text-[#ECF39E] hover:border-[#4F772D]/70 hover:-translate-y-0.5 transition-all duration-200 backdrop-blur-sm">
+                       class="inline-flex items-center gap-2 rounded-xl border border-(--accent)/40 bg-(--dark-section)/50 px-4 py-2.5 text-sm font-semibold text-(--accent-on-dark) hover:bg-(--accent)/25 hover:text-(--on-dark) hover:border-(--accent)/70 hover:-translate-y-0.5 transition-all duration-200 backdrop-blur-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
                         </svg>
@@ -245,7 +245,7 @@
     </div>
 
     {{-- Bottom fade into next section --}}
-    <div class="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#132A13] dark:from-[#0a1a0a] to-transparent pointer-events-none"></div>
+    <div class="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-(--dark-section) to-transparent pointer-events-none"></div>
 </section>
 
 {{-- ── CARD-TAB MENU + CONTENT PANELS ── --}}
