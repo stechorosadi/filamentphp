@@ -566,13 +566,10 @@
 {{-- ─────────────────────────────────────────── --}}
 <section id="content-section" class="relative py-20 overflow-hidden">
     {{-- Parallax background image --}}
-    <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-        <img id="content-parallax-bg"
-             src="{{ asset('storage/background/bg-01.jpg') }}"
-             alt=""
-             class="absolute inset-x-0 w-full object-cover will-change-transform"
-             style="height:140%; top:-20%; filter:blur(3px);">
-    </div>
+    <div id="content-parallax-bg"
+         class="absolute will-change-transform"
+         style="inset:-20% 0; background-image:url('{{ asset('storage/background/bg-01.webp') }}'); background-size:cover; background-position:center; filter:blur(0px); opacity:0.3;"
+         aria-hidden="true"></div>
     {{-- Warm colour overlay --}}
     <div class="absolute inset-0 bg-(--bg-primary)/75 pointer-events-none"></div>
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -925,9 +922,9 @@
 <section class="relative py-16 overflow-hidden">
     {{-- Background image with overlay (matches Latest Content section) --}}
     <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-        <img src="{{ asset('storage/background/bg-01.jpg') }}" alt=""
+        <img src="{{ asset('storage/background/bg-02.webp') }}" alt=""
              class="absolute inset-x-0 w-full object-cover"
-             style="height:140%; top:-20%; filter:blur(3px);">
+             style="height:140%; top:-30%; filter:blur(0px); opacity: 0.5;">
     </div>
     <div class="absolute inset-0 bg-(--bg-primary)/75 pointer-events-none"></div>
     {{-- Decorative blobs --}}
