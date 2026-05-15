@@ -73,6 +73,7 @@
             --dark-section: {{ $thMix($dbg, '#000000', 0.25) }};
             --dark-bg:      {{ $thMix($dbg, '#000000', 0.12) }};
         }
+    [x-cloak] { display: none !important; }
     </style>
 </head>
 <body
