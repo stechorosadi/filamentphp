@@ -101,7 +101,7 @@
                             </div>
 
                             {{-- Title --}}
-                            <h1 class="text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">
+                            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">
                                 {{ $slide->title }}
                             </h1>
 
@@ -568,7 +568,7 @@
     {{-- Parallax background image --}}
     <div id="content-parallax-bg"
          class="absolute will-change-transform"
-         style="inset:-20% 0; background-image:url('{{ asset('storage/background/bg-01.webp') }}'); background-size:cover; background-position:center; filter:blur(0px); opacity:0.7;"
+         style="inset:-20% 0; background-image:url('{{ asset('storage/background/bg-01.webp') }}'); background-size:cover; background-position:center; filter:blur(0px); opacity:0.8;"
          aria-hidden="true"></div>
     {{-- Warm colour overlay --}}
     <div class="absolute inset-0 bg-(--bg-primary)/75 pointer-events-none"></div>
@@ -924,7 +924,7 @@
     <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
         <img src="{{ asset('storage/background/bg-02.webp') }}" alt=""
              class="absolute inset-x-0 w-full object-cover"
-             style="height:140%; top:-30%; filter:blur(0px); opacity: 0.7;">
+             style="height:140%; top:-30%; filter:blur(0px); opacity: 0.8;">
     </div>
     <div class="absolute inset-0 bg-(--bg-primary)/75 pointer-events-none"></div>
     {{-- Decorative blobs --}}

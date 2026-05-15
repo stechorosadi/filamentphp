@@ -96,32 +96,32 @@ class ManageSiteSettings extends Page
                     ])
                     ->columns(1),
 
-                Section::make('Mission & Vision')
+                Section::make('Vision & Mission')
                     ->schema([
                         Tabs::make('Translations')
                             ->tabs([
                                 Tab::make('Indonesian (ID)')
                                     ->schema([
-                                        RichEditor::make('mission.id')
-                                            ->label('Mission (ID)')
+                                        RichEditor::make('vision.id')
+                                            ->label('Vision (ID)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
 
-                                        RichEditor::make('vision.id')
-                                            ->label('Vision (ID)')
+                                        RichEditor::make('mission.id')
+                                            ->label('Mission (ID)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
                                     ]),
 
                                 Tab::make('English (EN)')
                                     ->schema([
-                                        RichEditor::make('mission.en')
-                                            ->label('Mission (EN)')
+                                        RichEditor::make('vision.en')
+                                            ->label('Vision (EN)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
 
-                                        RichEditor::make('vision.en')
-                                            ->label('Vision (EN)')
+                                        RichEditor::make('mission.en')
+                                            ->label('Mission (EN)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
                                     ]),

@@ -175,71 +175,90 @@
 {{-- ══════════════════════════════════════════════════ --}}
 {{-- SECTION 3 · MISSION & VISION                       --}}
 {{-- ══════════════════════════════════════════════════ --}}
-<section class="py-20 bg-[var(--bg-primary)]">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<section class="relative py-20 overflow-hidden">
+    {{-- Background image with overlay --}}
+    <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+        <img src="{{ asset('storage/background/bg-02.webp') }}" alt=""
+             class="absolute inset-x-0 w-full object-cover"
+             style="height:140%; top:-30%; opacity: 0.8;">
+    </div>
+    <div class="absolute inset-0 bg-(--bg-primary)/75 pointer-events-none"></div>
+    {{-- Decorative blobs --}}
+    <div class="absolute -top-20 right-0 h-72 w-72 rounded-full bg-[var(--accent-dim)]/10 dark:bg-[var(--accent)]/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-[#FFDAC4]/40 dark:bg-[var(--bg-card)]/30 blur-3xl pointer-events-none"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {{-- Section heading --}}
         <div class="text-center mb-14">
             <p class="text-xs font-bold uppercase tracking-widest text-[var(--accent)] mb-3">{{ __('ui.about_page_title') }}</p>
             <h2 class="text-3xl sm:text-4xl font-bold text-[var(--text-primary)]">
-                {{ __('ui.about_mission_label') }} & {{ __('ui.about_vision_label') }}
+                {{ __('ui.about_vision_label') }} & {{ __('ui.about_mission_label') }}
             </h2>
             <div class="mx-auto mt-4 h-1 w-16 rounded-full bg-[var(--accent)]"></div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="flex flex-col gap-6">
 
-            {{-- Mission card --}}
-            <div class="group relative rounded-3xl bg-[var(--bg-card)] border border-[var(--border)] p-10 overflow-hidden
-                        transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                {{-- Decorative quote mark --}}
-                <div class="absolute -top-4 -right-2 text-[10rem] font-bold leading-none text-[var(--accent)]/8 select-none pointer-events-none">"</div>
-                {{-- Hover accent glow --}}
-                <div class="absolute inset-0 rounded-3xl bg-[var(--accent)]/0 group-hover:bg-[var(--accent)]/4 transition-colors duration-300 pointer-events-none"></div>
+            {{-- Vision row --}}
+            <div class="group relative rounded-3xl bg-[var(--accent)] overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-0.5">
+                {{-- Decorative overlays --}}
+                <div class="absolute inset-0 bg-[linear-gradient(135deg,#ffffff15_0%,transparent_55%)] pointer-events-none"></div>
+                <div class="absolute -bottom-16 -right-16 h-72 w-72 rounded-full bg-white/8 blur-3xl pointer-events-none"></div>
+                <div class="absolute top-0 left-1/2 h-px w-1/2 bg-white/10 pointer-events-none"></div>
 
-                <div class="relative">
-                    <div class="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent)]/15
-                                group-hover:bg-[var(--accent)]/25 transition-colors duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                             stroke-width="1.5" stroke="currentColor" class="h-7 w-7 text-[var(--accent)]">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
-                        </svg>
+                <div class="relative grid lg:grid-cols-[260px_1fr]">
+                    {{-- Left label panel --}}
+                    <div class="flex flex-col justify-start p-8 lg:p-10 lg:border-r border-white/15">
+                        <div class="flex items-center gap-4">
+                            <div class="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5" stroke="currentColor" class="h-7 w-7 text-white">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-white">{{ __('ui.about_vision_label') }}</h3>
+                                <div class="mt-2 h-0.5 w-10 rounded-full bg-white/40"></div>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-bold text-[var(--text-primary)] mb-3">
-                        {{ __('ui.about_mission_label') }}
-                    </h3>
-                    <div class="h-0.5 w-12 rounded-full bg-[var(--accent)] mb-6"></div>
-                    <div class="prose-themed">
-                        {!! $siteSetting->mission ?: '<p>'.__('ui.about_mission_placeholder').'</p>' !!}
+                    {{-- Right content panel --}}
+                    <div class="flex items-start p-8 lg:p-10 border-t border-white/15 lg:border-t-0">
+                        <div class="prose-inverted w-full">
+                            {!! $siteSetting->vision ?: '<p>'.__('ui.about_vision_placeholder').'</p>' !!}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Vision card --}}
-            <div class="group relative rounded-3xl bg-[var(--accent)] p-10 overflow-hidden
-                        transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                {{-- Decorative overlays --}}
-                <div class="absolute inset-0 bg-[linear-gradient(135deg,#ffffff12_0%,transparent_60%)] pointer-events-none"></div>
-                <div class="absolute -bottom-12 -right-12 h-56 w-56 rounded-full bg-white/10 blur-3xl pointer-events-none"></div>
-                <div class="absolute top-6 right-6 h-24 w-24 rounded-full bg-white/8 blur-2xl pointer-events-none"></div>
-                {{-- Decorative quote mark --}}
-                <div class="absolute -top-4 -right-2 text-[10rem] font-bold leading-none text-white/8 select-none pointer-events-none">"</div>
+            {{-- Mission row --}}
+            <div class="group relative rounded-3xl bg-[var(--bg-card)] border border-[var(--border)] overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-0.5">
+                {{-- Hover accent glow --}}
+                <div class="absolute inset-0 rounded-3xl bg-[var(--accent)]/0 group-hover:bg-[var(--accent)]/3 transition-colors duration-300 pointer-events-none"></div>
 
-                <div class="relative">
-                    <div class="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20
-                                group-hover:bg-white/30 transition-colors duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                             stroke-width="1.5" stroke="currentColor" class="h-7 w-7 text-white">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-                        </svg>
+                <div class="relative grid lg:grid-cols-[260px_1fr]">
+                    {{-- Left label panel --}}
+                    <div class="flex flex-col justify-start p-8 lg:p-10 lg:border-r border-[var(--border)]">
+                        <div class="flex items-center gap-4">
+                            <div class="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent)]/12 group-hover:bg-[var(--accent)]/22 transition-colors duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5" stroke="currentColor" class="h-7 w-7 text-[var(--accent)]">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-[var(--text-primary)]">{{ __('ui.about_mission_label') }}</h3>
+                                <div class="mt-2 h-0.5 w-10 rounded-full bg-[var(--accent)]"></div>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-bold text-white mb-3">
-                        {{ __('ui.about_vision_label') }}
-                    </h3>
-                    <div class="h-0.5 w-12 rounded-full bg-white/40 mb-6"></div>
-                    <div class="prose-inverted">
-                        {!! $siteSetting->vision ?: '<p>'.__('ui.about_vision_placeholder').'</p>' !!}
+                    {{-- Right content panel --}}
+                    <div class="flex items-start p-8 lg:p-10 border-t border-[var(--border)] lg:border-t-0">
+                        <div class="prose-themed w-full">
+                            {!! $siteSetting->mission ?: '<p>'.__('ui.about_mission_placeholder').'</p>' !!}
+                        </div>
                     </div>
                 </div>
             </div>
