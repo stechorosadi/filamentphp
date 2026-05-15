@@ -20,7 +20,8 @@ class ManageSiteSettingsTest extends TestCase
     {
         parent::setUp();
         Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
-        SiteSetting::create(['site_title' => ['id' => 'Test Site', 'en' => 'Test Site']]);
+        SiteSetting::create(['type' => 'organization', 'site_title' => ['id' => 'Test Site', 'en' => 'Test Site']]);
+        SiteSetting::create(['type' => 'personal', 'site_title' => ['id' => 'Personal', 'en' => 'Personal']]);
     }
 
     private function admin(): User
@@ -78,7 +79,7 @@ class ManageSiteSettingsTest extends TestCase
             ->call('save')
             ->assertHasNoFormErrors();
 
-        $this->assertDatabaseMissing('site_settings', ['logo_path' => null]);
+        $this->assertNotNull(SiteSetting::organization()->logo_path);
     }
 
     public function test_oversized_favicon_is_rejected(): void
@@ -104,6 +105,19 @@ class ManageSiteSettingsTest extends TestCase
             ->call('save')
             ->assertHasNoFormErrors();
 
-        $this->assertEquals('Updated Title', SiteSetting::first()->getTranslation('site_title', 'id'));
+        $this->assertEquals('Updated Title', SiteSetting::organization()->getTranslation('site_title', 'id'));
+    }
+
+    public function test_personal_site_toggle_saves_to_org_row_only(): void
+    {
+        $this->actingAs($this->admin());
+
+        Livewire::test(ManageSiteSettings::class)
+            ->fillForm(['is_personal_site' => true])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertTrue((bool) SiteSetting::organization()->is_personal_site);
+        $this->assertFalse((bool) SiteSetting::personal()->is_personal_site);
     }
 }

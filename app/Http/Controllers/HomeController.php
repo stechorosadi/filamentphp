@@ -6,6 +6,7 @@ use App\Enums\TeamMemberStatus;
 use App\Models\Content;
 use App\Models\ContentCategory;
 use App\Models\ContentClassification;
+use App\Models\SiteSetting;
 use App\Models\Tag;
 use App\Models\TeamMember;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -16,6 +17,11 @@ class HomeController extends Controller
 {
     public function index(): View
     {
+        $orgSetting = SiteSetting::organization();
+        if ($orgSetting->is_personal_site && SiteSetting::personal()->personal_member_id) {
+            return $this->personalHome();
+        }
+
         $locale = app()->getLocale();
         $search = mb_substr(request()->string('search')->trim()->value(), 0, 100);
         $categoryId = request()->integer('category') ?: null;
@@ -75,6 +81,34 @@ class HomeController extends Controller
             'featuredContents', 'latestContents', 'categories', 'classifications',
             'search', 'totalArticles', 'popularContents', 'teamMembers'
         ));
+    }
+
+    private function personalHome(): View
+    {
+        $personalSetting = SiteSetting::personal();
+
+        $member = TeamMember::where('id', $personalSetting->personal_member_id)
+            ->where('is_visible', true)
+            ->firstOrFail();
+
+        $member->load([
+            'user.educationHistory',
+            'user.workExperience',
+            'user.certifications',
+            'user.publications',
+        ]);
+
+        $blogs = collect();
+        if ($member->user_id) {
+            $blogs = Content::where('user_id', $member->user_id)
+                ->where('published', true)
+                ->where('archived', false)
+                ->with(['category', 'classification'])
+                ->latest('article_date')
+                ->get();
+        }
+
+        return view('personal-home', compact('member', 'blogs'));
     }
 
     public function search(): View

@@ -12,11 +12,13 @@
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
+    @if(!$personalMember)
     <url>
         <loc>{{ lroute('team') }}</loc>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
     </url>
+    @endif
     <url>
         <loc>{{ lroute('archive') }}</loc>
         <changefreq>weekly</changefreq>
@@ -64,6 +66,7 @@
     @endforeach
 
     {{-- ── Team member profiles ── --}}
+    @if(!$personalMember)
     @foreach($teamMembers as $member)
     <url>
         <loc>{{ lroute('team.member', ['member' => $member->nickname]) }}</loc>
@@ -72,5 +75,6 @@
         <priority>0.5</priority>
     </url>
     @endforeach
+    @endif
 
 </urlset>

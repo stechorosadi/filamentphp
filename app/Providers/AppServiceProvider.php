@@ -68,6 +68,17 @@ class AppServiceProvider extends ServiceProvider
             }
             View::share('siteSetting', $siteSetting);
 
+            // Share the linked TeamMember when personal site mode is active.
+            $personalMember = null;
+            try {
+                $attrs = $siteSetting->getAttributes();
+                $memberId = (int) ($attrs['personal_member_id'] ?? 0);
+                if (($attrs['type'] ?? 'organization') === 'personal' && $memberId) {
+                    $personalMember = TeamMember::find($memberId);
+                }
+            } catch (\Throwable) {}
+            View::share('personalMember', $personalMember);
+
             // Navigation menus: load locale-specific version, fall back to base name.
             $suffix = ' - '.strtoupper($locale);
 

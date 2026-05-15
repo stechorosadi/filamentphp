@@ -4,14 +4,15 @@ namespace App\Filament\Pages;
 
 use App\Filament\Actions\TranslateAction;
 use App\Models\SiteSetting;
+use App\Models\TeamMember;
 use App\Services\ImageConverter;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
@@ -21,17 +22,19 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class ManageSiteSettings extends Page
+class ManagePersonalSiteSettings extends Page
 {
-    protected string $view = 'filament.pages.manage-site-settings';
+    protected string $view = 'filament.pages.manage-personal-site-settings';
 
-    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-user-circle';
 
     protected static \UnitEnum|string|null $navigationGroup = 'Settings';
 
-    protected static ?string $navigationLabel = 'Site Settings';
+    protected static ?string $navigationLabel = 'Personal Site';
 
-    protected static ?string $title = 'Site Settings';
+    protected static ?string $title = 'Personal Site Settings';
+
+    protected static ?int $navigationSort = 2;
 
     public static function canAccess(): bool
     {
@@ -43,7 +46,7 @@ class ManageSiteSettings extends Page
     public function mount(): void
     {
         $this->form->fill(
-            SiteSetting::organization()->attributesToArray()
+            SiteSetting::personal()->attributesToArray()
         );
     }
 
@@ -54,12 +57,22 @@ class ManageSiteSettings extends Page
             ->schema([
                 Section::make('Identity')
                     ->schema([
+                        Select::make('personal_member_id')
+                            ->label('Profile Person')
+                            ->options(fn () => TeamMember::where('is_visible', true)
+                                ->orderBy('sort_order')
+                                ->get()
+                                ->mapWithKeys(fn ($m) => [$m->id => $m->fullName()]))
+                            ->searchable()
+                            ->nullable()
+                            ->helperText('The team member whose profile is shown as the homepage in Personal Site Mode.'),
+
                         Tabs::make('Translations')
                             ->tabs([
                                 Tab::make('Indonesian (ID)')
                                     ->schema([
                                         TextInput::make('site_title.id')
-                                            ->label('Site Title (ID)')
+                                            ->label('Name / Brand (ID)')
                                             ->required()
                                             ->maxLength(100),
 
@@ -77,7 +90,7 @@ class ManageSiteSettings extends Page
                                 Tab::make('English (EN)')
                                     ->schema([
                                         TextInput::make('site_title.en')
-                                            ->label('Site Title (EN)')
+                                            ->label('Name / Brand (EN)')
                                             ->maxLength(100),
 
                                         TextInput::make('site_tagline.en')
@@ -97,19 +110,19 @@ class ManageSiteSettings extends Page
                     ])
                     ->columns(1),
 
-                Section::make('Vision & Mission')
+                Section::make('Introduction & Biography')
                     ->schema([
                         Tabs::make('Translations')
                             ->tabs([
                                 Tab::make('Indonesian (ID)')
                                     ->schema([
                                         RichEditor::make('vision.id')
-                                            ->label('Vision (ID)')
+                                            ->label('Introduction (ID)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
 
                                         RichEditor::make('mission.id')
-                                            ->label('Mission (ID)')
+                                            ->label('Biography (ID)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
                                     ]),
@@ -117,12 +130,12 @@ class ManageSiteSettings extends Page
                                 Tab::make('English (EN)')
                                     ->schema([
                                         RichEditor::make('vision.en')
-                                            ->label('Vision (EN)')
+                                            ->label('Introduction (EN)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
 
                                         RichEditor::make('mission.en')
-                                            ->label('Mission (EN)')
+                                            ->label('Biography (EN)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
                                     ]),
@@ -136,7 +149,7 @@ class ManageSiteSettings extends Page
                 Section::make('Branding')
                     ->schema([
                         FileUpload::make('logo_path')
-                            ->label('Logo')
+                            ->label('Logo / Profile Brand Image')
                             ->image()
                             ->disk('public')
                             ->directory('site')
@@ -164,61 +177,28 @@ class ManageSiteSettings extends Page
                     ])
                     ->columns(2),
 
-                Section::make('Social Media')
-                    ->description('Add your social media profile URLs. Leave blank to hide.')
-                    ->schema([
-                        TextInput::make('facebook_url')
-                            ->label('Facebook')
-                            ->url()
-                            ->maxLength(255)
-                            ->prefix('🌐')
-                            ->placeholder('https://facebook.com/yourpage'),
-
-                        TextInput::make('instagram_url')
-                            ->label('Instagram')
-                            ->url()
-                            ->maxLength(255)
-                            ->prefix('🌐')
-                            ->placeholder('https://instagram.com/yourhandle'),
-
-                        TextInput::make('x_url')
-                            ->label('X (Twitter)')
-                            ->url()
-                            ->maxLength(255)
-                            ->prefix('🌐')
-                            ->placeholder('https://x.com/yourhandle'),
-
-                        TextInput::make('youtube_url')
-                            ->label('YouTube')
-                            ->url()
-                            ->maxLength(255)
-                            ->prefix('🌐')
-                            ->placeholder('https://youtube.com/@yourchannel'),
-                    ])
-                    ->columns(1),
-
                 Section::make('Contact Info')
-                    ->description('Displayed in the top bar above the navigation on the frontend.')
+                    ->description('Displayed in the site header and on the personal homepage contact strip.')
                     ->schema([
                         TextInput::make('contact_email')
                             ->label('Email')
                             ->email()
                             ->maxLength(255)
-                            ->placeholder('info@example.com'),
+                            ->placeholder('hello@yourname.com'),
 
                         TextInput::make('contact_address')
                             ->label('Address')
                             ->maxLength(255)
-                            ->placeholder('123 Main St, City, Country'),
+                            ->placeholder('City, Country'),
 
                         TextInput::make('contact_phone')
                             ->label('Phone')
                             ->tel()
                             ->maxLength(50)
-                            ->placeholder('+62 21 1234 5678'),
+                            ->placeholder('+62 812 3456 7890'),
 
                         TextInput::make('contact_working_hours')
-                            ->label('Working Hours')
+                            ->label('Availability')
                             ->maxLength(100)
                             ->placeholder('Mon–Fri, 09:00–17:00'),
 
@@ -227,12 +207,12 @@ class ManageSiteSettings extends Page
                             ->rows(3)
                             ->columnSpanFull()
                             ->placeholder('https://www.google.com/maps/embed?pb=...')
-                            ->helperText('Paste only the src URL from the Google Maps embed iframe: Share → Embed a map → copy the value inside src="…"'),
+                            ->helperText('Paste only the src URL from the Google Maps embed iframe.'),
                     ])
                     ->columns(2),
 
                 Section::make('Theme Colors')
-                    ->description('Customize the site color palette. Changes apply instantly — no rebuild needed.')
+                    ->description('Customize the personal site color palette. Changes apply instantly — no rebuild needed.')
                     ->schema([
                         ColorPicker::make('color_light_bg')
                             ->label('Light Background')
@@ -259,15 +239,6 @@ class ManageSiteSettings extends Page
                             ->helperText('Buttons, links, and highlights in dark mode.'),
                     ])
                     ->columns(2),
-
-                Section::make('Site Mode')
-                    ->description('Switch the public homepage between the organisation feed and a personal profile page.')
-                    ->schema([
-                        Toggle::make('is_personal_site')
-                            ->label('Enable Personal Site Mode')
-                            ->helperText('When ON, the homepage shows the personal profile configured in Personal Site Settings.'),
-                    ])
-                    ->columns(1),
             ]);
     }
 
@@ -275,13 +246,13 @@ class ManageSiteSettings extends Page
     {
         $data = $this->form->getState();
 
-        SiteSetting::organization()->update($data);
+        SiteSetting::personal()->update($data);
 
         Cache::forget('site_setting_en');
         Cache::forget('site_setting_id');
 
         Notification::make()
-            ->title('Settings saved.')
+            ->title('Personal site settings saved.')
             ->success()
             ->send();
     }

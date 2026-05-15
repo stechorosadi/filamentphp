@@ -193,7 +193,9 @@
         <div class="text-center mb-14">
             <p class="text-xs font-bold uppercase tracking-widest text-[var(--accent)] mb-3">{{ __('ui.about_page_title') }}</p>
             <h2 class="text-3xl sm:text-4xl font-bold text-[var(--text-primary)]">
-                {{ __('ui.about_vision_label') }} & {{ __('ui.about_mission_label') }}
+                {{ $personalMember ? __('ui.about_introduction_label') : __('ui.about_vision_label') }}
+                &
+                {{ $personalMember ? __('ui.about_biography_label') : __('ui.about_mission_label') }}
             </h2>
             <div class="mx-auto mt-4 h-1 w-16 rounded-full bg-[var(--accent)]"></div>
         </div>
@@ -219,7 +221,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-2xl font-bold text-white">{{ __('ui.about_vision_label') }}</h3>
+                                <h3 class="text-2xl font-bold text-white">{{ $personalMember ? __('ui.about_introduction_label') : __('ui.about_vision_label') }}</h3>
                                 <div class="mt-2 h-0.5 w-10 rounded-full bg-white/40"></div>
                             </div>
                         </div>
@@ -249,7 +251,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-2xl font-bold text-[var(--text-primary)]">{{ __('ui.about_mission_label') }}</h3>
+                                <h3 class="text-2xl font-bold text-[var(--text-primary)]">{{ $personalMember ? __('ui.about_biography_label') : __('ui.about_mission_label') }}</h3>
                                 <div class="mt-2 h-0.5 w-10 rounded-full bg-[var(--accent)]"></div>
                             </div>
                         </div>

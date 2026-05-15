@@ -26,7 +26,7 @@
         <p class="mb-2 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">{{ __('ui.all_pages') }}</p>
         <h1 class="mb-3 text-3xl sm:text-4xl font-bold text-[#ECF39E] leading-tight">{{ __('ui.sitemap') }}</h1>
         <p class="text-base text-[#90A955]">
-            {{ $contents->count() + $categories->count() + $classifications->count() + $tags->count() + $teamMembers->count() + 4 }}
+            {{ $contents->count() + $categories->count() + $classifications->count() + $tags->count() + ($personalMember ? 0 : $teamMembers->count() + 1) + 3 }}
             {{ __('ui.pages_indexed') }}
         </p>
     </div>
@@ -49,7 +49,7 @@
                     @foreach([
                         ['label' => __('ui.home'), 'url' => lroute('home')],
                         ['label' => __('ui.search'), 'url' => lroute('search')],
-                        ['label' => __('ui.team'), 'url' => lroute('team')],
+                        ...($personalMember ? [] : [['label' => __('ui.team'), 'url' => lroute('team')]]),
                         ['label' => __('ui.archive'), 'url' => lroute('archive')],
                     ] as $page)
                     <li>
@@ -142,6 +142,7 @@
             </div>
 
             {{-- Team Members --}}
+            @if(!$personalMember)
             <div>
                 <h2 class="mb-5 flex items-center gap-2 text-lg font-bold text-[var(--text-primary)]">
                     <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-(--accent)/15">
@@ -167,6 +168,7 @@
                 </ul>
                 @endif
             </div>
+            @endif
 
         </div>
 
