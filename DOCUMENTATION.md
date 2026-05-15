@@ -14,8 +14,9 @@ For technical internals (schema, models, resources) see [ARCHITECTURE.md](ARCHIT
 5. [Roles & Permissions](#roles--permissions)
 6. [Admin Panel Features](#admin-panel-features)
 7. [Public Frontend](#public-frontend)
-8. [Extending the App](#extending-the-app)
-9. [Deployment](#deployment)
+8. [PWA](#pwa)
+9. [Extending the App](#extending-the-app)
+10. [Deployment](#deployment)
 
 ---
 
@@ -112,10 +113,11 @@ The public frontend navbar is managed via **Filament → Menu Builder → Header
 
 **Admin panel → Settings → Site Settings** (super_admin only):
 - **Identity**: site title, tagline, meta description
-- **Branding**: logo (auto-resized to 128px height), favicon (auto-resized to 32×32px)
+- **Vision & Mission**: rich-text fields (EN/ID tabs) displayed on the About page
+- **Branding**: logo (auto-resized to 128px height, converted to WebP), favicon (auto-resized to 32×32px, kept as-is — PNG required)
 - **Social Media**: Facebook, Instagram, X, YouTube URLs
 - **Contact Info**: email, address (displayed in the top bar)
-- **Theme Colors**: accent, background, and text colors for light/dark modes
+- **Theme Colors**: accent, background, and text colors for light/dark modes — drive all frontend CSS variables
 
 ---
 
@@ -198,7 +200,7 @@ The dashboard shows four live stat cards:
 - **Other roles:** must enter Current Password, New Password, Confirm
 - Leave all password fields blank to keep the existing password
 
-**Avatar:** Auto-cropped to 200×200px. Click the avatar in the table to preview full size.
+**Avatar:** Auto-cropped to 200×200px and converted to WebP. Click the avatar in the table to preview full size.
 
 **User profile tabs (Education, Work Experience, Certifications, Publications):**
 
@@ -211,7 +213,7 @@ Each tab is a relation manager with drag-to-reorder support.
 | Certifications | Title, Issuing Organization, Category (Training/Seminar/Workshop/Professional/Online Course), Year, Description, Certificate upload |
 | Publications | Title, Type (Book/Journal/Research/Conference/Other), Publisher, Year, ISBN, DOI, URL, Abstract, File upload |
 
-Certificate and file image uploads are auto-resized to 1000px width (PDFs are uploaded as-is).
+Certificate and file image uploads are auto-resized to 1000px width and converted to WebP (PDFs are uploaded as-is).
 
 ---
 
@@ -323,6 +325,18 @@ Dedicated page for all published+archived content:
 
 ---
 
+### About Page (`/{locale}/about`)
+
+| Section | Description |
+|---|---|
+| **Hero** | Animated blobs, site title, tagline, and a CTA link to content |
+| **Stats** | Live counts: published articles, visible team members, categories |
+| **Vision & Mission** | Full-width horizontal split rows pulled from `SiteSetting.vision` / `SiteSetting.mission`; background image with dark overlay |
+
+Vision and Mission content is managed in **Admin panel → Settings → Site Settings → Vision & Mission** (fill both EN and ID tabs).
+
+---
+
 ### Sitemap (`/{locale}/sitemap` and `/sitemap.xml`)
 
 - **`/sitemap.xml`** — machine-readable XML sitemap for search engines; includes all published non-archived articles, categories, classifications, active tags, visible team members
@@ -393,6 +407,23 @@ Custom error pages for 404, 403, 500, 503, 419, 429:
 - **Dual-language** — error title and description shown in both English and Indonesian
 - **15-second SVG countdown ring** auto-redirects to homepage
 - Standalone — no database queries (safe for 500/503)
+
+---
+
+## PWA
+
+The site is installable as a Progressive Web App on desktop and mobile.
+
+### How it works
+
+- **Manifest** — `/manifest.webmanifest` is a dynamic route that reads site name, description, and theme colors from `SiteSetting`. It is cached for 5 minutes.
+- **Service worker** — `public/sw.js` caches core assets on install and serves them offline. When a network request fails and no cache entry exists, it returns `public/offline.html`.
+- **Icons** — `public/icons/icon-192.png` and `public/icons/icon-512.png` must be present for the manifest to be valid.
+- **Screenshots** — `public/storage/screenshots/desktop-screenshot.png` (1498×903) and `public/storage/screenshots/mobile-screenshot.png` (375×798) are shown in the Chrome install dialog for a richer prompt.
+
+### Updating screenshots
+
+Replace the files at `public/storage/screenshots/` with new PNGs. Chrome reads them from the manifest at install time — no code change needed.
 
 ---
 
