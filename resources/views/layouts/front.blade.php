@@ -282,7 +282,7 @@
     {{-- Background decorations --}}
     @if($personalMember)
     <div id="footer-topo" class="absolute inset-x-0 pointer-events-none"
-         style="top:-15%; bottom:-15%; background-image:url('{{ asset('storage/svg/topographic.webp') }}'); background-size:cover; background-position:center; opacity:0.10; mix-blend-mode:screen;"></div>
+         style="top:-15%; bottom:-15%; background-image:url('{{ asset('storage/svg/bg-svg-01.webp') }}'); background-size:cover; background-position:center; opacity:0.2; mix-blend-mode:screen;"></div>
     @else
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff07_1px,transparent_1px),linear-gradient(to_bottom,#ffffff07_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
     @endif

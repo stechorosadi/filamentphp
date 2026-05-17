@@ -30,7 +30,7 @@
     $expCount   = $hasUser ? $user->workExperience->count() : 0;
     $certCount  = $hasUser ? $user->certifications->count() : 0;
     $pubCount   = $hasUser ? $user->publications->count() : 0;
-    $blogCount  = $blogs->count();
+    $blogCount  = $blogs->total();
     $certBadgeColors = [
         'training'                   => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
         'seminar'                    => 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
@@ -66,7 +66,7 @@
 
     {{-- Topographic contour background --}}
     <div id="member-grid" class="absolute inset-0 pointer-events-none"
-         style="background-image:url('{{ asset('storage/svg/topographic.webp') }}'); background-size:cover; background-position:center; opacity:0.10; mix-blend-mode:screen;"></div>
+         style="background-image:url('{{ asset('storage/svg/bg-svg-01.webp') }}'); background-size:cover; background-position:center; opacity:0.2; mix-blend-mode:screen;"></div>
 
     {{-- Glow blobs --}}
     <div id="member-blob-1" class="absolute left-1/4 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-(--accent)/50 pointer-events-none will-change-transform" style="filter:blur(120px)"></div>
@@ -253,143 +253,219 @@
     <div class="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-(--dark-section) to-transparent pointer-events-none"></div>
 </section>
 
-{{-- ── CARD-TAB MENU + CONTENT PANELS ── --}}
+{{-- ── LATEST BLOG ── --}}
+<section class="relative py-20 overflow-hidden">
+    {{-- Parallax background image --}}
+    <div class="absolute will-change-transform"
+         style="inset:-20% 0; background-image:url('{{ asset('storage/background/bg-01.webp') }}'); background-size:cover; background-position:center; opacity:0.8;"
+         aria-hidden="true"></div>
+    {{-- Colour overlay --}}
+    <div class="absolute inset-0 bg-(--bg-primary)/75 pointer-events-none"></div>
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        {{-- Heading + search form --}}
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
+            <div class="flex items-center gap-4 flex-1">
+                <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-(--border) bg-(--accent)/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-(--accent)">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-(--text-primary)">{{ __('ui.latest_blog') }}</h2>
+                    <p class="text-md text-(--text-muted) mt-0.5">{{ __('ui.latest_blog_subtitle') }}</p>
+                </div>
+            </div>
+
+            <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 w-full sm:w-auto sm:min-w-72">
+                <div class="relative flex-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                         class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-(--accent) pointer-events-none">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+                    </svg>
+                    <input type="text" name="blog_q" value="{{ $blogSearch }}" maxlength="100"
+                           placeholder="{{ __('ui.search_placeholder') }}"
+                           class="w-full rounded-xl border border-(--border) bg-(--bg-card) pl-9 pr-4 py-2.5 text-sm text-(--text-primary) placeholder-(--text-muted)/60 focus:outline-none focus:border-(--accent) transition-colors">
+                </div>
+                <button type="submit"
+                        class="rounded-xl bg-(--accent) px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity shrink-0">
+                    {{ __('ui.search_btn') }}
+                </button>
+                @if($blogSearch)
+                <a href="{{ url()->current() }}"
+                   class="rounded-xl border border-(--border) px-4 py-2.5 text-sm text-(--accent) hover:bg-(--accent-dim) transition-colors shrink-0">
+                    {{ __('ui.clear') }}
+                </a>
+                @endif
+            </form>
+        </div>
+
+        {{-- Result count when searching --}}
+        @if($blogSearch)
+        <p class="mb-6 text-sm text-(--accent)">
+            {{ $blogs->total() }} {{ trans_choice('ui.result_for', $blogs->total()) }}
+            <span class="font-semibold text-(--text-primary)">"{{ $blogSearch }}"</span>
+        </p>
+        @endif
+
+        @if($blogs->isEmpty())
+        <div class="flex flex-col items-center justify-center py-24 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-12 w-12 text-(--accent) mb-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"/>
+            </svg>
+            <p class="text-(--text-muted) text-lg">
+                @if($blogSearch)
+                    {{ __('ui.no_results_for') }} <span class="font-semibold text-(--text-primary)">"{{ $blogSearch }}"</span>
+                @else
+                    {{ __('ui.no_blog_posts') }}
+                @endif
+            </p>
+            @if($blogSearch)
+            <a href="{{ url()->current() }}" class="mt-4 text-sm text-(--accent) hover:underline">{{ __('ui.clear') }}</a>
+            @endif
+        </div>
+        @else
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($blogs as $post)
+            <a href="{{ lroute('content.show', [$post->slug]) }}"
+               class="group flex flex-col rounded-2xl overflow-hidden bg-(--bg-card) border border-(--border) shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                @if($post->featured_image)
+                <div class="aspect-video w-full overflow-hidden">
+                    <img src="{{ asset('storage/' . $post->featured_image) }}"
+                         alt="{{ $post->title }}"
+                         loading="lazy"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                @endif
+                <div class="flex flex-col flex-1 p-5 gap-2">
+                    <div class="flex flex-wrap items-center gap-2">
+                        @if($post->article_date)
+                        <span class="text-xs text-(--text-muted)">{{ \Carbon\Carbon::parse($post->article_date)->format('d M Y') }}</span>
+                        @endif
+                        @if($post->category)
+                        <span class="inline-flex items-center rounded-full bg-(--accent)/10 px-2 py-0.5 text-xs font-semibold text-(--accent)">
+                            {{ $post->category->name }}
+                        </span>
+                        @endif
+                    </div>
+                    <h3 class="text-sm font-bold text-(--text-primary) leading-snug group-hover:text-(--accent) transition-colors line-clamp-2">
+                        {{ $post->title }}
+                    </h3>
+                    @if($post->excerpt)
+                    <p class="text-xs text-(--text-muted) leading-relaxed line-clamp-2 flex-1">{{ $post->excerpt }}</p>
+                    @endif
+                    <span class="mt-auto text-xs font-semibold text-(--accent) group-hover:underline">{{ __('ui.read_more') }} →</span>
+                </div>
+            </a>
+            @endforeach
+        </div>
+
+        {{-- Pagination --}}
+        @if($blogs->hasPages())
+        <div class="mt-12 flex justify-center">
+            {{ $blogs->links('pagination::tailwind') }}
+        </div>
+        @endif
+        @endif
+
+    </div>
+</section>
+
+{{-- ── PROFILE TABS ── --}}
 @if($hasUser)
-<section class="bg-(--bg-primary) py-12"
-         x-data="{ activeTab: 'blog' }"
+<section class="relative py-16 overflow-hidden"
+         x-data="{ activeTab: 'pub' }"
          x-cloak>
 
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    {{-- Background image with overlay (matches Most Popular section) --}}
+    <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+        <img src="{{ asset('storage/background/bg-02.webp') }}" alt=""
+             class="absolute inset-x-0 w-full object-cover"
+             style="height:140%; top:-30%; filter:blur(0px); opacity: 0.8;">
+    </div>
+    <div class="absolute inset-0 bg-(--bg-primary)/55 pointer-events-none"></div>
+    {{-- Decorative blobs --}}
+    <div class="absolute -top-20 right-0 h-72 w-72 rounded-full bg-(--accent-dim)/10 dark:bg-(--accent)/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-[#FFDAC4]/40 dark:bg-(--bg-card)/30 blur-3xl pointer-events-none"></div>
 
-        {{-- Card grid --}}
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-            {{-- Blog --}}
-            <button type="button"
-                    @click="activeTab = activeTab === 'blog' ? null : 'blog'"
-                    :class="activeTab === 'blog' ? 'border-(--accent) bg-(--accent)/10 text-(--accent)' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
-                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"/>
+        {{-- Section heading --}}
+        <div class="flex items-center gap-4 mb-10">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-(--border) bg-(--accent)/10">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-(--accent)">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
                 </svg>
-                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.blog') }}</span>
-                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
-                      :class="activeTab === 'blog' ? 'bg-(--accent) text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
-                    {{ $blogCount }}
-                </span>
-            </button>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold text-(--text-primary)">{{ __('ui.profile_highlights') }}</h2>
+                <p class="text-md text-(--text-muted) mt-0.5">{{ __('ui.profile_highlights_subtitle') }}</p>
+            </div>
+        </div>
 
-            {{-- Education History --}}
-            <button type="button"
-                    @click="activeTab = activeTab === 'edu' ? null : 'edu'"
-                    :class="activeTab === 'edu' ? 'border-(--accent) bg-(--accent)/10 text-(--accent)' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
-                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 3.741-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"/>
-                </svg>
-                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.education') }}</span>
-                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
-                      :class="activeTab === 'edu' ? 'bg-(--accent) text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
-                    {{ $eduCount }}
-                </span>
-            </button>
-
-            {{-- Working Experience --}}
-            <button type="button"
-                    @click="activeTab = activeTab === 'exp' ? null : 'exp'"
-                    :class="activeTab === 'exp' ? 'border-(--accent) bg-(--accent)/10 text-(--accent)' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
-                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"/>
-                </svg>
-                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.experience') }}</span>
-                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
-                      :class="activeTab === 'exp' ? 'bg-(--accent) text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
-                    {{ $expCount }}
-                </span>
-            </button>
-
-            {{-- Certification --}}
-            <button type="button"
-                    @click="activeTab = activeTab === 'cert' ? null : 'cert'"
-                    :class="activeTab === 'cert' ? 'border-(--accent) bg-(--accent)/10 text-(--accent)' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
-                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
-                </svg>
-                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.certifications') }}</span>
-                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
-                      :class="activeTab === 'cert' ? 'bg-(--accent) text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
-                    {{ $certCount }}
-                </span>
-            </button>
+        {{-- Card grid: Publication → Certification → Working Experience → Education History --}}
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
 
             {{-- Publication --}}
             <button type="button"
                     @click="activeTab = activeTab === 'pub' ? null : 'pub'"
-                    :class="activeTab === 'pub' ? 'border-(--accent) bg-(--accent)/10 text-(--accent)' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
+                    :class="activeTab === 'pub' ? 'border-(--accent) bg-(--accent) text-white shadow-lg' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
                     class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/>
                 </svg>
                 <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.publications') }}</span>
                 <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
-                      :class="activeTab === 'pub' ? 'bg-(--accent) text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
+                      :class="activeTab === 'pub' ? 'bg-white/25 text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
                     {{ $pubCount }}
                 </span>
             </button>
 
-        </div>
+            {{-- Certification --}}
+            <button type="button"
+                    @click="activeTab = activeTab === 'cert' ? null : 'cert'"
+                    :class="activeTab === 'cert' ? 'border-(--accent) bg-(--accent) text-white shadow-lg' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
+                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
+                </svg>
+                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.certifications') }}</span>
+                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
+                      :class="activeTab === 'cert' ? 'bg-white/25 text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
+                    {{ $certCount }}
+                </span>
+            </button>
 
-        {{-- ─── BLOG PANEL ─── --}}
-        <div x-show="activeTab === 'blog'"
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 -translate-y-2"
-             x-transition:enter-end="opacity-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 -translate-y-2">
-            <div class="rounded-2xl border border-(--border) bg-(--bg-card) p-6">
-                <h2 class="text-xl font-bold text-(--text-primary) mb-6">{{ __('ui.blog') }}</h2>
-                @if($blogs->isEmpty())
-                <p class="text-center text-(--text-muted) py-10">{{ __('ui.no_blog_posts') }}</p>
-                @else
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    @foreach($blogs as $post)
-                    <a href="{{ lroute('content.show', [$post->slug]) }}"
-                       class="group flex flex-col rounded-xl border border-(--border) bg-(--bg-primary) overflow-hidden hover:border-(--accent)/40 hover:-translate-y-1 hover:shadow-md transition-all duration-200">
-                        @if($post->featured_image)
-                        <div class="aspect-video w-full overflow-hidden">
-                            <img src="{{ asset('storage/' . $post->featured_image) }}"
-                                 alt="{{ $post->title }}"
-                                 loading="lazy"
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        </div>
-                        @endif
-                        <div class="flex flex-col flex-1 p-4 gap-2">
-                            <div class="flex flex-wrap items-center gap-2">
-                                @if($post->article_date)
-                                <span class="text-xs text-(--text-muted)">{{ \Carbon\Carbon::parse($post->article_date)->format('d M Y') }}</span>
-                                @endif
-                                @if($post->category)
-                                <span class="inline-flex items-center rounded-full bg-(--accent)/10 px-2 py-0.5 text-xs font-semibold text-(--accent)">
-                                    {{ $post->category->name }}
-                                </span>
-                                @endif
-                            </div>
-                            <h3 class="text-sm font-bold text-(--text-primary) leading-snug group-hover:text-(--accent) transition-colors line-clamp-2">
-                                {{ $post->title }}
-                            </h3>
-                            @if($post->excerpt)
-                            <p class="text-xs text-(--text-muted) leading-relaxed line-clamp-2 flex-1">{{ $post->excerpt }}</p>
-                            @endif
-                            <span class="mt-auto text-xs font-semibold text-(--accent) group-hover:underline">{{ __('ui.read_more') }} →</span>
-                        </div>
-                    </a>
-                    @endforeach
-                </div>
-                @endif
-            </div>
+            {{-- Working Experience --}}
+            <button type="button"
+                    @click="activeTab = activeTab === 'exp' ? null : 'exp'"
+                    :class="activeTab === 'exp' ? 'border-(--accent) bg-(--accent) text-white shadow-lg' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
+                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"/>
+                </svg>
+                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.experience') }}</span>
+                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
+                      :class="activeTab === 'exp' ? 'bg-white/25 text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
+                    {{ $expCount }}
+                </span>
+            </button>
+
+            {{-- Education History --}}
+            <button type="button"
+                    @click="activeTab = activeTab === 'edu' ? null : 'edu'"
+                    :class="activeTab === 'edu' ? 'border-(--accent) bg-(--accent) text-white shadow-lg' : 'border-(--border) bg-(--bg-card) text-(--text-muted) hover:border-(--accent)/50 hover:text-(--text-primary)'"
+                    class="flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7 shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 3.741-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"/>
+                </svg>
+                <span class="text-xs font-semibold text-center leading-tight">{{ __('ui.education') }}</span>
+                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold"
+                      :class="activeTab === 'edu' ? 'bg-white/25 text-white' : 'bg-(--bg-alt) text-(--text-muted)'">
+                    {{ $eduCount }}
+                </span>
+            </button>
+
         </div>
 
         {{-- ─── EDUCATION PANEL ─── --}}

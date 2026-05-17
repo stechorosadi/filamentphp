@@ -86,6 +86,8 @@ class HomeController extends Controller
     private function personalHome(): View
     {
         $personalSetting = SiteSetting::personal();
+        $locale = app()->getLocale();
+        $blogSearch = mb_substr(request()->string('blog_q')->trim()->value(), 0, 100);
 
         $member = TeamMember::where('id', $personalSetting->personal_member_id)
             ->where('is_visible', true)
@@ -98,17 +100,19 @@ class HomeController extends Controller
             'user.publications',
         ]);
 
-        $blogs = collect();
-        if ($member->user_id) {
-            $blogs = Content::where('user_id', $member->user_id)
-                ->where('published', true)
-                ->where('archived', false)
-                ->with(['category', 'classification'])
-                ->latest('article_date')
-                ->get();
-        }
+        $blogs = Content::where('user_id', $member->user_id ?? 0)
+            ->where('published', true)
+            ->where('archived', false)
+            ->with(['category', 'classification'])
+            ->when($blogSearch, fn ($q) => $q->where(fn ($q) => $q
+                ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(title, '$.\"$locale\"')) LIKE ?", ["%{$blogSearch}%"])
+                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(excerpt, '$.\"$locale\"')) LIKE ?", ["%{$blogSearch}%"])
+            ))
+            ->latest('article_date')
+            ->paginate(9)
+            ->appends(['blog_q' => $blogSearch]);
 
-        return view('personal-home', compact('member', 'blogs'));
+        return view('personal-home', compact('member', 'blogs', 'blogSearch'));
     }
 
     public function search(): View
