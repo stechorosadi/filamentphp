@@ -74,16 +74,16 @@
     <div id="member-blob-3" class="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-(--on-dark)/15 pointer-events-none will-change-transform opacity-0" style="filter:blur(90px)"></div>
 
     {{-- Floating assets --}}
-    <img id="masset-1" src="{{ asset('storage/aset-color/lightbulb.png') }}" alt=""
+    <img id="masset-1" src="{{ asset('storage/aset-color/tl.png') }}" alt=""
          class="absolute hidden lg:block w-20 opacity-30 pointer-events-none will-change-transform drop-shadow-lg"
          style="left:15%; top:24%; transform:rotate(-12deg)">
-    <img id="masset-2" src="{{ asset('storage/aset-color/cpu.png') }}" alt=""
+    <img id="masset-2" src="{{ asset('storage/aset-color/tr.png') }}" alt=""
          class="absolute hidden lg:block w-24 opacity-30 pointer-events-none will-change-transform drop-shadow-lg"
          style="right:14%; top:20%; transform:rotate(8deg)">
-    <img id="masset-3" src="{{ asset('storage/aset-color/shield.png') }}" alt=""
+    <img id="masset-3" src="{{ asset('storage/aset-color/bl.png') }}" alt=""
          class="absolute hidden lg:block w-16 opacity-30 pointer-events-none will-change-transform drop-shadow-lg"
          style="left:18%; bottom:10%; transform:rotate(10deg)">
-    <img id="masset-4" src="{{ asset('storage/aset-color/padlock.png') }}" alt=""
+    <img id="masset-4" src="{{ asset('storage/aset-color/br.png') }}" alt=""
          class="absolute hidden lg:block w-20 opacity-30 pointer-events-none will-change-transform drop-shadow-lg"
          style="right:16%; bottom:10%; transform:rotate(-8deg)">
 
@@ -704,7 +704,7 @@
             </a>
             @endif
             @if($siteSetting->contact_address)
-            <div class="flex items-center gap-3 rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3">
+            <div class="flex items-center gap-3 rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 hover:border-(--accent)/40 hover:-translate-y-0.5 transition-all duration-200">
                 <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-(--accent)/10">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-(--accent)" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
