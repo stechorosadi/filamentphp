@@ -181,7 +181,7 @@
             {{-- Logo --}}
             <a href="{{ lroute('home') }}" class="flex items-center gap-2 text-xl font-bold text-[var(--accent)] dark:text-[var(--accent)] tracking-tight">
                 @if($siteSetting->logo_path)
-                    <img src="{{ Storage::disk('public')->url($siteSetting->logo_path) }}" alt="{{ $siteSetting->site_title }}" class="h-8 w-auto object-contain">
+                    <img src="{{ Storage::disk('public')->url($siteSetting->logo_path) }}" alt="{{ $siteSetting->site_title }}" class="{{ $personalMember ? 'h-10' : 'h-8' }} w-auto object-contain">
                 @endif
                 {{ $siteSetting->site_title }}
             </a>
@@ -301,7 +301,7 @@
                     @if($siteSetting->logo_path)
                     <img src="{{ Storage::disk('public')->url($siteSetting->logo_path) }}"
                          alt="{{ $siteSetting->site_title }}"
-                         class="h-8 w-auto object-contain opacity-90">
+                         class="{{ $personalMember ? 'h-10' : 'h-8' }} w-auto object-contain opacity-90">
                     @endif
                     <span class="text-2xl font-bold text-white tracking-tight">{{ $siteSetting->site_title }}</span>
                 </div>
