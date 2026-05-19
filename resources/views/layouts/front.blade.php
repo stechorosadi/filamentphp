@@ -388,6 +388,13 @@
 
 @stack('scripts')
 <script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js');
+    });
+}
+</script>
+<script>
 (function () {
     var el = document.getElementById('footer-topo');
     if (!el) return;
