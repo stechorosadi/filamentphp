@@ -150,6 +150,7 @@ return [
     'employee_number' => 'Employee Number',
     'social_media' => 'Social Media',
     'position' => 'Position',
+    'profession' => 'Profession',
     'contact_page_title' => 'Contact Us',
     'contact_hero_heading' => 'We Would Love to Hear from You',
     'contact_hero_desc' => 'Have a question, partnership idea, or just want to say hello? Fill in the form below and our team will get back to you soon.',

@@ -150,6 +150,7 @@ return [
     'employee_number' => 'Nomor Pegawai',
     'social_media' => 'Media Sosial',
     'position' => 'Jabatan',
+    'profession' => 'Profesi',
     'contact_page_title' => 'Hubungi Kami',
     'contact_hero_heading' => 'Kami Senang Mendengar dari Anda',
     'contact_hero_desc' => 'Punya pertanyaan, ide kemitraan, atau sekadar ingin menyapa? Isi formulir di bawah dan tim kami akan segera menghubungi Anda.',

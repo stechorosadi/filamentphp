@@ -55,7 +55,7 @@ class TeamMemberForm
 
                         Textarea::make('word_of_wisdom')
                             ->label('Word of Wisdom')
-                            ->placeholder('Share a wise word about being an archivist…')
+                            ->placeholder('Share a wise word from your life…')
                             ->maxLength(500)
                             ->rows(3)
                             ->columnSpanFull(),

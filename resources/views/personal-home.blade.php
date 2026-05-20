@@ -129,7 +129,7 @@
                         </svg>
                     </div>
                     <div class="text-left">
-                        <p class="text-[10px] text-(--accent-on-dark)/60 uppercase tracking-widest font-bold">{{ __('ui.position') }}</p>
+                        <p class="text-[10px] text-(--accent-on-dark)/60 uppercase tracking-widest font-bold">{{ __('ui.profession') }}</p>
                         <p class="text-sm font-bold text-(--on-dark) leading-snug mt-0.5">{{ $member->position }}</p>
                     </div>
                 </div>
