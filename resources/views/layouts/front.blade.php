@@ -73,6 +73,7 @@
             --dark-section: {{ $thMix($dbg, '#000000', 0.25) }};
             --dark-bg:      {{ $thMix($dbg, '#000000', 0.12) }};
         }
+    [x-cloak] { display: none !important; }
     </style>
 </head>
 <body
@@ -139,7 +140,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/>
             </svg>
             <div class="flex flex-col leading-tight">
-                <span class="text-xs font-semibold uppercase tracking-wide opacity-75">{{ __('ui.contact_us') }}</span>
+                <span class="text-xs font-semibold uppercase tracking-wide opacity-75">{{ $personalMember ? __('ui.keep_in_touch') : __('ui.contact_us') }}</span>
                 <span class="text-sm">{{ $siteSetting->contact_email }}</span>
             </div>
         </a>
@@ -180,7 +181,7 @@
             {{-- Logo --}}
             <a href="{{ lroute('home') }}" class="flex items-center gap-2 text-xl font-bold text-[var(--accent)] dark:text-[var(--accent)] tracking-tight">
                 @if($siteSetting->logo_path)
-                    <img src="{{ Storage::disk('public')->url($siteSetting->logo_path) }}" alt="{{ $siteSetting->site_title }}" class="h-8 w-auto object-contain">
+                    <img src="{{ Storage::disk('public')->url($siteSetting->logo_path) }}" alt="{{ $siteSetting->site_title }}" class="{{ $personalMember ? 'h-10' : 'h-8' }} w-auto object-contain">
                 @endif
                 {{ $siteSetting->site_title }}
             </a>
@@ -279,7 +280,12 @@
     <div class="h-px bg-linear-to-r from-transparent via-(--accent-on-dark)/40 to-transparent"></div>
 
     {{-- Background decorations --}}
+    @if($personalMember)
+    <div id="footer-topo" class="absolute inset-x-0 pointer-events-none"
+         style="top:-15%; bottom:-15%; background-image:url('{{ asset('storage/svg/bg-svg-01.webp') }}'); background-size:cover; background-position:center; opacity:0.2; mix-blend-mode:screen;"></div>
+    @else
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff07_1px,transparent_1px),linear-gradient(to_bottom,#ffffff07_1px,transparent_1px)] bg-size-[48px_48px] pointer-events-none"></div>
+    @endif
     <div class="absolute -top-16 right-0 h-56 w-56 rounded-full bg-(--accent-on-dark)/10 blur-3xl pointer-events-none"></div>
     <div class="absolute bottom-0 -left-16 h-48 w-48 rounded-full bg-(--accent-on-dark)/15 blur-3xl pointer-events-none"></div>
 
@@ -295,7 +301,7 @@
                     @if($siteSetting->logo_path)
                     <img src="{{ Storage::disk('public')->url($siteSetting->logo_path) }}"
                          alt="{{ $siteSetting->site_title }}"
-                         class="h-8 w-auto object-contain opacity-90">
+                         class="{{ $personalMember ? 'h-10' : 'h-8' }} w-auto object-contain opacity-90">
                     @endif
                     <span class="text-2xl font-bold text-white tracking-tight">{{ $siteSetting->site_title }}</span>
                 </div>
@@ -306,10 +312,10 @@
                 {{-- Social media icons --}}
                 @php
                     $socials = array_filter([
-                        'facebook'  => $siteSetting->facebook_url  ?? null,
-                        'instagram' => $siteSetting->instagram_url ?? null,
-                        'x'         => $siteSetting->x_url         ?? null,
-                        'youtube'   => $siteSetting->youtube_url   ?? null,
+                        'facebook'  => $personalMember?->facebook_url  ?: ($siteSetting->facebook_url  ?? null),
+                        'instagram' => $personalMember?->instagram_url ?: ($siteSetting->instagram_url ?? null),
+                        'x'         => $personalMember?->x_url         ?: ($siteSetting->x_url         ?? null),
+                        'youtube'   => $personalMember?->youtube_url   ?: ($siteSetting->youtube_url   ?? null),
                     ]);
                 @endphp
                 @if($socials)
@@ -381,5 +387,24 @@
 </footer>
 
 @stack('scripts')
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js');
+    });
+}
+</script>
+<script>
+(function () {
+    var el = document.getElementById('footer-topo');
+    if (!el) return;
+    window.addEventListener('scroll', function () {
+        var footer = el.closest('footer');
+        var rect   = footer.getBoundingClientRect();
+        var offset = (window.innerHeight - rect.top) * 0.12;
+        el.style.transform = 'translateY(' + offset + 'px)';
+    }, { passive: true });
+}());
+</script>
 </body>
 </html>

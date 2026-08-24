@@ -199,7 +199,7 @@ Panel path: `/arsiparis` — accessible to any authenticated user; FilamentShiel
 | timestamps | | |
 
 ### `site_settings`
-Single-row settings table. Key columns: `site_title`, `site_tagline`, `site_description`, `logo_path` (public disk `site/`), `favicon_path` (public disk `site/`), social URL fields, contact fields, theme color fields. Text fields (`site_title`, `site_tagline`, `site_description`, contact/address fields) are translatable JSON (EN/ID).
+Single-row settings table. Key columns: `site_title`, `site_tagline`, `site_description`, `vision`, `mission`, `logo_path` (public disk `site/`), `favicon_path` (public disk `site/`), social URL fields, contact fields, theme color fields. Text fields (`site_title`, `site_tagline`, `site_description`, `vision`, `mission`, contact/address fields) are translatable JSON (EN/ID).
 
 ---
 
@@ -234,7 +234,8 @@ Single-row settings table. Key columns: `site_title`, `site_tagline`, `site_desc
 - Auto-generate `slug` on creating
 
 ### `SiteSetting` — `app/Models/SiteSetting.php`
-- Traits: `HasTranslations` — translatable: text/contact fields
+- Traits: `HasTranslations` — translatable: `site_title`, `site_tagline`, `site_description`, `vision`, `mission`, contact/address fields
+- `vision` and `mission` store rich HTML content (JSON, EN/ID), displayed on the About page
 - Singleton via `SiteSetting::instance()`
 - Auto-deletes `logo_path` and `favicon_path` on field change (updating) **and** on record delete
 
@@ -316,6 +317,46 @@ All uploads use Laravel's `public` disk (`storage/app/public/`, symlinked to `pu
 | dompdf | font cache | `storage/app/fonts/` — auto-created on boot |
 
 **File deletion coverage:** All file fields auto-delete via model `booted()` hooks. For models with DB-level `cascadeOnDelete()` (content attachments, user relations), parent model `deleting` hooks manually iterate and delete child files before the cascade removes the rows.
+
+---
+
+## Image Conversion Service
+
+`app/Services/ImageConverter.php` — converts uploaded JPEG/PNG images to WebP on ingest.
+
+| Method | Description |
+|---|---|
+| `ImageConverter::toWebp($file, $directory)` | Converts a `TemporaryUploadedFile` to WebP (quality 80) using PHP GD; falls back to original file store if `imagewebp` is unavailable |
+| `ImageConverter::encodeToWebp($path, $directory)` | Lower-level helper that reads a file path, re-encodes to WebP, and persists to storage |
+
+Applied to all image `FileUpload` fields via `saveUploadedFileUsing` in:
+- `ManageSiteSettings` (logo)
+- `ContentResource` (header image, featured image)
+- `ImageAttachmentsRelationManager`
+- `TeamMemberForm` (photo)
+- `UserResource` (avatar)
+
+Favicon upload is **intentionally excluded** — browsers require PNG/ICO format. Transparent PNGs are handled correctly via `imagealphablending` + `imagesavealpha`.
+
+---
+
+## PWA Support
+
+The application ships as an installable Progressive Web App.
+
+| Asset | Path | Description |
+|---|---|---|
+| App manifest | `GET /manifest.webmanifest` | Dynamic JSON; reads `SiteSetting` name, description, and theme colors |
+| Service worker | `public/sw.js` | Cache-first strategy for offline support |
+| Offline fallback | `public/offline.html` | Standalone HTML shown when network is unavailable and no cache exists |
+| Icon 192px | `public/icons/icon-192.png` | Required by the manifest `icons` array |
+| Icon 512px | `public/icons/icon-512.png` | Required by the manifest `icons` array |
+| Desktop screenshot | `public/storage/screenshots/desktop-screenshot.png` | `form_factor: wide` (1498×903) — used in Chrome install UI |
+| Mobile screenshot | `public/storage/screenshots/mobile-screenshot.png` | `form_factor: narrow` (375×798) — used in Chrome install UI |
+
+The manifest route caches a **plain array** of primitive site-setting values (not the Eloquent model) for 300 s — avoids PHP deserialization errors from the `HasTranslations` trait in the cache.
+
+PWA meta tags (`<link rel="manifest">`, `<meta name="theme-color">`, `apple-touch-icon`) are injected in `layouts/front.blade.php`.
 
 ---
 
@@ -408,7 +449,9 @@ All frontend routes are prefixed with `/{locale}/` (where `locale` is `en` or `i
 | GET | `/{locale}/articles/{slug}/pdf` | `content.pdf` | `HomeController@pdf` |
 | GET | `/{locale}/team` | `team` | `HomeController@team` |
 | GET | `/{locale}/team/{member}` | `team.member` | `HomeController@memberShow` |
+| GET | `/{locale}/about` | `about` | `HomeController@about` |
 | GET | `/{locale}/team/{member}/pdf` | `team.member.pdf` | `HomeController@memberPdf` |
+| GET | `/manifest.webmanifest` | `manifest` | inline closure — dynamic PWA manifest |
 
 Throttle: 60 req/min for most routes; 30/min for article show; 10/min for PDFs.
 
@@ -421,6 +464,7 @@ All methods that serve locale-prefixed routes accept `string $locale` as first p
 | Method | Purpose |
 |---|---|
 | `index()` | Homepage — featured (non-archived), latest (non-archived), categories, classifications, popular (non-archived); ordered by `article_date`; supports `?search=`, `?category=`, `?classification=` |
+| `about()` | About page — passes `$siteSetting` for Vision/Mission content and live article/member/category counts |
 | `search()` | Search page — includes archived content; paginate(12), locale-aware full-text search across title, excerpt, category, classification, tags |
 | `archive()` | Archive page — only `published=true, archived=true` content; ordered by `article_date`; paginate(12) |
 | `category()` | Category page — all published content for that category; paginate(9) |
@@ -470,6 +514,7 @@ All methods that serve locale-prefixed routes accept `string $locale` as first p
 | `team/index.blade.php` | Team listing — clickable cards (overlay link) |
 | `team/show.blade.php` | Member detail — hero, education/experience timeline (2-col), certifications grid, publications list, back link + Export PDF |
 | `team/pdf.blade.php` | PDF template — site header, profile hero, education/experience timeline, certifications grid, publications list |
+| `about.blade.php` | About page — animated hero, live stats (articles/members/categories), Vision & Mission full-width split rows with background overlay |
 | `errors/layout.blade.php` | Shared error page layout — dual-language (EN/ID) title/message, 15s countdown ring |
 | `errors/*.blade.php` | Custom error pages (403, 404, 419, 429, 500, 503) — extend `errors.layout`; standalone (no DB queries) |
 
@@ -487,3 +532,8 @@ All methods that serve locale-prefixed routes accept `string $locale` as first p
 - **Article image gallery** — CSS `columns-1 sm:columns-2` masonry layout; natural image proportions; lightbox modal
 - **Dark / Light mode** — Alpine.js toggle, localStorage persistence
 - **Page view tracking** — session-deduplicated, stored in `contents.views`
+- **CSS variable theme system** — all frontend colors driven by `SiteSetting` color fields, emitted as `:root` CSS custom properties in `layouts/front.blade.php`. Variables: `--bg-primary`, `--bg-alt`, `--accent`, `--accent-dim`, `--text-primary`, `--text-muted`, `--on-dark`, `--dark-section`, `--dark-bg`, `--accent-on-dark`. Dark mode overrides emitted in the same `<style>` block.
+- **WebP auto-conversion** — all image uploads are re-encoded to WebP (quality 80) via `ImageConverter::toWebp()` before storage; falls back to original format if PHP GD `imagewebp` is unavailable
+- **PWA** — installable app with dynamic manifest, service worker, offline fallback, and 192/512px icons; screenshots supplied for richer Chrome install UI
+- **About page** — `/{locale}/about`; displays Vision & Mission from `SiteSetting` as full-width split rows with a background overlay; live article/member/category counts
+- **Accessibility** — all icon-only buttons carry `aria-label`; decorative inline SVGs carry `aria-hidden="true"`

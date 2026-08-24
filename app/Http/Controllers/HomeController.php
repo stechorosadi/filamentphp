@@ -6,6 +6,7 @@ use App\Enums\TeamMemberStatus;
 use App\Models\Content;
 use App\Models\ContentCategory;
 use App\Models\ContentClassification;
+use App\Models\SiteSetting;
 use App\Models\Tag;
 use App\Models\TeamMember;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -16,6 +17,11 @@ class HomeController extends Controller
 {
     public function index(): View
     {
+        $orgSetting = SiteSetting::organization();
+        if ($orgSetting->is_personal_site && SiteSetting::personal()->personal_member_id) {
+            return $this->personalHome();
+        }
+
         $locale = app()->getLocale();
         $search = mb_substr(request()->string('search')->trim()->value(), 0, 100);
         $categoryId = request()->integer('category') ?: null;
@@ -75,6 +81,38 @@ class HomeController extends Controller
             'featuredContents', 'latestContents', 'categories', 'classifications',
             'search', 'totalArticles', 'popularContents', 'teamMembers'
         ));
+    }
+
+    private function personalHome(): View
+    {
+        $personalSetting = SiteSetting::personal();
+        $locale = app()->getLocale();
+        $blogSearch = mb_substr(request()->string('blog_q')->trim()->value(), 0, 100);
+
+        $member = TeamMember::where('id', $personalSetting->personal_member_id)
+            ->where('is_visible', true)
+            ->firstOrFail();
+
+        $member->load([
+            'user.educationHistory',
+            'user.workExperience',
+            'user.certifications',
+            'user.publications',
+        ]);
+
+        $blogs = Content::where('user_id', $member->user_id ?? 0)
+            ->where('published', true)
+            ->where('archived', false)
+            ->with(['category', 'classification'])
+            ->when($blogSearch, fn ($q) => $q->where(fn ($q) => $q
+                ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(title, '$.\"$locale\"')) LIKE ?", ["%{$blogSearch}%"])
+                ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(excerpt, '$.\"$locale\"')) LIKE ?", ["%{$blogSearch}%"])
+            ))
+            ->latest('article_date')
+            ->paginate(9)
+            ->appends(['blog_q' => $blogSearch]);
+
+        return view('personal-home', compact('member', 'blogs', 'blogSearch'));
     }
 
     public function search(): View

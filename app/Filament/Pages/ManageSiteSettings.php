@@ -11,6 +11,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
@@ -42,7 +43,7 @@ class ManageSiteSettings extends Page
     public function mount(): void
     {
         $this->form->fill(
-            SiteSetting::instance()->attributesToArray()
+            SiteSetting::organization()->attributesToArray()
         );
     }
 
@@ -96,32 +97,32 @@ class ManageSiteSettings extends Page
                     ])
                     ->columns(1),
 
-                Section::make('Mission & Vision')
+                Section::make('Vision & Mission')
                     ->schema([
                         Tabs::make('Translations')
                             ->tabs([
                                 Tab::make('Indonesian (ID)')
                                     ->schema([
-                                        RichEditor::make('mission.id')
-                                            ->label('Mission (ID)')
+                                        RichEditor::make('vision.id')
+                                            ->label('Vision (ID)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
 
-                                        RichEditor::make('vision.id')
-                                            ->label('Vision (ID)')
+                                        RichEditor::make('mission.id')
+                                            ->label('Mission (ID)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
                                     ]),
 
                                 Tab::make('English (EN)')
                                     ->schema([
-                                        RichEditor::make('mission.en')
-                                            ->label('Mission (EN)')
+                                        RichEditor::make('vision.en')
+                                            ->label('Vision (EN)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
 
-                                        RichEditor::make('vision.en')
-                                            ->label('Vision (EN)')
+                                        RichEditor::make('mission.en')
+                                            ->label('Mission (EN)')
                                             ->toolbarButtons(['bold', 'italic', 'bulletList', 'orderedList'])
                                             ->columnSpanFull(),
                                     ]),
@@ -258,6 +259,15 @@ class ManageSiteSettings extends Page
                             ->helperText('Buttons, links, and highlights in dark mode.'),
                     ])
                     ->columns(2),
+
+                Section::make('Site Mode')
+                    ->description('Switch the public homepage between the organisation feed and a personal profile page.')
+                    ->schema([
+                        Toggle::make('is_personal_site')
+                            ->label('Enable Personal Site Mode')
+                            ->helperText('When ON, the homepage shows the personal profile configured in Personal Site Settings.'),
+                    ])
+                    ->columns(1),
             ]);
     }
 
@@ -265,7 +275,7 @@ class ManageSiteSettings extends Page
     {
         $data = $this->form->getState();
 
-        SiteSetting::instance()->update($data);
+        SiteSetting::organization()->update($data);
 
         Cache::forget('site_setting_en');
         Cache::forget('site_setting_id');
