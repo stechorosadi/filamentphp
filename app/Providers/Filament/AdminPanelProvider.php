@@ -86,8 +86,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->assets([
-                Css::make('filament-admin')
-                    ->relativePublicPath('css/filament-admin.css'),
+                Css::make('filament-admin', asset('css/filament-admin.css')),
             ]);
     }
 }
