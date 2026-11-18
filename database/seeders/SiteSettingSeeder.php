@@ -9,8 +9,14 @@ class SiteSettingSeeder extends Seeder
 {
     public function run(): void
     {
-        SiteSetting::firstOrCreate([], [
-            'site_title' => config('app.name'),
-        ]);
+        SiteSetting::firstOrCreate(
+            ['type' => 'organization'],
+            ['site_title' => config('app.name')],
+        );
+
+        SiteSetting::firstOrCreate(
+            ['type' => 'personal'],
+            ['site_title' => config('app.name')],
+        );
     }
 }
